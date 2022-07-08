@@ -1,7 +1,28 @@
+import Table from "./Table";
+
+const characters = [
+  {
+    name: 'Charlie',
+    job: 'Janitor',
+  },
+  {
+    name: 'Mac',
+    job: 'Bouncer',
+  },
+  {
+    name: 'Dee',
+    job: 'Aspring actress',
+  },
+  {
+    name: 'Dennis',
+    job: 'Bartender',
+  },
+]
+
 function App() {
   return (
     <div className="App">
-      hello word!
+      <Table characters={characters}></Table>
     </div>
   );
 }
