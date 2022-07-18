@@ -1,4 +1,5 @@
 import { Layout, Menu } from 'antd';
+import { connect } from 'react-redux';
 const { Header } = Layout;
 
 const items1 = ['1', '2', '3'].map((key) => ({
@@ -14,4 +15,11 @@ const HeaderBox = () => {
   )
 }
 
-export default HeaderBox;
+// 把state里的数据映射到props里，可以通过Props使用
+const mapStateToProps = (state) => {
+  return {
+    userinfo: state.userinfo
+  }
+}
+
+export default connect(mapStateToProps)(HeaderBox);
