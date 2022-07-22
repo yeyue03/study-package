@@ -1,24 +1,32 @@
+import React, { Component } from 'react';
 import { Layout, Menu } from 'antd';
 import { connect } from 'react-redux';
 const { Header } = Layout;
 
-const items1 = ['1', '2', '3'].map((key) => ({
-  key,
-  label: `nav ${key}`,
-}));
+class HeaderBox extends Component {
+  render() {
+    const { menuList } = this.props;
+    console.log("======= menuList", menuList);
+    const navList = menuList.map(item => {
+      return {
+        key: item.id,
+        label: item.resourceName
+      }
+    })
+    const defaultSelectedKeys = ['21'];
 
-const HeaderBox = () => {
-  return (
-    <Header className="site-layout-background" style={{ padding: 0 }}>
-      <Menu mode="horizontal" defaultSelectedKeys={['2']} items={items1} />
-    </Header>
-  )
+    return (
+      <Header className="site-layout-background" style={{ padding: 0 }}>
+        <Menu mode="horizontal" theme='dark' defaultSelectedKeys={defaultSelectedKeys} items={navList} />
+      </Header>
+    )
+  }
 }
 
 // 把state里的数据映射到props里，可以通过Props使用
-const mapStateToProps = (state) => {
+const mapStateToProps = ({user}) => {
   return {
-    userinfo: state.userinfo
+    menuList: user.menuList
   }
 }
 

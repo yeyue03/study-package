@@ -8,7 +8,7 @@ import SliderBox from './components/SiderBox';
 import ContentBox from './components/ContentBox';
 
 import UserAPI from '@/api/user';
-import { setUserinfo } from '@/store/actions/user';
+import { setUserinfo, setMenu } from '@/store/actions/user';
 
 class Layouts extends Component {
   constructor(props) {
@@ -33,6 +33,7 @@ class Layouts extends Component {
       })
 
       this.props.setUserinfo(res.data.accountInfoVO)
+      this.props.setMenu(res.data.resourceListVOS)
 
     }).catch(err => {
       console.log("返回报错：", err);
@@ -79,6 +80,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setUserinfo(userinfo) {
       dispatch(setUserinfo(userinfo));
+    },
+    setMenu(menuList) {
+      dispatch(setMenu(menuList))
     }
   }
 }
