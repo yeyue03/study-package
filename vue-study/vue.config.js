@@ -54,7 +54,7 @@ module.exports = {
     /*为预处理器 loader 传递自定义选项*/
     loaderOptions: {
       sass: {
-        prependData: `@import "@/assets/scss/_variable.scss";`,// 预设全局css变量
+        data: `@import "@/assets/scss/_variable.scss";`,// 预设全局css变量
       },
       css: {
         // 这里的选项会传递给 css-loader
@@ -90,20 +90,20 @@ module.exports = {
     host: "0.0.0.0",
     port: 8080, // 端口号
     https: false, // https:{type:Boolean}
-    open: true //配置自动启动浏览器  open: 'Google Chrome'-默认启动谷歌
+    open: true, //配置自动启动浏览器  open: 'Google Chrome'-默认启动谷歌
     // proxy: 'http://localhost:9000' // 配置跨域处理,只有一个代理
  
     // 配置多个代理
-    // proxy: {
-    //   "/api": {
-    //     target: "https://way.jd.com", //目标主机
-    //     ws: true, //代理的WebSockets
-    //     changeOrigin: true, //需要虚拟主机站点
-    //     pathRewrite: {
-    //       "^/api": ""
-    //     }
-    //   }
-    // }
+    proxy: {
+      "/api": {
+        target: "http://10.14.21.71:2022", //目标主机
+        ws: true, // 代理的WebSockets
+        changeOrigin: true, // 需要虚拟主机站点
+        pathRewrite: {
+          "^/api": ""
+        }
+      }
+    }
   },
  
   // 第三方插件选项
