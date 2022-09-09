@@ -2,6 +2,6 @@
   <a-layout-content
     :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
   >
-    Content
+    <router-view></router-view>
   </a-layout-content>
 </template>

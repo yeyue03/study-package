@@ -6,22 +6,33 @@
       theme="dark"
       mode="horizontal"
       :style="{ lineHeight: '64px' }"
+      @select="selectMenu"
     >
-      <a-menu-item key="1">nav 1</a-menu-item>
-      <a-menu-item key="2">nav 2</a-menu-item>
-      <a-menu-item key="3">nav 3</a-menu-item>
+      <a-menu-item v-for="item in menuList" :key="item.key">{{ item.name }}</a-menu-item>
     </a-menu>
   </a-layout-header>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
+import { useStore } from 'vuex';
 
 export default defineComponent({
   name: 'HeaderBar',
   setup() {
+    const store = useStore();
+    const menuList = computed(() => {
+      return store.getters['getMenu'];
+    })
+
+    const selectMenu = (e) => {
+      store.dispatch('setNavKey', e.key);
+    }
+
     return {
-      selectedKeys1: ref(['2']),
+      menuList,
+      selectedKeys1: ref(['01']),
+      selectMenu,
     }
   },
 })

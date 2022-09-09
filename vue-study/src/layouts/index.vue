@@ -13,6 +13,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
+import { useStore } from 'vuex';
+
 import HeaderBar from './components/HeaderBar.vue';
 import SiderBar from './components/SiderBar.vue';
 import Breadcrumb from './components/Breadcrumb.vue';
@@ -28,11 +30,11 @@ export default defineComponent({
     Content
   },
   setup() {
-    const menuList = ref([]);
+    const store = useStore();
 
     const getMenu = () => {
       UserApi.GetMenu().then(res => {
-        menuList.value = res.data;
+        store.dispatch('setMenu', res.data || []);
       })
     }
     getMenu();
