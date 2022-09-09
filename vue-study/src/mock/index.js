@@ -12,17 +12,17 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
         {
           key: '01-01',
           name: '常用页面',
-          path: '/demo/common',
+          path: '/demo',
           childrens: [
             {
               key: '01-01-01',
               name: '列表页',
-              path: '/demo/common/table',
+              path: '/demo/list',
             },
             {
               key: '01-01-02',
               name: '详情页',
-              path: '/demo/common/detail',
+              path: '/demo/detail',
             }
           ]
         },
@@ -34,12 +34,12 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
             {
               key: '01-02-01',
               name: '列表页二',
-              path: '/demo/common/table',
+              path: '/demo/table',
             },
             {
               key: '01-02-02',
               name: '详情页二',
-              path: '/demo/common/detail',
+              path: '/demo/detail',
             }
           ]
         }
@@ -58,12 +58,12 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
             {
               key: '02-01-01',
               name: '无1',
-              path: '/demo/common/table',
+              path: '/demo/table',
             },
             {
               key: '02-01-02',
               name: '无2',
-              path: '/demo/common/detail',
+              path: '/demo/detail',
             }
           ]
         }
