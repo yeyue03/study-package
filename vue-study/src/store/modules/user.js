@@ -1,5 +1,5 @@
 const state = {
-  nowNavKey: '01',
+  nowNavKey: [],
   userinfo: {},
   menuList: [],
 }

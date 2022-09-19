@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import user from './modules/user';
+import navTag from "./modules/navTag";
 
 export default createStore({
   state: {},
@@ -7,6 +8,7 @@ export default createStore({
   mutations: {},
   actions: {},
   modules: {
-    user
+    user,
+    navTag
   },
 });

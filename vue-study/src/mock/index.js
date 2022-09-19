@@ -18,52 +18,62 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               key: '01-01-01',
               name: '列表页',
               path: '/demo/list',
+              componentName: 'DemoList',
+              navKey: '01',
+              parentKey: '01-01',
             },
             {
               key: '01-01-02',
               name: '详情页',
               path: '/demo/detail',
+              componentName: 'DemoDetail',
+              navKey: '01',
+              parentKey: '01-01',
             }
           ]
         },
         {
           key: '01-02',
           name: '测试二',
-          path: '/demo/common',
+          path: '/demo',
           childrens: [
             {
               key: '01-02-01',
-              name: '列表页二',
+              name: '表格页面',
               path: '/demo/table',
+              componentName: 'DemoTable',
+              navKey: '01',
+              parentKey: '01-02',
             },
-            {
-              key: '01-02-02',
-              name: '详情页二',
-              path: '/demo/detail',
-            }
           ]
         }
       ]
     },
     {
       key: '02',
-      name: '菜单二',
-      path: '/demo',
+      name: '小程序',
+      path: '/wx',
       childrens: [
         {
           key: '02-01',
-          name: '菜单二sub',
-          path: '/demo/common',
+          name: '通用组件',
+          path: '/wx',
           childrens: [
             {
               key: '02-01-01',
-              name: '无1',
-              path: '/demo/table',
+              name: '首页',
+              path: '/wx/home',
+              componentName: 'WxHome',
+              navKey: '02',
+              parentKey: '02-01',
             },
             {
               key: '02-01-02',
-              name: '无2',
-              path: '/demo/detail',
+              name: '地图',
+              path: '/wx/map',
+              componentName: 'WxMap',
+              navKey: '02',
+              parentKey: '02-01',
             }
           ]
         }

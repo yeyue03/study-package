@@ -21,6 +21,7 @@ import Breadcrumb from './components/Breadcrumb.vue';
 import Content from './components/Content.vue';
 
 import UserApi from '@/api/user';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   components: {
@@ -31,13 +32,14 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const route = useRoute();
 
-    const getMenu = () => {
-      UserApi.GetMenu().then(res => {
-        store.dispatch('setMenu', res.data || []);
-      })
-    }
-    getMenu();
+    // const getMenu = () => {
+    //   UserApi.GetMenu().then(res => {
+    //     store.dispatch('setMenu', res.data || []);
+    //   })
+    // }
+    // getMenu();
 
     return {
       
