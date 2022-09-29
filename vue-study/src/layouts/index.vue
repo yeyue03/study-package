@@ -3,8 +3,8 @@
     <HeaderBar />
     <a-layout>
       <SiderBar />
-      <a-layout style="padding: 0 24px 24px">
-        <Breadcrumb />
+      <a-layout style="padding: 0 20px 20px">
+        <NavTags />
         <Content />
       </a-layout>
     </a-layout>
@@ -19,6 +19,7 @@ import HeaderBar from './components/HeaderBar.vue';
 import SiderBar from './components/SiderBar.vue';
 import Breadcrumb from './components/Breadcrumb.vue';
 import Content from './components/Content.vue';
+import NavTags from './components/NavTags.vue';
 
 import UserApi from '@/api/user';
 import { useRoute } from 'vue-router';
@@ -28,7 +29,8 @@ export default defineComponent({
     HeaderBar,
     SiderBar,
     Breadcrumb,
-    Content
+    Content,
+    NavTags
   },
   setup() {
     const store = useStore();

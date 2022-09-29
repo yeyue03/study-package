@@ -14,7 +14,7 @@
           </span>
         </template>
         <a-menu-item v-for="item in subObj.childrens" :key="item.key">
-          <router-link :to="item.path">{{ item.name }}</router-link>
+          <router-link :to="item.path" @click="selectMenu(item)">{{ item.name }}</router-link>
         </a-menu-item>
       </a-sub-menu>
     </a-menu>
@@ -58,11 +58,17 @@ export default defineComponent({
       }
     })
 
+    const selectMenu = (item) => {
+      store.dispatch('pushNavTab', item)
+      console.log("=== e", item);
+    }
+
     return {
       selectedKeys2,
       openKeys,
       collapsed: ref(false),
       subNavList,
+      selectMenu,
     }
   },
 })

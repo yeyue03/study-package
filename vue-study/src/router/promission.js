@@ -10,7 +10,6 @@ import UserApi from '@/api/user';
 // 动态路由的配置
 let getRouter;
 router.beforeEach(async (to, from, next) => {
-  console.log("== 路由判断", to);
   if (to.path == '/') {
     next('/demo/list');
     return
@@ -23,7 +22,6 @@ router.beforeEach(async (to, from, next) => {
   if (!menuList || !menuList.length) {
     const res = await UserApi.GetMenu();
     if (res.code == 200) {
-      // console.log("== menu", res.data);
       store.dispatch('setMenu', res.data || []);
     }
   }
@@ -31,7 +29,6 @@ router.beforeEach(async (to, from, next) => {
   if (!getRouter) {
     // 没有路有，先拿到动态路由
     // getRouter = handleRoutes(routes);
-    console.log("==== 进入没有路由");
     routerGo(to, next);
   } else {
     next();
@@ -67,7 +64,6 @@ function routerGo(to, next) {
   const defaultRoutes = routes;
   getRouter = filterAsyncRouter(defaultRoutes);
   getRouter.push({ path: '/:catchAll(.*)', redirect: '/demo/list' });
-  console.log("====== getRouter", getRouter);
 
   getRouter.forEach(val => {
     router.addRoute(val);
