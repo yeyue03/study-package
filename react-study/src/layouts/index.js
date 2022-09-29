@@ -21,19 +21,16 @@ class Layouts extends Component {
   }
 
   componentDidMount() {
-    this.getLoginInfoFun();
+    this.getMenuFun();
   }
 
-  getLoginInfoFun() {
-    UserAPI.GetLoginInfo().then(res => {
-      console.log("===== 返回：", res);
+  getMenuFun() {
+    UserAPI.GetMenu().then(res => {
       this.setState({
-        userinfo: res.data.accountInfoVO,
-        menuList: res.data.resourceListVOS
+        menuList: res.data
       })
 
-      this.props.setUserinfo(res.data.accountInfoVO)
-      this.props.setMenu(res.data.resourceListVOS)
+      this.props.setMenu(res.data)
 
     }).catch(err => {
       console.log("返回报错：", err);
@@ -42,7 +39,7 @@ class Layouts extends Component {
 
   render() {
     return (
-      <Layout>
+      <Layout className='layout-wrap'>
         <SliderBox></SliderBox>
         <Layout>
           <HeaderBox></HeaderBox>

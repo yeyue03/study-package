@@ -6,14 +6,13 @@ const { Header } = Layout;
 class HeaderBox extends Component {
   render() {
     const { menuList } = this.props;
-    console.log("======= menuList", menuList);
     const navList = menuList.map(item => {
       return {
-        key: item.id,
-        label: item.resourceName
+        key: item.key,
+        label: item.name
       }
     })
-    const defaultSelectedKeys = ['21'];
+    const defaultSelectedKeys = ['01'];
 
     return (
       <Header className="site-layout-background" style={{ padding: 0 }}>
