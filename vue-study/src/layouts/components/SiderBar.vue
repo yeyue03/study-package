@@ -14,7 +14,7 @@
           </span>
         </template>
         <a-menu-item v-for="item in subObj.childrens" :key="item.key">
-          <router-link :to="item.path">{{ item.name }}</router-link>
+          <router-link :to="item.path" @click="selectMenu(item)">{{ item.name }}</router-link>
         </a-menu-item>
       </a-sub-menu>
     </a-menu>
@@ -24,6 +24,7 @@
 <script>
 import { computed, defineComponent, ref } from 'vue'
 import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
 
 export default defineComponent({
@@ -34,6 +35,15 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const route = useRoute();
+    const selectedKeys2 = ref();
+    const openKeys = ref();
+
+    if (route?.meta.key) {
+      selectedKeys2.value = [route.meta.key];
+      openKeys.value = [route.meta.parentKey];
+    }
+
     const menuList = computed(() => {
       return store.getters['getMenu'];
     })
@@ -48,11 +58,17 @@ export default defineComponent({
       }
     })
 
+    const selectMenu = (item) => {
+      store.dispatch('pushNavTab', item)
+      console.log("=== e", item);
+    }
+
     return {
-      selectedKeys2: ref(['1']),
+      selectedKeys2,
+      openKeys,
       collapsed: ref(false),
-      openKeys: ref(['sub1']),
       subNavList,
+      selectMenu,
     }
   },
 })

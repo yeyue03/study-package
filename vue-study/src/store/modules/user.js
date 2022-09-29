@@ -1,5 +1,5 @@
 const state = {
-  nowNavKey: '01',
+  nowNavKey: [],
   userinfo: {},
   menuList: [],
 }
@@ -10,7 +10,7 @@ const getters = {
 }
 
 const mutations = {
-  SET_NavKey: (state, key) => {
+  SET_NAVKEY: (state, key) => {
     state.nowNavKey = key;
   },
   SET_USERINFO: (state, info) => {
@@ -23,7 +23,7 @@ const mutations = {
 
 const actions = {
   setNavKey: ({ commit }, key) => {
-    commit('SET_NavKey', key);
+    commit('SET_NAVKEY', key);
   },
   setMenu: ({ commit }, menu) => {
     commit('SET_MENU', menu);

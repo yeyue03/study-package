@@ -16,22 +16,32 @@
 <script>
 import { computed, defineComponent, ref } from 'vue'
 import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'HeaderBar',
   setup() {
     const store = useStore();
+    const route = useRoute();
+
+    const selectedKeys1 = ref();
+    if (route?.meta.key) {
+      selectedKeys1.value = [route.meta.navKey];
+      store.dispatch('setNavKey', [route.meta.navKey]);
+    }
+
     const menuList = computed(() => {
       return store.getters['getMenu'];
     })
 
+
     const selectMenu = (e) => {
-      store.dispatch('setNavKey', e.key);
+      store.dispatch('setNavKey', [e.key]);
     }
 
     return {
       menuList,
-      selectedKeys1: ref(['01']),
+      selectedKeys1,
       selectMenu,
     }
   },
@@ -45,7 +55,7 @@ export default defineComponent({
   .logo {
     width: 120px;
     height: 31px;
-    margin: 16px 24px 16px 0;
+    margin-right: 50px;
     background: rgba(255, 255, 255, 0.3);
   }
 }
