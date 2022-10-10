@@ -1,25 +1,41 @@
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import {  Layout, Menu } from 'antd';
 import React from 'react';
+import {  Layout, Menu } from 'antd';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 const { Sider } = Layout;
 
-const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
-  const key = String(index + 1);
-  return {
-    key: `sub${key}`,
-    icon: React.createElement(icon),
-    label: `subnav ${key}`,
-    children: new Array(4).fill(null).map((_, j) => {
-      const subKey = index * 4 + j + 1;
+const SliderBox = (props) => {
+  const { menuList } = props;
+  let menuDivList = null;
+  if (menuList && menuList.length > 0) {
+    menuDivList = menuList[0].childrens.map(item => {
       return {
-        key: subKey,
-        label: `option${subKey}`,
-      };
-    }),
-  };
-});
+        key: item.key,
+        label: item.name,
+        children: item.childrens.map(item => {
+          return {
+            key: item.key,
+            label: item.name,
+          }
+        })
+      }
+    })
+  }
 
-const SliderBox = () => {
+  const navigate = useNavigate();
+
+  const selectMenu = (e) => {
+    const arr = menuList[0].childrens;
+    let _obj = null;
+    for (const item of arr[0].childrens) {
+      if (item.key === e.key) {
+        _obj = item;
+      }
+    }
+    console.log("==== select _obj", _obj);
+    navigate.push({ pathname: _obj.path, search: 'aa=25' });
+  }
+
   return (
     <Sider
       breakpoint="lg"
@@ -33,13 +49,20 @@ const SliderBox = () => {
         defaultSelectedKeys={['1']}
         defaultOpenKeys={['sub1']}
         style={{
-          height: '100%',
           borderRight: 0,
         }}
-        items={items2}
+        items={menuDivList}
+        onSelect={selectMenu}
       />
     </Sider>
   )
 }
 
-export default SliderBox;
+// 把state里的数据映射到props里，可以通过Props使用
+const mapStateToProps = ({user}) => {
+  return {
+    menuList: user.menuList
+  }
+}
+
+export default connect(mapStateToProps)(SliderBox);
