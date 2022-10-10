@@ -1,8 +1,8 @@
 <template>
   <a-layout-sider width="200" style="background: #fff">
     <a-menu
-      v-model:selectedKeys="selectedKeys2"
-      v-model:openKeys="openKeys"
+      :selectedKeys="selectedKeys2"
+      :openKeys="openKeys"
       mode="inline"
       :style="{ height: '100%', borderRight: 0 }"
     >
@@ -36,23 +36,15 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const route = useRoute();
-    const selectedKeys2 = ref();
-    const openKeys = ref();
 
-    if (route?.meta.key) {
-      const obj = {
-        path: route.fullPath,
-        ...route.meta
-      }
-      store.dispatch('pushNavTab', obj)
+    const selectedKeys2 = computed(() => {
+      const key = store.getters['getSiderNavKey'];
+      return [key];
+    })
 
-      selectedKeys2.value = [route.meta.key];
-      openKeys.value = [route.meta.parentKey];
-    }
-
-    watch(route, (newRoute) => {
-      selectedKeys2.value = [newRoute.meta.key];
-      openKeys.value = [newRoute.meta.parentKey];
+    const openKeys = computed(() => {
+      const key = store.getters['getSiderOpenKey'];
+      return [key];
     })
 
     const menuList = computed(() => {
@@ -60,7 +52,7 @@ export default defineComponent({
     })
 
     const subNavList = computed(() => {
-      const navKey = store.state.user.nowNavKey;
+      const navKey = store.state.user.headNavKey;
       const arr = menuList.value.filter(item => item.key == navKey);
       if (arr && arr.length) {
         return arr[0].childrens;
@@ -84,7 +76,7 @@ export default defineComponent({
       }
 
       if (_bool) {
-        store.dispatch('pushNavTab', item)
+        store.dispatch('pushNavTab', item);
       }
     }
 

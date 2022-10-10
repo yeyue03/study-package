@@ -2,7 +2,7 @@
   <a-layout-header class="header">
     <div class="logo" />
     <a-menu
-      v-model:selectedKeys="selectedKeys1"
+      :selectedKeys="selectedKeys1"
       theme="dark"
       mode="horizontal"
       :style="{ lineHeight: '64px' }"
@@ -24,14 +24,9 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
 
-    const selectedKeys1 = ref();
-    if (route?.meta.key) {
-      selectedKeys1.value = [route.meta.navKey];
-      store.dispatch('setNavKey', [route.meta.navKey]);
-    }
-    watch(route, (newRoute) => {
-      selectedKeys1.value = [newRoute.meta.navKey];
-      store.dispatch('setNavKey', [newRoute.meta.navKey]);
+    const selectedKeys1 = computed(() => {
+      const key = store.getters['getHeadNavKey'];
+      return [key];
     })
 
     const menuList = computed(() => {
@@ -40,7 +35,7 @@ export default defineComponent({
 
 
     const selectMenu = (e) => {
-      store.dispatch('setNavKey', [e.key]);
+      store.dispatch('setHeadNavKey', [e.key]);
     }
 
     return {
