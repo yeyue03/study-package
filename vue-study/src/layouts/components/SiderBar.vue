@@ -86,7 +86,6 @@ export default defineComponent({
       if (_bool) {
         store.dispatch('pushNavTab', item)
       }
-      console.log("=== e", item);
     }
 
     return {

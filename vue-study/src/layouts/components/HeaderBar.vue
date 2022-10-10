@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 
@@ -29,6 +29,10 @@ export default defineComponent({
       selectedKeys1.value = [route.meta.navKey];
       store.dispatch('setNavKey', [route.meta.navKey]);
     }
+    watch(route, (newRoute) => {
+      selectedKeys1.value = [newRoute.meta.navKey];
+      store.dispatch('setNavKey', [newRoute.meta.navKey]);
+    })
 
     const menuList = computed(() => {
       return store.getters['getMenu'];
