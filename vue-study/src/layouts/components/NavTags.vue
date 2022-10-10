@@ -1,7 +1,7 @@
 <template>
   <div class="tags-wrap">
     <template v-for="item in navTabList" :key="item.key">
-      <a-tag :color="route.path == item.path ? '#2db7f5' : null" closable @close.prevent>
+      <a-tag :color="nowPath == item.path ? '#2db7f5' : null" closable @close.prevent>
         <router-link :to="item.path">{{ item.name }}</router-link>
       </a-tag>
     </template>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { computed, defineComponent } from 'vue';
+import { ref, computed, defineComponent, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 
@@ -18,14 +18,18 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const route = useRoute();
-    console.log("==== store", store);
+
+    const nowPath = ref(route.fullPath);
+    watch(route, (newRoute) => {
+      nowPath.value = newRoute.fullPath;
+    })
 
     const navTabList = computed(() => {
       return store.getters['getNavTab'];
     })
 
     return {
-      route,
+      nowPath,
       navTabList
     }
   },

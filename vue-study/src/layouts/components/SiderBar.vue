@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
@@ -40,9 +40,20 @@ export default defineComponent({
     const openKeys = ref();
 
     if (route?.meta.key) {
+      const obj = {
+        path: route.fullPath,
+        ...route.meta
+      }
+      store.dispatch('pushNavTab', obj)
+
       selectedKeys2.value = [route.meta.key];
       openKeys.value = [route.meta.parentKey];
     }
+
+    watch(route, (newRoute) => {
+      selectedKeys2.value = [newRoute.meta.key];
+      openKeys.value = [newRoute.meta.parentKey];
+    })
 
     const menuList = computed(() => {
       return store.getters['getMenu'];
@@ -58,8 +69,23 @@ export default defineComponent({
       }
     })
 
+    const navTabList = computed(() => {
+      return store.getters['getNavTab'];
+    })
+
     const selectMenu = (item) => {
-      store.dispatch('pushNavTab', item)
+      const hadList = navTabList.value;
+      let _bool = true;
+      for (const obj of hadList) {
+        if (item.key == obj.key) {
+          _bool = false;
+          break;
+        }
+      }
+
+      if (_bool) {
+        store.dispatch('pushNavTab', item)
+      }
       console.log("=== e", item);
     }
 

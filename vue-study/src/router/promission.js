@@ -83,6 +83,7 @@ const loadView = (menuList) => {
         name: item.componentName,
         component: () => import(`@/views${item.path}`),
         meta: {
+          name: item.name,
           key: item.key,
           navKey: item.navKey,
           parentKey: item.parentKey
