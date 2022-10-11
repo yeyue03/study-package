@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
 import HeaderBar from './components/HeaderBar.vue';
@@ -35,27 +35,6 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const route = useRoute();
-
-    const setNavStore = (route) => {
-      const meta = route.meta;
-      store.dispatch('setHeadNavKey', meta.navKey);
-      store.dispatch('setSiderNavKey', meta.key);
-      store.dispatch('setSiderOpenKey', meta.parentKey);
-    }
-
-    if (route?.meta.key) {
-      const obj = {
-        path: route.fullPath,
-        ...route.meta
-      }
-      store.dispatch('pushNavTab', obj);
-
-      setNavStore(route);
-    }
-
-    watch(route, (newRoute) => {
-      setNavStore(newRoute);
-    })
 
     // const getMenu = () => {
     //   UserApi.GetMenu().then(res => {

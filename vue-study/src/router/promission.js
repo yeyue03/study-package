@@ -85,7 +85,7 @@ const loadView = (menuList) => {
         meta: {
           name: item.name,
           key: item.key,
-          navKey: item.navKey,
+          headKey: item.headKey,
           parentKey: item.parentKey
         }
       })

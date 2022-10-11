@@ -2,7 +2,7 @@
   <a-layout-header class="header">
     <div class="logo" />
     <a-menu
-      :selectedKeys="selectedKeys1"
+      :selectedKeys="selectedHeadNav"
       theme="dark"
       mode="horizontal"
       :style="{ lineHeight: '64px' }"
@@ -16,15 +16,16 @@
 <script>
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'HeaderBar',
   setup() {
     const store = useStore();
     const route = useRoute();
+    const router = useRouter();
 
-    const selectedKeys1 = computed(() => {
+    const selectedHeadNav = computed(() => {
       const key = store.getters['getHeadNavKey'];
       return [key];
     })
@@ -33,14 +34,29 @@ export default defineComponent({
       return store.getters['getMenu'];
     })
 
-
     const selectMenu = (e) => {
-      store.dispatch('setHeadNavKey', [e.key]);
+      const arr = menuList.value.filter(item => item.key == e.key);
+      if (arr && arr.length) {
+        const list = arr[0].childrens || [];
+
+        if (list.length) {
+          for (const obj of list) {
+            if (obj.childrens.length) {
+
+              router.push({
+                path: obj.childrens[0].path
+              })
+              break;
+            }
+          }
+        }
+
+      }
     }
 
     return {
       menuList,
-      selectedKeys1,
+      selectedHeadNav,
       selectMenu,
     }
   },
