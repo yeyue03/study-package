@@ -5,11 +5,15 @@
 </template>
 
 <script>
+import { ref, defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: "DemoTable",
-  components: {
-    
+  setup() {
+
+    return {
+      
+    }
   },
-};
+})
 </script>
