@@ -5,7 +5,7 @@
       :selectedKeys="selectedHeadNav"
       theme="dark"
       mode="horizontal"
-      :style="{ lineHeight: '64px' }"
+      :style="{ lineHeight: '50px' }"
       @select="selectMenu"
     >
       <a-menu-item v-for="item in menuList" :key="item.key">{{ item.name }}</a-menu-item>
@@ -65,6 +65,8 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .header {
+  height: 50px;
+  line-height: 50px;
   display: flex;
   align-items: center;
   .logo {

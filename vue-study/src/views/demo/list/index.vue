@@ -61,7 +61,12 @@
     </div>
 
     <div class="table-wrap">
-      <a-table :columns="columns" :data-source="dataSource" size="small">
+      <a-table
+        :columns="columns"
+        :data-source="dataSource"
+        size="small"
+        :scroll="{ x: 700, y: true }"
+      >
         <template #bodyCell="{ column, text }">
           <template v-if="column.dataIndex === 'name'">
             <a>{{ text }}</a>
@@ -73,7 +78,7 @@
 </template>
 
 <script>
-import { ref, reactive, defineComponent } from "vue";
+import { ref, reactive, defineComponent, nextTick } from "vue";
 import { DownOutlined, UpOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
   name: "DemoList",
@@ -153,6 +158,15 @@ export default defineComponent({
       },
     ];
 
+    const computedHeight = () => {
+      const tbody = document.querySelector('.table-wrap .ant-table-body')
+      const othersHeight = 300 + 32;
+      tbody.style.height = `calc(100vh - ${othersHeight}px)`;
+    }
+    nextTick(() => {
+      computedHeight();
+    })
+
     return {
       activeKey,
       formRef,
@@ -172,6 +186,7 @@ export default defineComponent({
   justify-content: space-between;
   align-items: center;
   :deep(.ant-tabs-nav) {
+    height: 45px;
     margin: 0;
   }
 }
