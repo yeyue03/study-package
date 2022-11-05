@@ -8,32 +8,32 @@ const getters = {
 }
 
 const mutations = {
-  SET_NAVTAB: (state, arr) => {
+  SET_NAV_TAB: (state, arr) => {
     state.navTabList = arr;
   },
-  PUSH_NAVTAB: (state, obj) => {
+  PUSH_NAV_TAB: (state, obj) => {
     state.navTabList.push(obj);
   },
-  DELETE_NAVTAB: (state, index) => {
+  DELETE_NAV_TAB: (state, index) => {
     state.navTabList.splice(index, 1);
   },
-  SET_VISIBLECOMPONENT: (state, val) => {
+  SET_VISIBLE_COMPONENT: (state, val) => {
     state.visibleComponent = val;
   },
 }
 
 const actions = {
   setNavTab: ({ commit }, arr) => {
-    commit('SET_NAVTAB', arr);
+    commit('SET_NAV_TAB', arr);
   },
   pushNavTab: ({ commit }, obj) => {
-    commit('PUSH_NAVTAB', obj);
+    commit('PUSH_NAV_TAB', obj);
   },
   deleteNavTab: ({ commit }, index) => {
-    commit('DELETE_NAVTAB', index);
+    commit('DELETE_NAV_TAB', index);
   },
   setVisibleComponent: ({ commit }, val) => {
-    commit('SET_VISIBLECOMPONENT', val);
+    commit('SET_VISIBLE_COMPONENT', val);
   },
 }
 

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
 import HeaderBar from './components/HeaderBar.vue';

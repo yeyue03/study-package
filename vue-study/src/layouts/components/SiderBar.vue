@@ -1,8 +1,8 @@
 <template>
   <a-layout-sider width="200" style="background: #fff">
     <a-menu
-      v-model:selectedKeys="selectedKeys2"
-      v-model:openKeys="openKeys"
+      :selectedKeys="selectedSiderNav"
+      :openKeys="openKeys"
       mode="inline"
       :style="{ height: '100%', borderRight: 0 }"
     >
@@ -14,7 +14,7 @@
           </span>
         </template>
         <a-menu-item v-for="item in subObj.childrens" :key="item.key">
-          <router-link :to="item.path" @click="selectMenu(item)">{{ item.name }}</router-link>
+          <router-link :to="item.path" >{{ item.name }}</router-link>
         </a-menu-item>
       </a-sub-menu>
     </a-menu>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
@@ -36,39 +36,98 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const route = useRoute();
-    const selectedKeys2 = ref();
-    const openKeys = ref();
 
-    if (route?.meta.key) {
-      selectedKeys2.value = [route.meta.key];
-      openKeys.value = [route.meta.parentKey];
-    }
+    const openKeys = ref([]);
+    const subNavList = ref([]);
 
     const menuList = computed(() => {
       return store.getters['getMenu'];
     })
 
-    const subNavList = computed(() => {
-      const navKey = store.state.user.nowNavKey;
-      const arr = menuList.value.filter(item => item.key == navKey);
-      if (arr && arr.length) {
-        return arr[0].childrens;
-      } else {
-        return [];
-      }
+    const navTabList = computed(() => {
+      return store.getters['getNavTab'];
     })
 
-    const selectMenu = (item) => {
-      store.dispatch('pushNavTab', item)
-      console.log("=== e", item);
+    const headNavKey = computed(() => {
+      return store.getters['getHeadNavKey'];
+    })
+
+    const selectedSiderNav = computed(() => {
+      const key = store.getters['getSiderNavKey'];
+      return [key];
+    })
+
+    // 判断菜单是否已打开过
+    const isHadTab = (key) => {
+      const hadList = navTabList.value;
+      let _bool = false;
+      for (const obj of hadList) {
+        if (key && key == obj.key) {
+          _bool = true;
+          break;
+        }
+      }
+
+      return _bool;
     }
 
+    // 设置侧边栏导航数组 且默认打开该模块下第一个页面
+    const setSiderNav = (headNavKey) => {
+      const arr = menuList.value.filter(item => item.key == headNavKey);
+      if (arr && arr.length) {
+        const list = arr[0].childrens || [];
+        subNavList.value = list;
+        openKeys.value = [route.meta.parentKey];
+      }
+    }
+
+    // 设置导航相关store
+    const setNavStore = (route) => {
+      const meta = route.meta;
+
+      if (meta.headKey != headNavKey.value) {
+        setSiderNav(meta.headKey);
+      } else {
+
+        if (openKeys.value.indexOf(meta.parentKey) == -1) {
+          openKeys.value.push(meta.parentKey);
+        }
+      }
+
+      store.dispatch('setHeadNavKey', meta.headKey);
+      store.dispatch('setSiderNavKey', meta.key);
+
+      const _bool = isHadTab(meta.key);
+      if (!_bool) {
+        const tabObj = {
+          path: route.fullPath,
+          ...meta
+        }
+        store.dispatch('pushNavTab', tabObj);
+      }
+    }
+
+    // 初次进入页面时
+    if (route?.meta.key) {
+      setNavStore(route);
+    }
+
+    // 监听路由
+    watch(route, (newRoute) => {
+      setNavStore(newRoute);
+    })
+
+    // 监听顶部导航栏切换
+    watch(headNavKey, (newVal) => {
+      subNavList.value = [];
+      setSiderNav(newVal);
+    })
+
     return {
-      selectedKeys2,
+      selectedSiderNav,
       openKeys,
       collapsed: ref(false),
       subNavList,
-      selectMenu,
     }
   },
 })

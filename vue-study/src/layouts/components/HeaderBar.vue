@@ -2,10 +2,10 @@
   <a-layout-header class="header">
     <div class="logo" />
     <a-menu
-      v-model:selectedKeys="selectedKeys1"
+      :selectedKeys="selectedHeadNav"
       theme="dark"
       mode="horizontal"
-      :style="{ lineHeight: '64px' }"
+      :style="{ lineHeight: '50px' }"
       @select="selectMenu"
     >
       <a-menu-item v-for="item in menuList" :key="item.key">{{ item.name }}</a-menu-item>
@@ -14,34 +14,49 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'HeaderBar',
   setup() {
     const store = useStore();
     const route = useRoute();
+    const router = useRouter();
 
-    const selectedKeys1 = ref();
-    if (route?.meta.key) {
-      selectedKeys1.value = [route.meta.navKey];
-      store.dispatch('setNavKey', [route.meta.navKey]);
-    }
+    const selectedHeadNav = computed(() => {
+      const key = store.getters['getHeadNavKey'];
+      return [key];
+    })
 
     const menuList = computed(() => {
       return store.getters['getMenu'];
     })
 
-
     const selectMenu = (e) => {
-      store.dispatch('setNavKey', [e.key]);
+      const arr = menuList.value.filter(item => item.key == e.key);
+      if (arr && arr.length) {
+        const list = arr[0].childrens || [];
+
+        if (list.length) {
+          for (const obj of list) {
+            if (obj.childrens.length) {
+
+              router.push({
+                path: obj.childrens[0].path
+              })
+              break;
+            }
+          }
+        }
+
+      }
     }
 
     return {
       menuList,
-      selectedKeys1,
+      selectedHeadNav,
       selectMenu,
     }
   },
@@ -50,6 +65,8 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .header {
+  height: 50px;
+  line-height: 50px;
   display: flex;
   align-items: center;
   .logo {

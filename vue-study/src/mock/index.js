@@ -19,7 +19,7 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               name: '列表页',
               path: '/demo/list',
               componentName: 'DemoList',
-              navKey: '01',
+              headKey: '01',
               parentKey: '01-01',
             },
             {
@@ -27,7 +27,7 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               name: '详情页',
               path: '/demo/detail',
               componentName: 'DemoDetail',
-              navKey: '01',
+              headKey: '01',
               parentKey: '01-01',
             }
           ]
@@ -42,7 +42,7 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               name: '表格页面',
               path: '/demo/table',
               componentName: 'DemoTable',
-              navKey: '01',
+              headKey: '01',
               parentKey: '01-02',
             },
           ]
@@ -64,7 +64,7 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               name: '首页',
               path: '/wx/home',
               componentName: 'WxHome',
-              navKey: '02',
+              headKey: '02',
               parentKey: '02-01',
             },
             {
@@ -72,7 +72,7 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               name: '地图',
               path: '/wx/map',
               componentName: 'WxMap',
-              navKey: '02',
+              headKey: '02',
               parentKey: '02-01',
             }
           ]
