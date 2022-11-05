@@ -32,8 +32,7 @@ const SliderBox = (props) => {
         _obj = item;
       }
     }
-    console.log("==== select _obj", _obj);
-    navigate.push({ pathname: _obj.path, search: 'aa=25' });
+    navigate({ pathname: _obj.path, search: 'aa=25' });
   }
 
   return (

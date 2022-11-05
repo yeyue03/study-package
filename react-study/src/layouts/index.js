@@ -1,4 +1,4 @@
-import { Breadcrumb, Layout } from 'antd';
+import { Layout } from 'antd';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './index.css';
@@ -45,18 +45,9 @@ class Layouts extends Component {
           <HeaderBox></HeaderBox>
           <Layout
             style={{
-              padding: '0 24px 24px',
+              padding: '20px',
             }}
-          >
-            <Breadcrumb
-              style={{
-                margin: '16px 0',
-              }}
-            >
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb>
+          > 
             <ContentBox></ContentBox>
           </Layout>
         </Layout>
