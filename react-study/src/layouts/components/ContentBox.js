@@ -1,3 +1,4 @@
+import DemoHome from '../../views/demo/Home';
 import DemoList from '../../views/demo/List';
 import DemoDetail from '../../views/demo/Detail';
 
@@ -15,9 +16,9 @@ const ContentBox = () => {
         minHeight: 280,
       }}
     >
-      Content
       <Routes>
-        <Route path="/demo/list" element={<DemoList />}></Route>
+        <Route path="/" element={<DemoHome />}></Route>
+        <Route path="/demo/list" element={<DemoList aa="33" />}></Route>
         <Route path="/demo/detail" element={<DemoDetail />}></Route>
       </Routes>
     </Content>
