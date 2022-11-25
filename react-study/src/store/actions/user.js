@@ -1,4 +1,4 @@
-import { SET_USERINFO, SET_MENU } from '../actionTypes/user';
+import { SET_USERINFO, SET_MENU, SET_HEAD_NAVKEY } from '../actionTypes/user';
 
 export function setUserinfo(userinfo) {
   return {
@@ -11,5 +11,12 @@ export function setMenu(menuList) {
   return {
     type: SET_MENU,
     menuList
+  }
+}
+
+export function setHeadNavKey(key) {
+  return {
+    type: SET_HEAD_NAVKEY,
+    key
   }
 }

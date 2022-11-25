@@ -1,14 +1,55 @@
 import React from 'react';
 import {  Layout, Menu } from 'antd';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 const { Sider } = Layout;
 
 const SliderBox = (props) => {
-  const { menuList } = props;
+  const location = useLocation();
+  console.log("==== location", location);
+
+  let { headNavKey, menuList } = props;
+  let defaultOpenKeys = '01-01';
+  let defaultSelectedKeys = '01-01-01';
   let menuDivList = null;
+  let siderMenu = [];
+
+  // 递归循环菜单数组
+  const recursionMenu = (list, key, val) => {
+    let _obj = {};
+    for (const item of list) {
+      if (item[key] === val) {
+        _obj = item;
+
+      } else if (item.childrens && item.childrens) {
+        return recursionMenu(item.childrens, key, val);
+      }
+    }
+
+    return _obj;
+  }
+
   if (menuList && menuList.length > 0) {
-    menuDivList = menuList[0].childrens.map(item => {
+    console.log("=== menuList", menuList);
+
+    if (!defaultSelectedKeys) {
+      const pathname = location.pathname;
+      const obj = recursionMenu(menuList, 'path', pathname);
+      headNavKey = obj.meta?.headKey;
+      defaultOpenKeys = obj.meta?.parentKey;
+      defaultSelectedKeys = obj.key;
+
+      console.log("=== obj", obj);
+    }
+
+    for (const item of menuList) {
+      if (item.key === headNavKey) {
+        siderMenu = item.childrens;
+        break;
+      }
+    }
+
+    menuDivList = siderMenu.map(item => {
       return {
         key: item.key,
         label: item.name,
@@ -25,14 +66,21 @@ const SliderBox = (props) => {
   const navigate = useNavigate();
 
   const selectMenu = (e) => {
-    const arr = menuList[0].childrens;
-    let _obj = null;
-    for (const item of arr[0].childrens) {
-      if (item.key === e.key) {
-        _obj = item;
+    const keyPath = e.keyPath;
+    let routeObj = null;
+    for (const item of siderMenu) {
+      if (item.key === keyPath[1]) {
+
+        for (const obj of item.childrens) {
+          if (obj.key === keyPath[0]) {
+            routeObj = obj;
+            break;
+          }
+        }
+        break;
       }
     }
-    navigate({ pathname: _obj.path, search: 'aa=25' });
+    navigate({ pathname: routeObj.path, search: 'aa=25' });
   }
 
   return (
@@ -45,8 +93,8 @@ const SliderBox = (props) => {
       <Menu
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
+        defaultSelectedKeys={[defaultSelectedKeys]}
+        defaultOpenKeys={[defaultOpenKeys]}
         style={{
           borderRight: 0,
         }}
@@ -60,7 +108,8 @@ const SliderBox = (props) => {
 // 把state里的数据映射到props里，可以通过Props使用
 const mapStateToProps = ({user}) => {
   return {
-    menuList: user.menuList
+    headNavKey: user.headNavKey,
+    menuList: user.menuList,
   }
 }
 
