@@ -1,7 +1,14 @@
 <template>
-  <a-layout-content
-    :style="{ background: '#fff', padding: '10px 20px', margin: 0, minHeight: '280px' }"
-  >
+  <a-layout-content class="container">
     <router-view></router-view>
   </a-layout-content>
 </template>
+
+<style scoped>
+.container {
+  min-height: 280px;
+  margin: 0;
+  padding: 20px;
+  background: #fff;
+}
+</style>
