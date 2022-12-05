@@ -10,5 +10,6 @@
   margin: 0;
   padding: 20px;
   background: #fff;
+  overflow-y: auto;
 }
 </style>
