@@ -1,0 +1,4 @@
+export const SET_NAV_TAB = 'SET_NAV_TAB';
+export const PUSH_NAV_TAB = 'PUSH_NAV_TAB';
+export const DELETE_NAV_TAB = 'DELETE_NAV_TAB';
+export const SET_VISIBLE_COMPONENT = 'SET_VISIBLE_COMPONENT';

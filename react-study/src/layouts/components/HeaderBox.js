@@ -28,7 +28,7 @@ class HeaderBox extends Component {
 }
 
 // 把state里的数据映射到props里，可以通过Props使用
-const mapStateToProps = ({user}) => {
+const mapStateToProps = ({ user }) => {
   return {
     menuList: user.menuList,
     headNavKey: user.headNavKey

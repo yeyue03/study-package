@@ -2,15 +2,17 @@ import React from 'react';
 import {  Layout, Menu } from 'antd';
 import { connect } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { pushNavTab } from '../../store/actions/navTag';
 const { Sider } = Layout;
 
 const SliderBox = (props) => {
   const location = useLocation();
-  console.log("==== location", location);
 
   let { headNavKey, menuList } = props;
-  let defaultOpenKeys = '01-01';
-  let defaultSelectedKeys = '01-01-01';
+  const [openKeys, setOpenKeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState('');
+
   let menuDivList = null;
   let siderMenu = [];
 
@@ -30,16 +32,20 @@ const SliderBox = (props) => {
   }
 
   if (menuList && menuList.length > 0) {
-    console.log("=== menuList", menuList);
+    console.log("=== selectedKeys", selectedKeys);
 
-    if (!defaultSelectedKeys) {
+    if (!selectedKeys) {
       const pathname = location.pathname;
-      const obj = recursionMenu(menuList, 'path', pathname);
-      headNavKey = obj.meta?.headKey;
-      defaultOpenKeys = obj.meta?.parentKey;
-      defaultSelectedKeys = obj.key;
+      const routeObj = recursionMenu(menuList, 'path', pathname);
+      headNavKey = routeObj.meta?.headKey;
+      setOpenKeys( [routeObj.meta?.parentKey] );
+      setSelectedKeys(routeObj.key);
 
-      console.log("=== obj", obj);
+      props.pushNavTab({
+        path: location.pathname,
+        key: routeObj.key,
+        ...routeObj.meta
+      })
     }
 
     for (const item of menuList) {
@@ -65,21 +71,23 @@ const SliderBox = (props) => {
 
   const navigate = useNavigate();
 
+  // SubMenu 展开/关闭的回调
+  const onOpenChange = arr => {
+    setOpenKeys(arr);
+  }
+
+  // 选中菜单
   const selectMenu = (e) => {
     const keyPath = e.keyPath;
-    let routeObj = null;
-    for (const item of siderMenu) {
-      if (item.key === keyPath[1]) {
+    setSelectedKeys(e.key);
+    console.log("==");
 
-        for (const obj of item.childrens) {
-          if (obj.key === keyPath[0]) {
-            routeObj = obj;
-            break;
-          }
-        }
-        break;
-      }
-    }
+    const routeObj = recursionMenu(menuList, 'key', keyPath[0]);
+    props.pushNavTab({
+      path: location.pathname,
+      key: routeObj.key,
+      ...routeObj.meta
+    })
     navigate({ pathname: routeObj.path, search: 'aa=25' });
   }
 
@@ -93,13 +101,14 @@ const SliderBox = (props) => {
       <Menu
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={[defaultSelectedKeys]}
-        defaultOpenKeys={[defaultOpenKeys]}
+        selectedKeys={[selectedKeys]}
+        openKeys={openKeys}
         style={{
           borderRight: 0,
         }}
         items={menuDivList}
         onSelect={selectMenu}
+        onOpenChange={onOpenChange}
       />
     </Sider>
   )
@@ -113,4 +122,12 @@ const mapStateToProps = ({user}) => {
   }
 }
 
-export default connect(mapStateToProps)(SliderBox);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    pushNavTab(obj) {
+      dispatch(pushNavTab(obj))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SliderBox);
