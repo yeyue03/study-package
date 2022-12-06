@@ -4,7 +4,7 @@
       <a-tag
         class="tags"
         :color="nowPath == item.path ? '#2db7f5' : null"
-        closable
+        :closable="item.path != '/home'"
         @close.prevent="handleClose(item, index)"
         @contextmenu.prevent="openMenu($event, item)"
       >
@@ -77,7 +77,7 @@ export default defineComponent({
         return;
       }
 
-      let toPath = "/demo/list";
+      let toPath = "/home";
       if (index > 0) {
         toPath = navTabList.value[index - 1].path;
       } else if (navTabList.value[index]) {
@@ -97,7 +97,7 @@ export default defineComponent({
       floatVisible.value = false;
 
       router.push({
-        path: "/demo/list",
+        path: "/home",
       });
     }
 

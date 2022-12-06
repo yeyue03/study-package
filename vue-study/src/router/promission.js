@@ -11,7 +11,7 @@ import UserApi from '@/api/user';
 let getRouter;
 router.beforeEach(async (to, from, next) => {
   if (to.path == '/') {
-    next('/demo/list');
+    next('/home');
     return
   }
 
@@ -63,7 +63,8 @@ function handleRoutes(menuList) {
 function routerGo(to, next) {
   const defaultRoutes = routes;
   getRouter = filterAsyncRouter(defaultRoutes);
-  getRouter.push({ path: '/:catchAll(.*)', redirect: '/demo/list' });
+  getRouter.push({ path: '/:catchAll(.*)', redirect: '/home' });
+  console.log("=== getRouter", getRouter);
 
   getRouter.forEach(val => {
     router.addRoute(val);
@@ -100,7 +101,7 @@ function filterAsyncRouter(RouterMap) {
 
   for (const item of RouterMap) {
     if (item.path == '/') {
-      item.children = asyncRouteArr;
+      item.children.push(...asyncRouteArr);
     }
   }
 

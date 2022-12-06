@@ -5,7 +5,19 @@ const routes = [
     path: "/",
     name: "Layout",
     component: Layout,
-    children: []
+    children: [
+      {
+        path: '/home',
+        name: 'Home',
+        component: () => import('@/views/home'),
+        meta: {
+          name: '主页',
+          key: 'home',
+          headKey: '01',
+          parentKey: '01-01',
+        }
+      }
+    ]
   },
 ];
 
