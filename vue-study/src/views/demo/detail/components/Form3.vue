@@ -33,21 +33,16 @@ export default defineComponent({
       name: [
         {
           required: true,
-          message: 'Please input Activity name',
+          message: '请输入活动名称',
         },
         {
           min: 3,
           max: 5,
-          message: 'Length should be 3 to 5',
+          message: '长度应为3-5',
           trigger: 'blur',
         },
       ],
-      region: [
-        {
-          required: true,
-          message: 'Please select region',
-        },
-      ],
+      region: [{ required: true, message: '请选择活动区域' }],
     });
     const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
     const onSubmit = () => {

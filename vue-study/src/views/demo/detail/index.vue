@@ -1,12 +1,27 @@
 <template>
   <div class="detail">
-    <h2>表单1 - rules校验直接写form-item上，校验成功失败由finish、onFinishFailed判断</h2>
+    <HTitle>
+      <span>表单1 - 栅格布局</span>
+      <template v-slot:dec>
+        rules校验直接写form-item上，校验成功失败由finish、onFinishFailed判断
+      </template>
+    </HTitle>
     <Fomr1 />
 
-    <h2>表单2 - rules校验抽出单独写一个数组，自定义校验规则，hasFeedback校验返回校验图标，校验成功失败由finish、onFinishFailed判断</h2>
+    <HTitle>
+      <span>表单2 - 固定宽度</span>
+      <template v-slot:dec>
+        rules校验抽出单独写一个数组，自定义校验规则，hasFeedback校验返回校验图标，校验成功失败由finish、onFinishFailed判断
+      </template>
+    </HTitle>
     <Fomr2 />
 
-    <h2>表单3 - Form.useForm 自定义触发校验时机</h2>
+    <HTitle>
+      <span>表单3 - 使用 useForm</span>
+      <template v-slot:dec>
+        Form.useForm 自定义触发校验时机
+      </template>
+    </HTitle>
     <Fomr3 />
   </div>
 </template>

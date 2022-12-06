@@ -4,34 +4,40 @@
     name="custom-validation"
     :model="formState"
     :rules="rules"
+    layout="inline"
     v-bind="layout"
     @finish="handleFinish"
     @validate="handleValidate"
     @finishFailed="handleFinishFailed"
   >
+    <a-form-item has-feedback label="用户名" name="username">
+      <FormInput v-model:value="formState.username" />
+    </a-form-item>
+
     <a-form-item has-feedback label="密码" name="pass">
-      <a-input
-        v-model:value="formState.pass"
-        type="password"
-        autocomplete="off"
-      />
+      <FormInput v-model:value="formState.pass" type="password" autocomplete="off" />
     </a-form-item>
+
     <a-form-item has-feedback label="确认密码" name="checkPass">
-      <a-input
-        v-model:value="formState.checkPass"
-        type="password"
-        autocomplete="off"
-      />
+      <FormInput v-model:value="formState.checkPass" type="password" autocomplete="off" />
     </a-form-item>
+
+    <a-form-item has-feedback label="城市" name="city">
+      <FormInput v-model:value="formState.city" />
+    </a-form-item>
+
     <a-form-item has-feedback label="年龄" name="age">
       <a-input-number v-model:value="formState.age" />
     </a-form-item>
-    <a-form-item :wrapper-col="{ offset: 3 }">
+
+    <a-row class="button-wrap">
       <a-button type="primary" html-type="submit">提交</a-button>
       <a-button style="margin-left: 10px" type="primary" @click="submitClick">自定义方法提交</a-button>
       <a-button style="margin-left: 10px" @click="resetForm">重置</a-button>
-    </a-form-item>
+    </a-row>
+    
   </a-form>
+
 </template>
 
 <script>
@@ -88,8 +94,8 @@ export default defineComponent({
       age: [{ validator: checkAge, trigger: "change" }],
     };
     const layout = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 5 },
+      labelCol: { style: { width: '180px' } },
+      wrapperCol: { style: { width: '180px' } },
     };
     const handleFinish = (values) => {
       console.log(values, formState);
@@ -126,3 +132,18 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.button-wrap {
+  width: 100%;
+  margin: 0 15px 15px;
+  padding-left: 185px;
+  box-sizing: border-box;
+}
+.ant-form-inline .ant-form-item {
+  margin-bottom: 24px;
+}
+.ant-form-inline .ant-form-item-with-help {
+  margin-bottom: 0;
+}
+</style>
