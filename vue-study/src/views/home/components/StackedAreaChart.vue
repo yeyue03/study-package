@@ -1,14 +1,23 @@
 <template>
-  <div id="main"></div>
+  <div :id="echartId"></div>
 </template>
 
 <script>
-import { defineComponent, onBeforeUnmount, onMounted, onUnmounted } from "vue";
+import { defineComponent, onBeforeUnmount, onMounted, toRefs } from "vue";
 import echarts from "@/utils/echarts.js";
 
 export default defineComponent({
   name: "StackedAreaChart",
-  setup() {
+  props: {
+    echartId: {
+      type: String,
+      defalut: () => {
+        return ''
+      }
+    }
+  },
+  setup(props) {
+    const { echartId } = toRefs(props);
     const setOptions = {
       title: {
         text: "Stacked Area Chart",
@@ -108,7 +117,7 @@ export default defineComponent({
 
     let myChart = null;
     const initChart = () => {
-      myChart = echarts.init(document.getElementById("main"));
+      myChart = echarts.init(document.getElementById(echartId.value));
       myChart.setOption(setOptions);
       window.onresize = function () {
         //自适应大小
