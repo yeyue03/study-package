@@ -1,5 +1,5 @@
 <template>
-  <div class="detail">
+  <div class="container detail">
     <HTitle>
       <span>表单1 - 栅格布局</span>
       <template v-slot:dec>

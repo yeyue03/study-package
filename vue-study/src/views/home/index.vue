@@ -1,177 +1,173 @@
 <template>
-  <div class="panel-wrap">
-    <div class="panel-left">
-
-      <div class="tiles-wrap">
-        <div class="tiles">
-          <span class="tile-amount">300</span>
-          <span class="tile-title">发稿数</span>
+  <div>
+    <div class="tiles-wrap">
+      <div class="tile" v-for="item in tilesList" :key="item.id">
+        <div class="tile-info">
+          <span class="tile-amount">{{ item.amount }}</span>
+          <span class="tile-title">{{ item.title }}</span>
         </div>
-
-        <div class="tiles">
-          <span class="tile-amount">300</span>
-          <span class="tile-title">发稿数</span>
-        </div>
-
-        <div class="tiles">
-          <span class="tile-amount">300</span>
-          <span class="tile-title">发稿数</span>
-        </div>
-        
-        <div class="tiles">
-          <span class="tile-amount">300</span>
-          <span class="tile-title">发稿数</span>
-        </div>
-
-        <div class="tiles">
-          <span class="tile-amount">300</span>
-          <span class="tile-title">发稿数</span>
-        </div>
-
-      </div>
-
-      <div class="echarts-wrap">
-        <a-row algin="middle" justify="space-between">
-          <div>
-            <HTitle>大部门人数比</HTitle>
-            <PieCharts echartId="pie01" style="width: 380px; height: 260px" />
-          </div>
-
-          <div>
-            <HTitle>部门资源利用率</HTitle>
-            <BarChart echartId="bar01" style="width: 380px; height: 260px" />
-          </div>
-        </a-row>
-
-        <a-row algin="middle" justify="space-between">
-          <div>
-            <HTitle>项目投入人数</HTitle>
-            <BarChart echartId="bar02" style="width: 380px; height: 260px" />
-          </div>
-
-          <div>
-            <HTitle>项目收益比</HTitle>
-            <PieCharts echartId="pie02" style="width: 380px; height: 260px" />
-          </div>
-        </a-row>
-        
-        <!-- <StackedAreaChart  echartId="area" style="width: 300px; height: 400px" /> -->
+        <a-progress type="circle" :percent="item.percent" :width="70" :strokeColor="item.strokeColor" />
       </div>
     </div>
 
-    <div class="panel-right">
-      <NoticeList title="消息推送" />
-
-      <div class="shortcut-wrap">
-        <template v-for="item in 10" :key="item">
-          <div class="shortcut">
-            <home-outlined style="fontSize: 35px;" />
-            <span>服务平台</span>
-          </div>
-        </template>
+    <a-row justify="space-between">
+      <div class="sale-info">
+        <div class="title-box">
+          <span class="title">本月销售情况</span>
+          <span>3月</span>
+        </div>
+        <div class="chart-box">
+          <PieCharts echartId="pie01" style="width: 100%; height: 260px" />
+        </div>
       </div>
-    </div>
-    
+
+      <div class="sale-info width-66">
+        <div class="title-box">
+          <span class="title">产品销售统计</span>
+          <span>3月</span>
+        </div>
+        <div class="chart-box">
+          <LineChart echartId="line01" style="width: 100%; height: 260px" />
+        </div>
+      </div>
+    </a-row>
+
+    <a-row justify="space-between" style="margin-top: 20px;">
+      <div class="sale-info">
+        <div class="title-box">
+          <span class="title">销售经理情况统计</span>
+          <span>3月</span>
+        </div>
+        <div class="chart-box">
+          <StatisticalTable />
+        </div>
+      </div>
+
+      <div class="sale-info width-66">
+        <div class="title-box">
+          <span class="title">年收入情况统计</span>
+          <span>3月</span>
+        </div>
+        <div class="chart-box">
+          <BarChart echartId="homeBar" style="width: 100%; height: 260px" />
+        </div>
+      </div>
+    </a-row>
+
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import StackedAreaChart from './components/StackedAreaChart.vue';
-import NoticeList from './components/NoticeList.vue';
+import { defineComponent, ref } from 'vue'
 import PieCharts from './components/PieCharts.vue';
+import LineChart from './components/LineChart.vue';
 import BarChart from './components/BarChart.vue';
-import HTitle from '../../components/other/HTitle.vue';
-import { HomeOutlined } from '@ant-design/icons-vue';
+import StatisticalTable from './components/StatisticalTable.vue';
 
 export default defineComponent({
   name: "Home",
   components: {
-    StackedAreaChart,
-    NoticeList,
     PieCharts,
+    LineChart,
     BarChart,
-    HTitle,
-    HomeOutlined
+    StatisticalTable,
   },
   setup() {
+    const tilesList = ref([
+      {
+        id: 1,
+        title: '新产品研发进度',
+        amount: 86,
+        percent: 30,
+      },
+      {
+        id: 2,
+        title: '指标数据写这里',
+        amount: 248,
+        percent: 26,
+        strokeColor: '#e6a23c',
+      },
+      {
+        id: 3,
+        title: '执笔数据',
+        amount: 352,
+        percent: 26,
+        strokeColor: '#e6a23c',
+      },
+      {
+        id: 4,
+        title: '年收益',
+        amount: 159,
+        percent: 26,
+        strokeColor: '#e6a23c',
+      },
+      {
+        id: 5,
+        title: '退换货笔数',
+        amount: 352,
+        percent: 26,
+      },
+      {
+        id: 6,
+        title: '新增收入',
+        amount: 159,
+        percent: 26,
+      },
+    ])
 
     return {
-      
+      tilesList
     }
   },
 })
 </script>
 
 <style lang="less" scoped>
-.panel-wrap {
-  display: flex;
-}
-.panel-left {
-  width: 800px;
-}
-.panel-right {
-  width: 350px;
-  margin-left: 20px;
-}
-
 .tiles-wrap {
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  .tiles {
+  margin-bottom: 20px;
+  .tile {
+    width: 15%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    width: 120px;
-    height: 120px;
-    margin: 10px;
-    background: #ccccff;
-    border-radius: 10px;
-    .tile-title {
-      line-height: 20px;
-      color: #3c495c;
+    padding: 12px 20px;
+    background: #fff;
+    .tile-info {
+      display: flex;
+      flex-direction: column;
+      margin-right: 15px;
     }
     .tile-amount {
-      font-size: 32px;
-      font-weight: 700;
-      line-height: 56px;
+      font-size: 28px;
+    }
+    .tile-title {
+      font-size: 12px;
+      color: #777;
     }
   }
-  .tiles:first-child {
-    background: #FFEE99;
-  }
-  .tiles:nth-child(2) {
-    background: #33CCFF;
-  }
-  .tiles:nth-child(3) {
-    background: #FFFF99;
-  }
-  .tiles:nth-child(4) {
-    background: #00FF00;
-  }
-  .tiles:nth-child(5) {
-    background: #33FFFF;
-  }
-}
-.echarts-wrap {
-  width: 100%;
 }
 
-.shortcut-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  .shortcut {
+.sale-info {
+  width: 32%;
+  background: #fff;
+  .title-box {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    width: 90px;
-    margin: 8px 12px;
-    span {
-      margin-top: 10px;
-      font-size: 14px;
+    padding: 15px 20px;
+    border-bottom: solid 1px #ddd;
+    .title {
+      font-size: 20px;
+      color: #777;
     }
   }
+  .chart-box {
+    padding: 0 10px;
+  }
+}
+.width-66 {
+  width: 66%;
 }
 </style>

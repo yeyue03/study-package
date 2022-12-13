@@ -1,5 +1,5 @@
 <template>
-  <div class="list">
+  <div class="container list">
     <div class="operation-wrap">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="全部"></a-tab-pane>

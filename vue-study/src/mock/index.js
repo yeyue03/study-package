@@ -29,7 +29,15 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               componentName: 'DemoDetail',
               headKey: '01',
               parentKey: '01-01',
-            }
+            },
+            {
+              key: '01-01-03',
+              name: '主页02',
+              path: '/home/Home02',
+              componentName: 'Home02',
+              headKey: '01',
+              parentKey: '01-01',
+            },
           ]
         },
         {

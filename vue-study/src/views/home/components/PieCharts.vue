@@ -23,8 +23,11 @@ export default defineComponent({
         trigger: 'item'
       },
       legend: {
-        top: 'top',
-        left: 'center'
+        type: 'scroll',
+        orient: 'vertical',
+        right: 10,
+        top: 20,
+        bottom: 20,
       },
       series: [
         {

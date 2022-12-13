@@ -17,4 +17,8 @@
   widows: 100%;
   height: 100%;
 }
+.container {
+  padding: 20px;
+  background: #fff;
+}
 </style>

@@ -1,15 +1,13 @@
 <template>
-  <a-layout-content class="container">
+  <a-layout-content>
     <router-view></router-view>
   </a-layout-content>
 </template>
 
 <style scoped>
-.container {
+.ant-layout-content {
   min-height: 280px;
   margin: 0;
-  padding: 20px;
-  background: #fff;
   overflow-y: auto;
 }
 </style>
