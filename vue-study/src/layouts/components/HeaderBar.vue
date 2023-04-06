@@ -14,15 +14,14 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { useStore } from 'vuex';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'HeaderBar',
   setup() {
     const store = useStore();
-    const route = useRoute();
     const router = useRouter();
 
     const selectedHeadNav = computed(() => {

@@ -32,14 +32,14 @@
 
 <script>
 import { defineComponent, reactive, ref } from 'vue';
-import { message, Form } from 'ant-design-vue';
+import { Form } from 'ant-design-vue';
 import mitt from "@/utils/mitt.js";
 
 const useForm = Form.useForm;
 export default defineComponent({
   name: 'AddValue',
   props: {},
-  setup(props, { emit }) {
+  setup() {
     const visible = ref(false);
     const submitLoading = ref(false);
 
@@ -57,7 +57,7 @@ export default defineComponent({
 
     const { resetFields, validate, validateInfos } = useForm(formState, rules);
 
-    const setFormValue = (record) => {
+    const setFormValue = () => {
       resetFields();
     }
 

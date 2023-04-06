@@ -12,40 +12,23 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref, watch } from 'vue';
-import { useStore } from 'vuex';
+import { defineComponent } from 'vue';
 
 import HeaderBar from './components/HeaderBar.vue';
 import SiderBar from './components/SiderBar.vue';
-import Breadcrumb from './components/Breadcrumb.vue';
 import Content from './components/Content.vue';
 import NavTags from './components/NavTags.vue';
-
-import UserApi from '@/api/user';
-import { useRoute } from 'vue-router';
 
 export default defineComponent({
   components: {
     HeaderBar,
     SiderBar,
-    Breadcrumb,
     Content,
     NavTags
   },
   setup() {
-    const store = useStore();
-    const route = useRoute();
 
-    // const getMenu = () => {
-    //   UserApi.GetMenu().then(res => {
-    //     store.dispatch('setMenu', res.data || []);
-    //   })
-    // }
-    // getMenu();
-
-    return {
-      
-    };
+    return {};
   },
 });
 </script>

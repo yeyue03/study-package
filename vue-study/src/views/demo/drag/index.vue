@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { ref, reactive, defineComponent } from "vue";
+import { ref, defineComponent } from "vue";
 import LineChart from "./components/LineChart.vue";
 import AddValue from './components/AddValue.vue';
 

@@ -25,13 +25,11 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
+import { UserOutlined } from '@ant-design/icons-vue';
 
 export default defineComponent({
   components: {
     UserOutlined,
-    LaptopOutlined,
-    NotificationOutlined,
   },
   setup() {
     const store = useStore();

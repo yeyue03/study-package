@@ -8,8 +8,6 @@
 
 export default {
   name: "WxMap",
-  components: {
-    
-  },
+  components: {},
 };
 </script>

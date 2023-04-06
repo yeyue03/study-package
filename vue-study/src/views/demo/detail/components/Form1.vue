@@ -48,7 +48,7 @@ export default defineComponent({
       password: '',
       remember: true,
     });
-    const onFinish = (values) => {
+    const onFinish = () => {
       message.success('操作成功');
     };
 

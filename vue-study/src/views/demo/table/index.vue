@@ -11,9 +11,7 @@ export default defineComponent({
   name: "DemoTable",
   setup() {
 
-    return {
-      
-    }
+    return {}
   },
 })
 </script>
