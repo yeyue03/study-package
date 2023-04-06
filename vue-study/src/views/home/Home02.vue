@@ -52,8 +52,6 @@
             <PieCharts echartId="pie02" style="width: 380px; height: 260px" />
           </div>
         </a-row>
-
-        <StackedAreaChart echartId="area" style="width: 300px; height: 400px" />
       </div>
     </div>
 
@@ -74,7 +72,6 @@
 
 <script>
 import { defineComponent } from "vue";
-import StackedAreaChart from "./components/StackedAreaChart.vue";
 import NoticeList from "./components/NoticeList.vue";
 import PieCharts from "./components/PieCharts.vue";
 import BarChart from "./components/BarChart.vue";
@@ -84,7 +81,6 @@ import { HomeOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
   name: "Home02",
   components: {
-    StackedAreaChart,
     NoticeList,
     PieCharts,
     BarChart,
