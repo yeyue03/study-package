@@ -1,6 +1,6 @@
 <template>
   <div class="axis-wrap">
-    <div class="canvas-box
+    <div class="canvas-box">
  
       <canvas ref="canvasRef" width="200" height="110" style="border-color: #f5f5f5">
         您的浏览器不支持canvas
@@ -111,13 +111,6 @@ export default defineComponent({
 .canvas-box {
   width: 220px;
   height: 230px;
-  background: #eee;
-}
-.axis-x {
-  display: flex;
-  justify-content: space-between;
-}
-</style> height: 230px;
   background: #eee;
 }
 .axis-x {
