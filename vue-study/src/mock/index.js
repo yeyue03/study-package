@@ -53,6 +53,14 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               headKey: '01',
               parentKey: '01-02',
             },
+            {
+              key: '01-02-02',
+              name: '按钮拖拽新增',
+              path: '/demo/drag',
+              componentName: 'DemoDrag',
+              headKey: '01',
+              parentKey: '01-02',
+            },
           ]
         }
       ]
@@ -82,6 +90,28 @@ Mock.mock('/api/mock/user/getMenu', 'post', {
               componentName: 'WxMap',
               headKey: '02',
               parentKey: '02-01',
+            }
+          ]
+        }
+      ]
+    },
+    {
+      key: '03',
+      name: '系统设置',
+      path: '/settings',
+      childrens: [
+        {
+          key: '03-01',
+          name: '系统管理',
+          path: '/wx',
+          childrens: [
+            {
+              key: '03-01-01',
+              name: '字典',
+              path: '/settings/dictionary',
+              componentName: 'WxHome',
+              headKey: '03',
+              parentKey: '03-01',
             }
           ]
         }
