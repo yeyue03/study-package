@@ -12,22 +12,21 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-import HeaderBar from './components/HeaderBar.vue';
-import SiderBar from './components/SiderBar.vue';
-import Content from './components/Content.vue';
-import NavTags from './components/NavTags.vue';
+import HeaderBar from "./components/HeaderBar.vue";
+import SiderBar from "./components/SiderBar.vue";
+import Content from "./components/Content.vue";
+import NavTags from "./components/NavTags.vue";
 
 export default defineComponent({
   components: {
     HeaderBar,
     SiderBar,
     Content,
-    NavTags
+    NavTags,
   },
   setup() {
-
     return {};
   },
 });
@@ -39,4 +38,3 @@ export default defineComponent({
   height: 100%;
 }
 </style>
-

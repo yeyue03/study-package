@@ -12,19 +12,19 @@ export default defineComponent({
     echartId: {
       type: String,
       defalut: () => {
-        return ''
-      }
-    }
+        return "";
+      },
+    },
   },
   setup(props) {
     const { echartId } = toRefs(props);
     const setOptions = {
       xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        type: "category",
+        data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       },
       yAxis: {
-        type: 'value'
+        type: "value",
       },
       series: [
         {
@@ -33,18 +33,18 @@ export default defineComponent({
             {
               value: 200,
               itemStyle: {
-                color: '#a90000'
-              }
+                color: "#a90000",
+              },
             },
             150,
             80,
             70,
             110,
-            130
+            130,
           ],
-          type: 'bar'
-        }
-      ]
+          type: "bar",
+        },
+      ],
     };
 
     let myChart = null;
@@ -63,7 +63,7 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       myChart.dispose(); // 销毁实例
-    })
+    });
 
     return {};
   },

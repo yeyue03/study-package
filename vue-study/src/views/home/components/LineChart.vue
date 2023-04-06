@@ -12,27 +12,27 @@ export default defineComponent({
     echartId: {
       type: String,
       defalut: () => {
-        return ''
-      }
-    }
+        return "";
+      },
+    },
   },
   setup(props) {
     const { echartId } = toRefs(props);
     const setOptions = {
       xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        type: "category",
+        data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       },
       yAxis: {
-        type: 'value'
+        type: "value",
       },
       series: [
         {
           data: [820, 932, 901, 934, 1290, 1330, 1320],
-          type: 'line',
-          smooth: true
-        }
-      ]
+          type: "line",
+          smooth: true,
+        },
+      ],
     };
 
     let myChart = null;
@@ -51,7 +51,7 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       myChart.dispose(); // 销毁实例
-    })
+    });
 
     return {};
   },

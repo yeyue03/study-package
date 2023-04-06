@@ -1,8 +1,12 @@
 <template>
   <div class="axis-wrap">
     <div class="canvas-box">
- 
-      <canvas ref="canvasRef" width="200" height="110" style="border-color: #f5f5f5">
+      <canvas
+        ref="canvasRef"
+        width="200"
+        height="110"
+        style="border-color: #f5f5f5"
+      >
         您的浏览器不支持canvas
       </canvas>
       <div class="axis-x">
@@ -14,16 +18,16 @@
 </template>
 
 <script>
-import { ref, defineComponent, nextTick, reactive } from 'vue'
+import { ref, defineComponent, nextTick, reactive } from "vue";
 
 export default defineComponent({
-  name: 'CoordinateAxis',
+  name: "CoordinateAxis",
   setup() {
     const formState = reactive({
       startValue: 10,
-      endValue: 20
-    })
-    
+      endValue: 20,
+    });
+
     const canvasRef = ref();
     let ctx = null;
     const canvasWidth = 200; // 获取画布的宽度
@@ -34,28 +38,30 @@ export default defineComponent({
     const yLineNumber = Math.floor(canvasHeight / gridSpace) - 1; // 计算需要几条横线
 
     nextTick(() => {
-      ctx = canvasRef.value.getContext('2d');
+      ctx = canvasRef.value.getContext("2d");
       setCanvas();
-    })
+    });
 
     // 绘制直线
     const drawLine = () => {
       ctx.beginPath();
       ctx.moveTo(axisSpace, canvasHeight - axisSpace - formState.startValue);
       ctx.lineTo(canvasWidth, canvasHeight - axisSpace - formState.endValue);
-      ctx.strokeStyle = '#0080FF';
+      ctx.strokeStyle = "#0080FF";
       ctx.stroke();
-    }
+    };
 
     const setCanvas = () => {
       ctx.strokeStyle = "#ccc";
-      for (let i = 2; i < xLineNumber; i++) { // 循环画竖线 边界不要线，所以i从2开始
+      for (let i = 2; i < xLineNumber; i++) {
+        // 循环画竖线 边界不要线，所以i从2开始
         ctx.beginPath();
         ctx.moveTo(i * gridSpace, gridSpace);
         ctx.lineTo(i * gridSpace, canvasHeight - axisSpace);
         ctx.stroke();
       }
-      for (let i = 2; i < yLineNumber; i++) { // 循环画横线
+      for (let i = 2; i < yLineNumber; i++) {
+        // 循环画横线
         ctx.beginPath();
         ctx.moveTo(gridSpace, i * gridSpace);
         ctx.lineTo(canvasWidth, i * gridSpace);
@@ -81,26 +87,26 @@ export default defineComponent({
       ctx.lineTo(canvasWidth - axisSpace + 10, canvasHeight - axisSpace);
       ctx.closePath();
       ctx.fill();
-      
+
       // 绘制Y轴箭头
       ctx.moveTo(axisSpace - 5, axisSpace);
       ctx.lineTo(axisSpace + 5, axisSpace);
       ctx.lineTo(axisSpace, axisSpace - 10);
       ctx.closePath();
       ctx.fill();
-    }
+    };
 
-    const changeValue = e => {
+    const changeValue = () => {
       drawLine();
-    }
+    };
 
     return {
       canvasRef,
       formState,
-      changeValue
-    }
+      changeValue,
+    };
   },
-})
+});
 </script>
 
 <style scopede>

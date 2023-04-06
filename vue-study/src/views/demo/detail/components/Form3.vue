@@ -19,39 +19,42 @@
   </a-form>
 </template>
 <script>
-import { defineComponent, reactive, toRaw } from 'vue';
-import { Form } from 'ant-design-vue';
+import { defineComponent, reactive, toRaw } from "vue";
+import { Form } from "ant-design-vue";
 
 const useForm = Form.useForm;
 export default defineComponent({
   setup() {
     const modelRef = reactive({
-      name: '',
+      name: "",
       region: undefined,
     });
     const rulesRef = reactive({
       name: [
         {
           required: true,
-          message: '请输入活动名称',
+          message: "请输入活动名称",
         },
         {
           min: 3,
           max: 5,
-          message: '长度应为3-5',
-          trigger: 'blur',
+          message: "长度应为3-5",
+          trigger: "blur",
         },
       ],
-      region: [{ required: true, message: '请选择活动区域' }],
+      region: [{ required: true, message: "请选择活动区域" }],
     });
-    const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
+    const { resetFields, validate, validateInfos } = useForm(
+      modelRef,
+      rulesRef
+    );
     const onSubmit = () => {
       validate()
         .then(() => {
           console.log(toRaw(modelRef));
         })
-        .catch(err => {
-          console.log('error', err);
+        .catch((err) => {
+          console.log("error", err);
         });
     };
     return {
@@ -66,4 +69,3 @@ export default defineComponent({
   },
 });
 </script>
-

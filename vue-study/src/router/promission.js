@@ -2,27 +2,27 @@ import routes from "./routes";
 import router from "./index";
 import store from "../store";
 
-import NProgress from 'nprogress';
-import 'nprogress/nprogress.css';
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 
-import UserApi from '@/api/user';
+import UserApi from "@/api/user";
 
 // 动态路由的配置
 let getRouter;
 router.beforeEach(async (to, from, next) => {
-  if (to.path == '/') {
-    next('/home');
-    return
+  if (to.path == "/") {
+    next("/home");
+    return;
   }
 
   const menuList = store.state.user.menuList;
   NProgress.start();
-  
+
   // 在具体的项目中还涉及到跳转登录、用户session信息等，需要处理更详细些，否则会有死循环
   if (!menuList || !menuList.length) {
     const res = await UserApi.GetMenu();
     if (res.code == 200) {
-      store.dispatch('setMenu', res.data || []);
+      store.dispatch("setMenu", res.data || []);
     }
   }
 
@@ -34,42 +34,42 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
   NProgress.done();
-})
+});
 
 router.afterEach(() => {
   NProgress.done();
-})
+});
 
-function handleRoutes(menuList) {
-  if (!menuList || menuList.length === 0) {
-    return false
-  }
-  let whiteList = ['55555', '12']
-  let userId = localStorage.getItem('wx')
-  for (let i in whiteList) {
-    if (whiteList[i] === userId) {
-      // 按照自己项目逻辑做不同的处理
-      // menuList.push({
-      //   path: '/tem',
-      //   name: 'Tem',
-      //   component: () => import('../pages/Tem/index.vue')
-      // })
-      break;
-    }
-  }
-  return [...menuList]
-}
+// function handleRoutes(menuList) {
+//   if (!menuList || menuList.length === 0) {
+//     return false;
+//   }
+//   let whiteList = ["55555", "12"];
+//   let userId = localStorage.getItem("wx");
+//   for (let i in whiteList) {
+//     if (whiteList[i] === userId) {
+//       // 按照自己项目逻辑做不同的处理
+//       // menuList.push({
+//       //   path: '/tem',
+//       //   name: 'Tem',
+//       //   component: () => import('../pages/Tem/index.vue')
+//       // })
+//       break;
+//     }
+//   }
+//   return [...menuList];
+// }
 
 function routerGo(to, next) {
   const defaultRoutes = routes;
   getRouter = filterAsyncRouter(defaultRoutes);
-  getRouter.push({ path: '/:catchAll(.*)', redirect: '/home' });
+  getRouter.push({ path: "/:catchAll(.*)", redirect: "/home" });
   console.log("=== getRouter", getRouter);
 
-  getRouter.forEach(val => {
+  getRouter.forEach((val) => {
     router.addRoute(val);
-  })
-  next({...to, replace: true })
+  });
+  next({ ...to, replace: true });
 }
 
 let asyncRouteArr = [];
@@ -77,7 +77,6 @@ const loadView = (menuList) => {
   for (const item of menuList) {
     if (item.childrens && item.childrens.length) {
       loadView(item.childrens);
-      
     } else {
       asyncRouteArr.push({
         path: item.path,
@@ -87,12 +86,12 @@ const loadView = (menuList) => {
           name: item.name,
           key: item.key,
           headKey: item.headKey,
-          parentKey: item.parentKey
-        }
-      })
+          parentKey: item.parentKey,
+        },
+      });
     }
   }
-}
+};
 
 function filterAsyncRouter(RouterMap) {
   const menuList = store.state.user.menuList;
@@ -100,7 +99,7 @@ function filterAsyncRouter(RouterMap) {
   loadView(menuList);
 
   for (const item of RouterMap) {
-    if (item.path == '/') {
+    if (item.path == "/") {
       item.children.push(...asyncRouteArr);
     }
   }

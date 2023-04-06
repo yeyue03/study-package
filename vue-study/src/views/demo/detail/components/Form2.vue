@@ -15,11 +15,19 @@
     </a-form-item>
 
     <a-form-item has-feedback label="密码" name="pass">
-      <FormInput v-model:value="formState.pass" type="password" autocomplete="off" />
+      <FormInput
+        v-model:value="formState.pass"
+        type="password"
+        autocomplete="off"
+      />
     </a-form-item>
 
     <a-form-item has-feedback label="确认密码" name="checkPass">
-      <FormInput v-model:value="formState.checkPass" type="password" autocomplete="off" />
+      <FormInput
+        v-model:value="formState.checkPass"
+        type="password"
+        autocomplete="off"
+      />
     </a-form-item>
 
     <a-form-item has-feedback label="城市" name="city">
@@ -32,12 +40,12 @@
 
     <a-row class="button-wrap">
       <a-button type="primary" html-type="submit">提交</a-button>
-      <a-button style="margin-left: 10px" type="primary" @click="submitClick">自定义方法提交</a-button>
+      <a-button style="margin-left: 10px" type="primary" @click="submitClick"
+        >自定义方法提交</a-button
+      >
       <a-button style="margin-left: 10px" @click="resetForm">重置</a-button>
     </a-row>
-    
   </a-form>
-
 </template>
 
 <script>
@@ -94,8 +102,8 @@ export default defineComponent({
       age: [{ validator: checkAge, trigger: "change" }],
     };
     const layout = {
-      labelCol: { style: { width: '180px' } },
-      wrapperCol: { style: { width: '180px' } },
+      labelCol: { style: { width: "180px" } },
+      wrapperCol: { style: { width: "180px" } },
     };
     const handleFinish = (values) => {
       console.log(values, formState);
@@ -111,12 +119,15 @@ export default defineComponent({
     };
 
     const submitClick = () => {
-      formRef.value.validate().then(res => {
-        console.log("== 校验通过", res);
-      }).catch(err => {
-        console.log("== 校验错误", err);
-      });
-    }
+      formRef.value
+        .validate()
+        .then((res) => {
+          console.log("== 校验通过", res);
+        })
+        .catch((err) => {
+          console.log("== 校验错误", err);
+        });
+    };
 
     return {
       formState,
@@ -127,7 +138,7 @@ export default defineComponent({
       handleFinish,
       resetForm,
       handleValidate,
-      submitClick
+      submitClick,
     };
   },
 });

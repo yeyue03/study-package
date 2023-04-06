@@ -6,7 +6,12 @@
           <span class="tile-amount">{{ item.amount }}</span>
           <span class="tile-title">{{ item.title }}</span>
         </div>
-        <a-progress type="circle" :percent="item.percent" :width="70" :strokeColor="item.strokeColor" />
+        <a-progress
+          type="circle"
+          :percent="item.percent"
+          :width="70"
+          :strokeColor="item.strokeColor"
+        />
       </div>
     </div>
 
@@ -32,7 +37,7 @@
       </div>
     </a-row>
 
-    <a-row justify="space-between" style="margin-top: 20px;">
+    <a-row justify="space-between" style="margin-top: 20px">
       <div class="sale-info">
         <div class="title-box">
           <span class="title">销售经理情况统计</span>
@@ -53,16 +58,15 @@
         </div>
       </div>
     </a-row>
-
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import PieCharts from './components/PieCharts.vue';
-import LineChart from './components/LineChart.vue';
-import BarChart from './components/BarChart.vue';
-import StatisticalTable from './components/StatisticalTable.vue';
+import { defineComponent, ref } from "vue";
+import PieCharts from "./components/PieCharts.vue";
+import LineChart from "./components/LineChart.vue";
+import BarChart from "./components/BarChart.vue";
+import StatisticalTable from "./components/StatisticalTable.vue";
 
 export default defineComponent({
   name: "Home",
@@ -76,50 +80,50 @@ export default defineComponent({
     const tilesList = ref([
       {
         id: 1,
-        title: '新产品研发进度',
+        title: "新产品研发进度",
         amount: 86,
         percent: 30,
       },
       {
         id: 2,
-        title: '指标数据写这里',
+        title: "指标数据写这里",
         amount: 248,
         percent: 26,
-        strokeColor: '#e6a23c',
+        strokeColor: "#e6a23c",
       },
       {
         id: 3,
-        title: '执笔数据',
+        title: "执笔数据",
         amount: 352,
         percent: 26,
-        strokeColor: '#e6a23c',
+        strokeColor: "#e6a23c",
       },
       {
         id: 4,
-        title: '年收益',
+        title: "年收益",
         amount: 159,
         percent: 26,
-        strokeColor: '#e6a23c',
+        strokeColor: "#e6a23c",
       },
       {
         id: 5,
-        title: '退换货笔数',
+        title: "退换货笔数",
         amount: 352,
         percent: 26,
       },
       {
         id: 6,
-        title: '新增收入',
+        title: "新增收入",
         amount: 159,
         percent: 26,
       },
-    ])
+    ]);
 
     return {
-      tilesList
-    }
+      tilesList,
+    };
   },
-})
+});
 </script>
 
 <style lang="less" scoped>

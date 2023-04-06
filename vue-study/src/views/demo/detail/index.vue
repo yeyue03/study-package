@@ -18,18 +18,16 @@
 
     <HTitle>
       <span>表单3 - 使用 useForm</span>
-      <template v-slot:dec>
-        Form.useForm 自定义触发校验时机
-      </template>
+      <template v-slot:dec> Form.useForm 自定义触发校验时机 </template>
     </HTitle>
     <Fomr3 />
   </div>
 </template>
 
 <script>
-import Fomr1 from './components/Form1';
-import Fomr2 from './components/Form2';
-import Fomr3 from './components/Form3';
+import Fomr1 from "./components/Form1";
+import Fomr2 from "./components/Form2";
+import Fomr3 from "./components/Form3";
 
 export default {
   name: "DemoDetail",

@@ -1,5 +1,5 @@
 <script>
-import { defineComponent, toRefs } from 'vue';
+import { defineComponent, toRefs } from "vue";
 const colObj = {
   // 1: { xs: 24 },
   // 2: { xs: 24, sm: 12 },
@@ -12,26 +12,24 @@ const colObj = {
 };
 
 export default defineComponent({
-  name: 'FormRow',
+  name: "FormRow",
   props: {
     col: {
       type: Number,
       default: () => {
-        return 3
-      }
-    }
+        return 3;
+      },
+    },
   },
   setup(props, { slots }) {
     const { col } = toRefs(props);
     return () => (
       <a-row>
-        {
-          slots.default().map(item => {
-            return <a-col {...colObj[col.value]}>{item}</a-col>
-          })
-        }
+        {slots.default().map((item) => {
+          return <a-col {...colObj[col.value]}>{item}</a-col>;
+        })}
       </a-row>
-    )
+    );
   },
-})
+});
 </script>

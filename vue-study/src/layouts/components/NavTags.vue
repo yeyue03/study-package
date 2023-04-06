@@ -46,15 +46,15 @@ export default defineComponent({
 
     const closeMenu = () => {
       floatVisible.value = false;
-    }
+    };
 
     watch(floatVisible, (newVal) => {
       if (newVal) {
-        document.body.addEventListener('click', closeMenu);
+        document.body.addEventListener("click", closeMenu);
       } else {
-        document.body.removeEventListener('click', closeMenu);
+        document.body.removeEventListener("click", closeMenu);
       }
-    })
+    });
 
     const navTabList = computed(() => {
       return store.getters["getNavTab"];
@@ -65,7 +65,7 @@ export default defineComponent({
       floatVisible.value = true;
       floatLeft.value = e.offsetX;
       floatTop.value = e.offsetY;
-    }
+    };
 
     const handleClose = (item, index) => {
       store.dispatch("deleteNavTab", index);
@@ -92,14 +92,14 @@ export default defineComponent({
     };
 
     const cleartags = () => {
-      store.dispatch('setNavTab', []);
+      store.dispatch("setNavTab", []);
       floatKey.value = null;
       floatVisible.value = false;
 
       router.push({
         path: "/home",
       });
-    }
+    };
 
     return {
       floatVisible,

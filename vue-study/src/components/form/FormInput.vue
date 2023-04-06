@@ -1,5 +1,10 @@
 <template>
-  <a-input v-if="!showText" :value="value" @change="handleChange" @keydown.enter.stop.prevent></a-input>
+  <a-input
+    v-if="!showText"
+    :value="value"
+    @change="handleChange"
+    @keydown.enter.stop.prevent
+  ></a-input>
   <span v-else class="detail-text">{{ value }}</span>
 </template>
 
@@ -17,18 +22,18 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const showText = inject('showText', false)
-    
-    const handleChange = e => {
+    const showText = inject("showText", false);
+
+    const handleChange = (e) => {
       const value = e.target.value;
-      emit('update:value', value);
-      emit('onChange', value);
-    }
+      emit("update:value", value);
+      emit("onChange", value);
+    };
 
     return {
       showText,
-      handleChange
-    }
+      handleChange,
+    };
   },
 });
 </script>

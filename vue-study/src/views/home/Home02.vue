@@ -1,7 +1,6 @@
 <template>
   <div class="container panel-wrap">
     <div class="panel-left">
-
       <div class="tiles-wrap">
         <div class="tiles">
           <span class="tile-amount">300</span>
@@ -17,17 +16,16 @@
           <span class="tile-amount">300</span>
           <span class="tile-title">发稿数</span>
         </div>
-        
-        <div class="tiles">
-          <span class="tile-amount">300</span>
-          <span class="tile-title">发稿数</span>
-        </div>
 
         <div class="tiles">
           <span class="tile-amount">300</span>
           <span class="tile-title">发稿数</span>
         </div>
 
+        <div class="tiles">
+          <span class="tile-amount">300</span>
+          <span class="tile-title">发稿数</span>
+        </div>
       </div>
 
       <div class="echarts-wrap">
@@ -54,8 +52,8 @@
             <PieCharts echartId="pie02" style="width: 380px; height: 260px" />
           </div>
         </a-row>
-        
-        <!-- <StackedAreaChart  echartId="area" style="width: 300px; height: 400px" /> -->
+
+        <StackedAreaChart echartId="area" style="width: 300px; height: 400px" />
       </div>
     </div>
 
@@ -65,24 +63,23 @@
       <div class="shortcut-wrap">
         <template v-for="item in 10" :key="item">
           <div class="shortcut">
-            <home-outlined style="fontSize: 35px;" />
+            <home-outlined style="fontsize: 35px" />
             <span>服务平台</span>
           </div>
         </template>
       </div>
     </div>
-    
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import StackedAreaChart from './components/StackedAreaChart.vue';
-import NoticeList from './components/NoticeList.vue';
-import PieCharts from './components/PieCharts.vue';
-import BarChart from './components/BarChart.vue';
-import HTitle from '../../components/other/HTitle.vue';
-import { HomeOutlined } from '@ant-design/icons-vue';
+import { defineComponent } from "vue";
+import StackedAreaChart from "./components/StackedAreaChart.vue";
+import NoticeList from "./components/NoticeList.vue";
+import PieCharts from "./components/PieCharts.vue";
+import BarChart from "./components/BarChart.vue";
+import HTitle from "../../components/other/HTitle.vue";
+import { HomeOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
   name: "Home02",
@@ -92,13 +89,12 @@ export default defineComponent({
     PieCharts,
     BarChart,
     HTitle,
-    HomeOutlined
+    HomeOutlined,
   },
   setup() {
-
-    return {}
+    return {};
   },
-})
+});
 </script>
 
 <style lang="less" scoped>
@@ -138,19 +134,19 @@ export default defineComponent({
     }
   }
   .tiles:first-child {
-    background: #FFEE99;
+    background: #ffee99;
   }
   .tiles:nth-child(2) {
-    background: #33CCFF;
+    background: #33ccff;
   }
   .tiles:nth-child(3) {
-    background: #FFFF99;
+    background: #ffff99;
   }
   .tiles:nth-child(4) {
-    background: #00FF00;
+    background: #00ff00;
   }
   .tiles:nth-child(5) {
-    background: #33FFFF;
+    background: #33ffff;
   }
 }
 .echarts-wrap {

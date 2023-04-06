@@ -1,11 +1,11 @@
 const state = {
   navTabList: [],
-  visibleComponent: '',
-}
+  visibleComponent: "",
+};
 
 const getters = {
-  getNavTab: state => state.navTabList
-}
+  getNavTab: (state) => state.navTabList,
+};
 
 const mutations = {
   SET_NAV_TAB: (state, arr) => {
@@ -20,26 +20,26 @@ const mutations = {
   SET_VISIBLE_COMPONENT: (state, val) => {
     state.visibleComponent = val;
   },
-}
+};
 
 const actions = {
   setNavTab: ({ commit }, arr) => {
-    commit('SET_NAV_TAB', arr);
+    commit("SET_NAV_TAB", arr);
   },
   pushNavTab: ({ commit }, obj) => {
-    commit('PUSH_NAV_TAB', obj);
+    commit("PUSH_NAV_TAB", obj);
   },
   deleteNavTab: ({ commit }, index) => {
-    commit('DELETE_NAV_TAB', index);
+    commit("DELETE_NAV_TAB", index);
   },
   setVisibleComponent: ({ commit }, val) => {
-    commit('SET_VISIBLE_COMPONENT', val);
+    commit("SET_VISIBLE_COMPONENT", val);
   },
-}
+};
 
 export default {
   state,
   getters,
   mutations,
-  actions
-}
+  actions,
+};

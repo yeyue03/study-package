@@ -3,7 +3,14 @@
     <div class="operation-wrap">
       <div></div>
       <div class="operaion-btns">
-        <a-button type="primary" draggable="true" ghost @dragstart="dragStartEvent" @click="handleAdd">新增</a-button>
+        <a-button
+          type="primary"
+          draggable="true"
+          ghost
+          @dragstart="dragStartEvent"
+          @click="handleAdd"
+          >新增</a-button
+        >
       </div>
     </div>
 
@@ -18,46 +25,46 @@
 <script>
 import { ref, defineComponent } from "vue";
 import LineChart from "./components/LineChart.vue";
-import AddValue from './components/AddValue.vue';
+import AddValue from "./components/AddValue.vue";
 
 export default defineComponent({
   name: "DemoDrag",
   components: {
     LineChart,
-    AddValue
+    AddValue,
   },
   setup() {
     const addValueRef = ref();
 
     // 新增
     const handleAdd = () => {
-      addValueRef.value.showModal('add');
+      addValueRef.value.showModal("add");
       addValueRef.value.setFormValue();
     };
 
-    const dragStartEvent = e => {
-      e.dataTransfer.setData('add', 'Y')
-      e.dataTransfer.setData('bbb', 'Y55')
-    }
+    const dragStartEvent = (e) => {
+      e.dataTransfer.setData("add", "Y");
+      e.dataTransfer.setData("bbb", "Y55");
+    };
 
-    const dropEvent = e => {
+    const dropEvent = (e) => {
       e.preventDefault();
-      const val = e.dataTransfer.getData('add');
+      const val = e.dataTransfer.getData("add");
       if (val) {
         handleAdd();
       }
-    }
+    };
 
-    const dragoverEvent = e => {
+    const dragoverEvent = (e) => {
       e.preventDefault();
-    }
+    };
 
     return {
       addValueRef,
       handleAdd,
       dragStartEvent,
       dropEvent,
-      dragoverEvent
+      dragoverEvent,
     };
   },
 });
@@ -76,5 +83,4 @@ export default defineComponent({
     margin: 0 10px;
   }
 }
-
 </style>

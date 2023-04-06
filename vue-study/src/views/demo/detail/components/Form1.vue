@@ -36,25 +36,25 @@
   </a-form>
 </template>
 <script>
-import { defineComponent, reactive } from 'vue';
-import { message } from 'ant-design-vue';
-import FormRow from '../../../../components/form/FormRow.vue';
+import { defineComponent, reactive } from "vue";
+import { message } from "ant-design-vue";
+import FormRow from "../../../../components/form/FormRow.vue";
 
 export default defineComponent({
   components: { FormRow },
   setup() {
     const formState = reactive({
-      username: '',
-      password: '',
+      username: "",
+      password: "",
       remember: true,
     });
     const onFinish = () => {
-      message.success('操作成功');
+      message.success("操作成功");
     };
 
     const onFinishFailed = (errorInfo) => {
-      console.log('Failed:', errorInfo);
-      message.warning('操作失败');
+      console.log("Failed:", errorInfo);
+      message.warning("操作失败");
     };
 
     return {
@@ -65,4 +65,3 @@ export default defineComponent({
   },
 });
 </script>
-

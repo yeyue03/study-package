@@ -17,54 +17,50 @@
 </template>
 
 <script>
-import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 const columns = [
   {
-    name: '经理',
-    dataIndex: 'name',
-    key: 'name',
+    name: "经理",
+    dataIndex: "name",
+    key: "name",
   },
   {
-    title: '门店',
-    dataIndex: 'address',
-    key: 'address',
+    title: "门店",
+    dataIndex: "address",
+    key: "address",
   },
   {
-    title: '状态',
-    key: 'status',
-    dataIndex: 'status',
+    title: "状态",
+    key: "status",
+    dataIndex: "status",
   },
 ];
 
 const data = [
   {
-    key: '1',
-    name: '周星驰',
-    address: '上海浦东分店',
-    status: '低',
-    color: 'green',
+    key: "1",
+    name: "周星驰",
+    address: "上海浦东分店",
+    status: "低",
+    color: "green",
   },
   {
-    key: '2',
-    name: '周星驰',
-    address: '上海浦东分店',
-    status: '高',
+    key: "2",
+    name: "周星驰",
+    address: "上海浦东分店",
+    status: "高",
   },
   {
-    key: '3',
-    name: '周星驰',
-    address: '上海浦东分店',
-    status: '正常',
-    color: 'geekblue',
+    key: "3",
+    name: "周星驰",
+    address: "上海浦东分店",
+    status: "正常",
+    color: "geekblue",
   },
 ];
 
 export default defineComponent({
-  components: {
-    SmileOutlined,
-    DownOutlined,
-  },
+  components: {},
   setup() {
     return {
       data,

@@ -159,13 +159,13 @@ export default defineComponent({
     ];
 
     const computedHeight = () => {
-      const tbody = document.querySelector('.table-wrap .ant-table-body')
+      const tbody = document.querySelector(".table-wrap .ant-table-body");
       const othersHeight = 300 + 72;
       tbody.style.height = `calc(100vh - ${othersHeight}px)`;
-    }
+    };
     nextTick(() => {
       computedHeight();
-    })
+    });
 
     return {
       activeKey,

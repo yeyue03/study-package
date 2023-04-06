@@ -12,9 +12,9 @@ export default defineComponent({
     echartId: {
       type: String,
       defalut: () => {
-        return ''
-      }
-    }
+        return "";
+      },
+    },
   },
   setup(props) {
     const { echartId } = toRefs(props);
@@ -131,7 +131,7 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       myChart.dispose(); // 销毁实例
-    })
+    });
 
     return {};
   },

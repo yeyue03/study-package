@@ -17,23 +17,22 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'NoticeList',
+  name: "NoticeList",
   props: {
     title: {
       type: String,
       default: () => {
-        return ''
-      }
-    }
+        return "";
+      },
+    },
   },
   setup() {
-    
-    return {}
+    return {};
   },
-})
+});
 </script>
 
 <style lang="less" scoped>

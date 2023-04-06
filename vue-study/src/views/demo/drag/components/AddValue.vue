@@ -10,10 +10,13 @@
     @cancel="handleCancel"
   >
     <template #footer>
-      <a-button size="large" @click="handleCancel">
-        取消
-      </a-button>
-      <a-button size="large" type="primary" :loading="submitLoading" @click="onSubmit">
+      <a-button size="large" @click="handleCancel"> 取消 </a-button>
+      <a-button
+        size="large"
+        type="primary"
+        :loading="submitLoading"
+        @click="onSubmit"
+      >
         保存
       </a-button>
     </template>
@@ -24,51 +27,54 @@
       </a-form-item>
 
       <a-form-item label="y轴值" v-bind="validateInfos.yval">
-        <a-input-number style="width: 100%" v-model:value="formState.yval"></a-input-number>
+        <a-input-number
+          style="width: 100%"
+          v-model:value="formState.yval"
+        ></a-input-number>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script>
-import { defineComponent, reactive, ref } from 'vue';
-import { Form } from 'ant-design-vue';
+import { defineComponent, reactive, ref } from "vue";
+import { Form } from "ant-design-vue";
 import mitt from "@/utils/mitt.js";
 
 const useForm = Form.useForm;
 export default defineComponent({
-  name: 'AddValue',
+  name: "AddValue",
   props: {},
   setup() {
     const visible = ref(false);
     const submitLoading = ref(false);
 
-    const addType = ref('add');
+    const addType = ref("add");
     const formRef = ref();
     const formState = reactive({
-      xval: '',
-      yval: '',
+      xval: "",
+      yval: "",
     });
 
     const rules = reactive({
-      xval: [{ required: true, message: '请输入', trigger: 'blur' }],
-      yval: [{ required: true, message: '请输入', trigger: 'blur' }],
+      xval: [{ required: true, message: "请输入", trigger: "blur" }],
+      yval: [{ required: true, message: "请输入", trigger: "blur" }],
     });
 
     const { resetFields, validate, validateInfos } = useForm(formState, rules);
 
     const setFormValue = () => {
       resetFields();
-    }
+    };
 
     const showModal = (type) => {
-      visible.value = true
-      addType.value = type
-    }
+      visible.value = true;
+      addType.value = type;
+    };
 
     const handleCancel = () => {
-      visible.value = false
-    }
+      visible.value = false;
+    };
 
     // 提交
     const onSubmit = () => {
@@ -76,13 +82,13 @@ export default defineComponent({
         .then(async () => {
           // submitLoading.value = true;
 
-          mitt.emit('addLineChartData', formState);
+          mitt.emit("addLineChartData", formState);
           handleCancel();
         })
-        .catch(error => {
-          console.log('error', error);
+        .catch((error) => {
+          console.log("error", error);
         });
-    }
+    };
 
     return {
       visible,

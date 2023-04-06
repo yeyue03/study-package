@@ -10,25 +10,22 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'HTitle',
+  name: "HTitle",
   props: {
     level: {
       type: [Number, String],
       default: () => {
-        return '1'
-      }
-    }
+        return "1";
+      },
+    },
   },
   setup() {
-
-    return {
-      
-    }
+    return {};
   },
-})
+});
 </script>
 
 <style scoped>
@@ -42,7 +39,7 @@ export default defineComponent({
   font-weight: bold;
 }
 .title-level-1::before {
-  content: '';
+  content: "";
   display: inline-block;
   width: 0;
   height: 1em;
