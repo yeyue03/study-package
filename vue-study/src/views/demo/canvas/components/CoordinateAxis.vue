@@ -1,18 +1,24 @@
 <template>
   <div class="axis-wrap">
+    <div class="tag-box">
+      <span class="tag-span">Ramp 01</span>
+      <span class="tag-span">1h:00m</span>
+    </div>
+
     <div class="canvas-box">
       <canvas
         ref="canvasRef"
-        width="200"
+        width="205"
         height="110"
         style="border-color: #f5f5f5"
       >
         您的浏览器不支持canvas
       </canvas>
-      <div class="axis-x">
-        <span>{{ formState.startValue }}</span>
-        <input type="number" v-model="formState.endValue" />
-      </div>
+    </div>
+
+    <div class="tag-box">
+      <span class="tag-span">{{ formState.startValue }}</span>
+      <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @change="changeValue" />
     </div>
   </div>
 </template>
@@ -30,11 +36,11 @@ export default defineComponent({
 
     const canvasRef = ref();
     let ctx = null;
-    const canvasWidth = 200; // 获取画布的宽度
+    const canvasWidth = 205; // 获取画布的宽度
     const canvasHeight = 110; // 获取画布的高度
     const gridSpace = 10; // 网格线间隔 px
     const axisSpace = 10; // 坐标轴留白 px
-    const xLineNumber = Math.floor(canvasWidth / gridSpace); // 计算需要几条竖线
+    const xLineNumber = Math.floor(canvasWidth / gridSpace) + 1; // 计算需要几条竖线
     const yLineNumber = Math.floor(canvasHeight / gridSpace) - 1; // 计算需要几条横线
 
     nextTick(() => {
@@ -42,16 +48,9 @@ export default defineComponent({
       setCanvas();
     });
 
-    // 绘制直线
-    const drawLine = () => {
-      ctx.beginPath();
-      ctx.moveTo(axisSpace, canvasHeight - axisSpace - formState.startValue);
-      ctx.lineTo(canvasWidth, canvasHeight - axisSpace - formState.endValue);
-      ctx.strokeStyle = "#0080FF";
-      ctx.stroke();
-    };
-
     const setCanvas = () => {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
       ctx.strokeStyle = "#ccc";
       for (let i = 2; i < xLineNumber; i++) {
         // 循环画竖线 边界不要线，所以i从2开始
@@ -94,10 +93,17 @@ export default defineComponent({
       ctx.lineTo(axisSpace, axisSpace - 10);
       ctx.closePath();
       ctx.fill();
+
+      // 绘制直线
+      ctx.beginPath();
+      ctx.moveTo(axisSpace, canvasHeight - axisSpace - formState.startValue);
+      ctx.lineTo(canvasWidth, canvasHeight - axisSpace - formState.endValue);
+      ctx.strokeStyle = "#0080FF";
+      ctx.stroke();
     };
 
     const changeValue = () => {
-      drawLine();
+      setCanvas();
     };
 
     return {
@@ -109,9 +115,9 @@ export default defineComponent({
 });
 </script>
 
-<style scopede>
+<style lang="less" scopede>
 .axis-wrap {
-  width: 450px;
+  width: 205px;
   height: 450px;
 }
 .canvas-box {
@@ -119,8 +125,19 @@ export default defineComponent({
   height: 230px;
   background: #eee;
 }
-.axis-x {
+.tag-box {
+  width: 100%;
+  padding: 10px 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
+
+  .tag-span {
+    width: 80px;
+    text-align: center;
+  }
+  .ant-input-number-input {
+    text-align: center;
+  }
 }
 </style>
