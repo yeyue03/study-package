@@ -8,9 +8,7 @@
     <div class="canvas-box">
       <canvas
         ref="canvasRef"
-        width="205"
-        height="110"
-        style="border-color: #f5f5f5"
+        :style="{width: '205px', height: '110px'}"
       >
         您的浏览器不支持canvas
       </canvas>
@@ -24,11 +22,27 @@
 </template>
 
 <script>
-import { ref, defineComponent, nextTick, reactive } from "vue";
+import { ref, defineComponent, nextTick, reactive, toRefs } from "vue";
 
 export default defineComponent({
   name: "CoordinateAxis",
-  setup() {
+  props: {
+    canvasWidth: {
+      type: Number,
+      default: () => {
+        return 205;
+      }
+    },
+    canvasHeight: {
+      type: Number,
+      default: () => {
+        return 110;
+      }
+    }
+  },
+  setup(props) {
+    const { canvasWidth, canvasHeight } = toRefs(props); // 获取画布的宽、高
+
     const formState = reactive({
       startValue: 10,
       endValue: 20,
@@ -36,12 +50,10 @@ export default defineComponent({
 
     const canvasRef = ref();
     let ctx = null;
-    const canvasWidth = 205; // 获取画布的宽度
-    const canvasHeight = 110; // 获取画布的高度
     const gridSpace = 10; // 网格线间隔 px
     const axisSpace = 10; // 坐标轴留白 px
-    const xLineNumber = Math.floor(canvasWidth / gridSpace) + 1; // 计算需要几条竖线
-    const yLineNumber = Math.floor(canvasHeight / gridSpace) - 1; // 计算需要几条横线
+    const xLineNumber = Math.floor(canvasWidth.value / gridSpace) + 1; // 计算需要几条竖线
+    const yLineNumber = Math.floor(canvasHeight.value / gridSpace) - 1; // 计算需要几条横线
 
     nextTick(() => {
       ctx = canvasRef.value.getContext("2d");
@@ -49,41 +61,43 @@ export default defineComponent({
     });
 
     const setCanvas = () => {
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value);
+      console.log("===== canvasWidth.value：", canvasWidth.value);
+      console.log("===== canvasHeight.value：", canvasHeight.value);
 
       ctx.strokeStyle = "#ccc";
       for (let i = 2; i < xLineNumber; i++) {
         // 循环画竖线 边界不要线，所以i从2开始
         ctx.beginPath();
         ctx.moveTo(i * gridSpace, gridSpace);
-        ctx.lineTo(i * gridSpace, canvasHeight - axisSpace);
+        ctx.lineTo(i * gridSpace, canvasHeight.value - axisSpace);
         ctx.stroke();
       }
       for (let i = 2; i < yLineNumber; i++) {
         // 循环画横线
         ctx.beginPath();
         ctx.moveTo(gridSpace, i * gridSpace);
-        ctx.lineTo(canvasWidth, i * gridSpace);
+        ctx.lineTo(canvasWidth.value, i * gridSpace);
         ctx.stroke();
       }
 
       ctx.strokeStyle = "black";
       // 绘制X轴
       ctx.beginPath();
-      ctx.moveTo(axisSpace, canvasHeight - axisSpace);
-      ctx.lineTo(canvasWidth - axisSpace, canvasHeight - axisSpace);
+      ctx.moveTo(axisSpace, canvasHeight.value - axisSpace);
+      ctx.lineTo(canvasWidth.value - axisSpace, canvasHeight.value - axisSpace);
       ctx.stroke();
 
       // 绘制Y轴
       ctx.beginPath();
       ctx.moveTo(axisSpace, axisSpace);
-      ctx.lineTo(axisSpace, canvasHeight - axisSpace);
+      ctx.lineTo(axisSpace, canvasHeight.value - axisSpace);
       ctx.stroke();
 
       // 绘制X轴的箭头
-      ctx.moveTo(canvasWidth - axisSpace, canvasHeight - axisSpace - 5);
-      ctx.lineTo(canvasWidth - axisSpace, canvasHeight - axisSpace + 5);
-      ctx.lineTo(canvasWidth - axisSpace + 10, canvasHeight - axisSpace);
+      ctx.moveTo(canvasWidth.value - axisSpace, canvasHeight.value - axisSpace - 5);
+      ctx.lineTo(canvasWidth.value - axisSpace, canvasHeight.value - axisSpace + 5);
+      ctx.lineTo(canvasWidth.value - axisSpace + 10, canvasHeight.value - axisSpace);
       ctx.closePath();
       ctx.fill();
 
@@ -96,8 +110,8 @@ export default defineComponent({
 
       // 绘制直线
       ctx.beginPath();
-      ctx.moveTo(axisSpace, canvasHeight - axisSpace - formState.startValue);
-      ctx.lineTo(canvasWidth, canvasHeight - axisSpace - formState.endValue);
+      ctx.moveTo(axisSpace, canvasHeight.value - axisSpace - formState.startValue);
+      ctx.lineTo(canvasWidth.value, canvasHeight.value - axisSpace - formState.endValue);
       ctx.strokeStyle = "#0080FF";
       ctx.stroke();
     };
@@ -109,6 +123,11 @@ export default defineComponent({
     return {
       canvasRef,
       formState,
+      canvasStyle: {
+        width: '205px',
+        height: '110px',
+        'border-color': '#f5f5f5'
+      },
       changeValue,
     };
   },
@@ -118,7 +137,6 @@ export default defineComponent({
 <style lang="less" scopede>
 .axis-wrap {
   width: 205px;
-  height: 450px;
 }
 .canvas-box {
   width: 220px;
