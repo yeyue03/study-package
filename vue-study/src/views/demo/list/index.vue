@@ -1,5 +1,5 @@
 <template>
-  <div class="list">
+  <div class="container list">
     <div class="operation-wrap">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="全部"></a-tab-pane>
@@ -159,13 +159,13 @@ export default defineComponent({
     ];
 
     const computedHeight = () => {
-      const tbody = document.querySelector('.table-wrap .ant-table-body')
-      const othersHeight = 300 + 32;
+      const tbody = document.querySelector(".table-wrap .ant-table-body");
+      const othersHeight = 300 + 72;
       tbody.style.height = `calc(100vh - ${othersHeight}px)`;
-    }
+    };
     nextTick(() => {
       computedHeight();
-    })
+    });
 
     return {
       activeKey,

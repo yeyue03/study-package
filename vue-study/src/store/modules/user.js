@@ -1,16 +1,16 @@
 const state = {
-  headNavKey: '',
-  siderNavKey: '',
+  headNavKey: "",
+  siderNavKey: "",
   userinfo: {},
-  menuList: [], 
-}
+  menuList: [],
+};
 
 const getters = {
   getHeadNavKey: (state) => state.headNavKey,
   getSiderNavKey: (state) => state.siderNavKey,
   getUserinfo: (state) => state.userinfo,
   getMenu: (state) => state.menuList,
-}
+};
 
 const mutations = {
   SET_HEAD_NAVKEY: (state, key) => {
@@ -24,24 +24,24 @@ const mutations = {
   },
   SET_MENU: (state, menu) => {
     state.menuList = menu;
-  }
-}
+  },
+};
 
 const actions = {
   setHeadNavKey: ({ commit }, key) => {
-    commit('SET_HEAD_NAVKEY', key);
+    commit("SET_HEAD_NAVKEY", key);
   },
   setSiderNavKey: ({ commit }, key) => {
-    commit('SET_SIDER_NAVKEY', key);
+    commit("SET_SIDER_NAVKEY", key);
   },
   setMenu: ({ commit }, menu) => {
-    commit('SET_MENU', menu);
-  }
-}
+    commit("SET_MENU", menu);
+  },
+};
 
 export default {
   state,
   getters,
   mutations,
-  actions
-}
+  actions,
+};

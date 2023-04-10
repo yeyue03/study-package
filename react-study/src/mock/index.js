@@ -42,11 +42,21 @@ Mock.mock('/api/mock/user/getMenu', () => {
                 key: '01-01-01',
                 name: '列表页',
                 path: '/demo/list',
+                meta: {
+                  name: '列表页',
+                  headKey: '01',
+                  parentKey: '01-01'
+                }
               },
               {
                 key: '01-01-02',
                 name: '详情页',
                 path: '/demo/detail',
+                meta: {
+                  name: '详情页',
+                  headKey: '01',
+                  parentKey: '01-01'
+                }
               }
             ]
           },

@@ -1,7 +1,13 @@
 <template>
-  <a-layout-content
-    :style="{ background: '#fff', padding: '10px 20px', margin: 0, minHeight: '280px' }"
-  >
+  <a-layout-content>
     <router-view></router-view>
   </a-layout-content>
 </template>
+
+<style scoped>
+.ant-layout-content {
+  min-height: 280px;
+  margin: 0;
+  overflow-y: auto;
+}
+</style>

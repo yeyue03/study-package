@@ -14,7 +14,7 @@
           </span>
         </template>
         <a-menu-item v-for="item in subObj.childrens" :key="item.key">
-          <router-link :to="item.path" >{{ item.name }}</router-link>
+          <router-link :to="item.path">{{ item.name }}</router-link>
         </a-menu-item>
       </a-sub-menu>
     </a-menu>
@@ -22,16 +22,14 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref, watch } from 'vue'
-import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
+import { computed, defineComponent, ref, watch } from "vue";
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
+import { UserOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
   components: {
     UserOutlined,
-    LaptopOutlined,
-    NotificationOutlined,
   },
   setup() {
     const store = useStore();
@@ -41,21 +39,21 @@ export default defineComponent({
     const subNavList = ref([]);
 
     const menuList = computed(() => {
-      return store.getters['getMenu'];
-    })
+      return store.getters["getMenu"];
+    });
 
     const navTabList = computed(() => {
-      return store.getters['getNavTab'];
-    })
+      return store.getters["getNavTab"];
+    });
 
     const headNavKey = computed(() => {
-      return store.getters['getHeadNavKey'];
-    })
+      return store.getters["getHeadNavKey"];
+    });
 
     const selectedSiderNav = computed(() => {
-      const key = store.getters['getSiderNavKey'];
+      const key = store.getters["getSiderNavKey"];
       return [key];
-    })
+    });
 
     // 判断菜单是否已打开过
     const isHadTab = (key) => {
@@ -69,17 +67,17 @@ export default defineComponent({
       }
 
       return _bool;
-    }
+    };
 
     // 设置侧边栏导航数组 且默认打开该模块下第一个页面
     const setSiderNav = (headNavKey) => {
-      const arr = menuList.value.filter(item => item.key == headNavKey);
+      const arr = menuList.value.filter((item) => item.key == headNavKey);
       if (arr && arr.length) {
         const list = arr[0].childrens || [];
         subNavList.value = list;
         openKeys.value = [route.meta.parentKey];
       }
-    }
+    };
 
     // 设置导航相关store
     const setNavStore = (route) => {
@@ -88,24 +86,23 @@ export default defineComponent({
       if (meta.headKey != headNavKey.value) {
         setSiderNav(meta.headKey);
       } else {
-
         if (openKeys.value.indexOf(meta.parentKey) == -1) {
           openKeys.value.push(meta.parentKey);
         }
       }
 
-      store.dispatch('setHeadNavKey', meta.headKey);
-      store.dispatch('setSiderNavKey', meta.key);
+      store.dispatch("setHeadNavKey", meta.headKey);
+      store.dispatch("setSiderNavKey", meta.key);
 
       const _bool = isHadTab(meta.key);
       if (!_bool) {
         const tabObj = {
           path: route.fullPath,
-          ...meta
-        }
-        store.dispatch('pushNavTab', tabObj);
+          ...meta,
+        };
+        store.dispatch("pushNavTab", tabObj);
       }
-    }
+    };
 
     // 初次进入页面时
     if (route?.meta.key) {
@@ -115,20 +112,20 @@ export default defineComponent({
     // 监听路由
     watch(route, (newRoute) => {
       setNavStore(newRoute);
-    })
+    });
 
     // 监听顶部导航栏切换
     watch(headNavKey, (newVal) => {
       subNavList.value = [];
       setSiderNav(newVal);
-    })
+    });
 
     return {
       selectedSiderNav,
       openKeys,
       collapsed: ref(false),
       subNavList,
-    }
+    };
   },
-})
+});
 </script>

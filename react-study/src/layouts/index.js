@@ -6,6 +6,7 @@ import './index.css';
 import HeaderBox from './components/HeaderBox';
 import SliderBox from './components/SiderBox';
 import ContentBox from './components/ContentBox';
+import NavTags from './components/NavTags';
 
 import UserAPI from '@/api/user';
 import { setUserinfo, setMenu } from '@/store/actions/user';
@@ -45,9 +46,10 @@ class Layouts extends Component {
           <HeaderBox></HeaderBox>
           <Layout
             style={{
-              padding: '20px',
+              padding: '0 20px 20px',
             }}
           > 
+            <NavTags />
             <ContentBox></ContentBox>
           </Layout>
         </Layout>

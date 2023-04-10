@@ -11,7 +11,7 @@ const ContentBox = () => {
     <Content
       className="site-layout-background"
       style={{
-        padding: 24,
+        padding: 20,
         margin: 0,
         minHeight: 280,
       }}

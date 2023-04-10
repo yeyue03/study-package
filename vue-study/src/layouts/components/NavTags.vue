@@ -4,7 +4,7 @@
       <a-tag
         class="tags"
         :color="nowPath == item.path ? '#2db7f5' : null"
-        closable
+        :closable="item.path != '/home'"
         @close.prevent="handleClose(item, index)"
         @contextmenu.prevent="openMenu($event, item)"
       >
@@ -46,15 +46,15 @@ export default defineComponent({
 
     const closeMenu = () => {
       floatVisible.value = false;
-    }
+    };
 
     watch(floatVisible, (newVal) => {
       if (newVal) {
-        document.body.addEventListener('click', closeMenu);
+        document.body.addEventListener("click", closeMenu);
       } else {
-        document.body.removeEventListener('click', closeMenu);
+        document.body.removeEventListener("click", closeMenu);
       }
-    })
+    });
 
     const navTabList = computed(() => {
       return store.getters["getNavTab"];
@@ -65,7 +65,7 @@ export default defineComponent({
       floatVisible.value = true;
       floatLeft.value = e.offsetX;
       floatTop.value = e.offsetY;
-    }
+    };
 
     const handleClose = (item, index) => {
       store.dispatch("deleteNavTab", index);
@@ -77,7 +77,7 @@ export default defineComponent({
         return;
       }
 
-      let toPath = "/demo/list";
+      let toPath = "/home";
       if (index > 0) {
         toPath = navTabList.value[index - 1].path;
       } else if (navTabList.value[index]) {
@@ -92,14 +92,14 @@ export default defineComponent({
     };
 
     const cleartags = () => {
-      store.dispatch('setNavTab', []);
+      store.dispatch("setNavTab", []);
       floatKey.value = null;
       floatVisible.value = false;
 
       router.push({
-        path: "/demo/list",
+        path: "/home",
       });
-    }
+    };
 
     return {
       floatVisible,
@@ -124,7 +124,7 @@ export default defineComponent({
   align-items: center;
   width: 100%;
   height: 40px;
-  padding: 0 10px;
+  padding: 10px;
   margin-bottom: 15px;
   background: #fff;
   box-sizing: border-box;

@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import user from './modules/user';
+import user from "./modules/user";
 import navTag from "./modules/navTag";
 
 export default createStore({
@@ -9,6 +9,6 @@ export default createStore({
   actions: {},
   modules: {
     user,
-    navTag
+    navTag,
   },
 });
