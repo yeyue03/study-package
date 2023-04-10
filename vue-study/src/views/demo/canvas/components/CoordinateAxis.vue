@@ -5,11 +5,8 @@
       <span class="tag-span">1h:00m</span>
     </div>
 
-    <div class="canvas-box">
-      <canvas
-        ref="canvasRef"
-        :style="{width: '205px', height: '110px'}"
-      >
+    <div class="canvas-box" :style="canvasStyle">
+      <canvas ref="canvasRef">
         您的浏览器不支持canvas
       </canvas>
     </div>
@@ -57,13 +54,15 @@ export default defineComponent({
 
     nextTick(() => {
       ctx = canvasRef.value.getContext("2d");
+      // ctx.canvas.style.width = canvasWidth.value + 'px';
+      // ctx.canvas.style.height = canvasHeight.value + 'px';
+      ctx.width = canvasWidth.value;
+      ctx.height = canvasHeight.value;
       setCanvas();
     });
 
     const setCanvas = () => {
       ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value);
-      console.log("===== canvasWidth.value：", canvasWidth.value);
-      console.log("===== canvasHeight.value：", canvasHeight.value);
 
       ctx.strokeStyle = "#ccc";
       for (let i = 2; i < xLineNumber; i++) {
@@ -124,8 +123,8 @@ export default defineComponent({
       canvasRef,
       formState,
       canvasStyle: {
-        width: '205px',
-        height: '110px',
+        width: canvasWidth.value + 'px',
+        height: canvasHeight.value + 'px',
         'border-color': '#f5f5f5'
       },
       changeValue,

@@ -125,5 +125,27 @@ Mock.mock("/api/mock/user/getMenu", "post", {
         },
       ],
     },
+    {
+      key: "04",
+      name: "项目",
+      path: "/project",
+      childrens: [
+        {
+          key: "04-01",
+          name: "温度湿度",
+          path: "/aaa",
+          childrens: [
+            {
+              key: "04-01-01",
+              name: "图表",
+              path: "/project/charts",
+              componentName: "ProjectCharts",
+              headKey: "04",
+              parentKey: "04-01",
+            },
+          ],
+        },
+      ],
+    },
   ],
 });
