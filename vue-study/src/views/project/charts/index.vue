@@ -1,16 +1,16 @@
 <template>
   <div class="context-box">
-    <div class="sidebar-box">
+    <div class="sidebar-wrap">
       <Sidebar />
     </div>
 
-    <div class="main-box">
-      <div class="options-box">
-        顶部操作栏
+    <div class="main-wrap">
+      <div class="options-wrap">
+        <OptionsBtn />
       </div>
 
-      <div class="charts-box">
-        图表
+      <div class="charts-wrap">
+        <ControlRoom />
       </div>
     </div>
   </div>
@@ -19,11 +19,15 @@
 <script>
 import { defineComponent } from "vue";
 import Sidebar from './components/Sidebar.vue';
+import OptionsBtn from "./components/OptionsBtn.vue";
+import ControlRoom from './components/ControlRoom.vue';
 
 export default defineComponent({
   name: "ProjectCharts",
   components: {
-    Sidebar
+    Sidebar,
+    OptionsBtn,
+    ControlRoom
   },
   setup() {
     return {};
@@ -38,25 +42,26 @@ export default defineComponent({
   height: 100%;
   color: #fff;
 }
-.sidebar-box {
+.sidebar-wrap {
   width: 200px;
   height: 100%;
   background: #eee;
 }
-.main-box {
+.main-wrap {
   display: flex;
   flex: 1;
   flex-direction: column;
 
-  .options-box {
+  .options-wrap {
     width: 100%;
     height: 40px;
-    border: solid 1px #333;
   }
 
-  .charts-box {
+  .charts-wrap {
     flex: 1;
-    border: solid 1px #333;
+    width: 100%;
+    padding: 50px 0;
+    background: #333;
   }
 }
 </style>
