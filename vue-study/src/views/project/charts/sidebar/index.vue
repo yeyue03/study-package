@@ -13,19 +13,40 @@
           </div>
         </a-row>
 
-        <img class="img-little" src="https://img2.baidu.com/it/u=2846650635,2580703468&amp;fm=253&amp;app=138&amp;size=w931&amp;n=0&amp;f=JPEG&amp;fmt=auto?sec=1681232400&amp;t=d366aad5250c1762b388ccd811f87bcb" />
+        <img class="img-little" src="https://img2.baidu.com/it/u=2846650635,2580703468&amp;fm=253&amp;app=138&amp;size=w931&amp;n=0&amp;f=JPEG&amp;fmt=auto?sec=1681232400&amp;t=d366aad5250c1762b388ccd811f87bcb" @click="showInfoPopup" />
       </a-row>
+
+      <div v-show="visibleInfo" class="info-popup">
+        <InfoPopup @hideInfoPopup="hideInfoPopup" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { ref, defineComponent } from "vue";
+import InfoPopup from './InfoPopup.vue';
 
 export default defineComponent({
   name: "ChartSideBar",
+  components: {
+    InfoPopup
+  },
   setup() {
-    return {};
+    const visibleInfo = ref(false);
+    const showInfoPopup = () => {
+      visibleInfo.value = true;
+    }
+
+    const hideInfoPopup = () => {
+      visibleInfo.value = false;
+    }
+
+    return {
+      visibleInfo,
+      showInfoPopup,
+      hideInfoPopup
+    };
   },
 });
 </script>
@@ -35,7 +56,6 @@ export default defineComponent({
   width: 100%;
   height: 130px;
   padding: 5px;
-  background: #333;
   box-sizing: border-box;
 }
 .item-box {
@@ -60,5 +80,12 @@ export default defineComponent({
     width: 30px;
     height: 30px;
   }
+}
+
+.info-popup {
+  z-index: 5;
+  position: absolute;
+  top: -5px;
+  left: 190px;
 }
 </style>

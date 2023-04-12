@@ -11,7 +11,7 @@
 import { ref, defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'OptionsName',
+  name: 'OptionsBtn',
   setup() {
     const optionList = ref([
       {
@@ -35,9 +35,22 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .option-box {
+  position: relative;
   display: flex;
 }
+.option-box::before {
+  z-index: 2;
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 20px;
+  background: #aaa;
+}
 .option-item {
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   width: 50px;

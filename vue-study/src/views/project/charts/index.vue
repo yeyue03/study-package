@@ -1,36 +1,44 @@
 <template>
+  <a-row>
+    <a-button @click="showMainType = 'control'">坐标系</a-button>
+    <a-button @click="showMainType = 'chart'">折线图</a-button>
+  </a-row>
   <div class="context-box">
     <div class="sidebar-wrap">
       <Sidebar />
     </div>
 
     <div class="main-wrap">
-      <div class="options-wrap">
-        <OptionsBtn />
+      <div class="placeholder" v-show="showMainType == 'control'">
+        <ControlRoom />
       </div>
 
-      <div class="charts-wrap">
-        <ControlRoom />
+      <div class="placeholder" v-show="showMainType == 'chart'">
+        <ChartPanel />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import Sidebar from './components/Sidebar.vue';
-import OptionsBtn from "./components/OptionsBtn.vue";
-import ControlRoom from './components/ControlRoom.vue';
+import { ref, defineComponent } from "vue";
+import Sidebar from './sidebar';
+import ControlRoom from './control';
+import ChartPanel from './chartPanel';
 
 export default defineComponent({
   name: "ProjectCharts",
   components: {
     Sidebar,
-    OptionsBtn,
-    ControlRoom
+    ControlRoom,
+    ChartPanel
   },
   setup() {
-    return {};
+    const showMainType = ref('chart')
+
+    return {
+      showMainType,
+    };
   },
 });
 </script>
@@ -39,29 +47,22 @@ export default defineComponent({
 .context-box {
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 90%;
   color: #fff;
 }
 .sidebar-wrap {
   width: 200px;
   height: 100%;
-  background: #eee;
+  background: #333;
+  border: solid 1px #eee;
 }
 .main-wrap {
-  display: flex;
+  position: relative;
   flex: 1;
-  flex-direction: column;
 
-  .options-wrap {
+  .placeholder {
     width: 100%;
-    height: 40px;
-  }
-
-  .charts-wrap {
-    flex: 1;
-    width: 100%;
-    padding: 50px 0;
-    background: #333;
+    height: 100%;
   }
 }
 </style>
