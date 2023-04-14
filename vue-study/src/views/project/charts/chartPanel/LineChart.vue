@@ -1,5 +1,5 @@
 <template>
-  <div ref="lineChartRef" style="width: 100%; height: 260px"></div>
+  <div ref="lineChartRef" style="width: 700px; height: 300px"></div>
 </template>
 
 <script>
@@ -26,24 +26,12 @@ export default defineComponent({
     const setOptions = computed(() => {
       return {
         title: {
-          text: 'Temperature Change in the Coming Week'
+          text: '温度监控'
         },
         tooltip: {
           trigger: 'axis'
         },
         legend: {},
-        toolbox: {
-          show: true,
-          feature: {
-            dataZoom: {
-              yAxisIndex: 'none'
-            },
-            dataView: { readOnly: false },
-            magicType: { type: ['line', 'bar'] },
-            restore: {},
-            saveAsImage: {}
-          }
-        },
         xAxis: {
           type: 'category',
           boundaryGap: false,

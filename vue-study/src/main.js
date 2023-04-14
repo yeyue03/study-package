@@ -4,6 +4,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import "ant-design-vue/dist/antd.css";
+import '@/assets/font/iconfont.css';
 
 import "./router/promission";
 import "./mock";

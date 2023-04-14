@@ -34,7 +34,7 @@ export default defineComponent({
     ChartPanel
   },
   setup() {
-    const showMainType = ref('chart')
+    const showMainType = ref('control')
 
     return {
       showMainType,
@@ -53,7 +53,7 @@ export default defineComponent({
 .sidebar-wrap {
   width: 200px;
   height: 100%;
-  background: #333;
+  background: #aaa;
   border: solid 1px #eee;
 }
 .main-wrap {

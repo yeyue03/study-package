@@ -6,14 +6,13 @@
         <a-row>
           <img class="img-left" src="https://img0.baidu.com/it/u=2826200390,835824988&amp;fm=253&amp;app=120&amp;size=w931&amp;n=0&amp;f=JPEG&amp;fmt=auto?sec=1681232400&amp;t=ec1d56123fc60998f62a20b3aa0b3543" />
 
-          <div>
-            <img class="img-little" src="https://img0.baidu.com/it/u=3807993216,142160708&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=800&amp;h=851" />
-            <br />
-            <img class="img-little" src="https://img0.baidu.com/it/u=2439550938,2482018825&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500" />
+          <div class="icon-box">
+            <i class="iconfont icon-wendu"></i>
+            <i class="iconfont icon-shidu"></i>
           </div>
         </a-row>
 
-        <img class="img-little" src="https://img2.baidu.com/it/u=2846650635,2580703468&amp;fm=253&amp;app=138&amp;size=w931&amp;n=0&amp;f=JPEG&amp;fmt=auto?sec=1681232400&amp;t=d366aad5250c1762b388ccd811f87bcb" @click="showInfoPopup" />
+        <i class="iconfont icon-xinxiinfo21 icon-help" @click="showInfoPopup"></i>
       </a-row>
 
       <div v-show="visibleInfo" class="info-popup">
@@ -35,7 +34,7 @@ export default defineComponent({
   setup() {
     const visibleInfo = ref(false);
     const showInfoPopup = () => {
-      visibleInfo.value = true;
+      visibleInfo.value = !visibleInfo.value;
     }
 
     const hideInfoPopup = () => {
@@ -57,6 +56,8 @@ export default defineComponent({
   height: 130px;
   padding: 5px;
   box-sizing: border-box;
+  background: #333;
+  border: solid 1px #ccc;
 }
 .item-box {
   position: relative;
@@ -71,14 +72,28 @@ export default defineComponent({
   border-radius: 5px;
 
   .img-left {
-    width: 60px;
+    width: 55px;
     height: auto;
     margin-right: 5px;
   }
 
-  .img-little {
-    width: 30px;
-    height: 30px;
+  .icon-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+  }
+  .icon-wendu {
+    font-size: 20px;
+  }
+  .icon-help {
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    text-align: center;
+    color: #333;
+    background: #eee;
+    cursor: pointer;
   }
 }
 

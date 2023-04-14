@@ -5,33 +5,25 @@
     </div>
 
     <div class="control-box">
-      <div class="control-row">
-        <img class="img" src="https://img0.baidu.com/it/u=3807993216,142160708&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=800&amp;h=851" />
-        <div class="board">
-          <CoordinateAxis />
-        </div>
+      <template v-for="(list, key) in controlObj" :key="key">
+        <div class="control-row" @drop="dropEvent($event, key)" @dragover="dragoverEvent">
+          <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
-        <div class="bg-row">
-          <div class="gray-block"></div>
-        </div>
-      </div>
+          <div class="board" v-for="item in list" :key="item.id">
+            <CoordinateAxis :axisObj="item" />
+          </div>
 
-      <div class="control-row">
-        <img class="img" src="https://img0.baidu.com/it/u=3807993216,142160708&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=800&amp;h=851" />
-        <div class="board">
-          <CoordinateAxis />
+          <div class="bg-row">
+            <div class="gray-block"></div>
+          </div>
         </div>
-
-        <div class="bg-row">
-          <div class="gray-block"></div>
-        </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import OptionBtn from './OptionsBtn.vue';
 import CoordinateAxis from './CoordinateAxis.vue';
 
@@ -42,9 +34,55 @@ export default defineComponent({
     CoordinateAxis
   },
   setup() {
+    const controlObj = reactive({
+      temperature: [
+        {
+          icon: 'icon-wendu',
+          startValue: 20,
+          endValue: 10,
+          optionType: 'temperature-range',
+        }
+      ],
+      humidity: [{
+        icon: 'icon-shidu',
+        startValue: 20,
+        endValue: 10,
+        optionType: 'humidity-range'
+      }],
+    })
+    
+    // 拖拽释放事件 controlType: 所在面板类型
+    const dropEvent = (e, controlType) => {
+      e.preventDefault();
+      const optionType = e.dataTransfer.getData("optionType"); // 按钮类型
+      if (!optionType) {
+        return
+      }
+
+      let startValue = 10;
+      let endValue = 20;
+      if (optionType == 'temperature-constant' || optionType == 'humidity-constant') {
+        endValue = 10;
+      }
+
+      controlObj[controlType].push({
+        id: Math.random(),
+        startValue,
+        endValue,
+        optionType,
+        icon: controlType == 'temperature' ? 'icon-wendu' : 'icon-shidu'
+      })
+      console.log("=== optionType", optionType);
+    }
+
+    const dragoverEvent = e => {
+      e.preventDefault();
+    }
     
     return {
-
+      controlObj,
+      dropEvent,
+      dragoverEvent
     }
   },
 })
@@ -76,21 +114,37 @@ export default defineComponent({
   position: relative;
   display: flex;
   align-items: center;
-  margin: 5px 0;
+  margin: 10px 0;
 
-  .img {
+  .iconfont {
     z-index: 2;
     width: 40px;
-    height: 40px;
+    height: 50px;
     margin-right: 40px;
+    font-size: 30px;
+    text-align: center;
+    color: #f00;
     border: solid 1px #eee;
+    border-left: none;
+    background: #333;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 10px 3px #333;
+    border-radius: 3px;
+  }
+  .icon-shidu {
+    color: skyblue;
   }
 
   .board {
     z-index: 2;
-    border: solid 2px #eee;
-    border-radius: 3px;
-    padding: 3px;
+    margin: 0 20px;
+    border: solid 3px transparent;
+    box-shadow: 2px 2px 5px 1px #333;
+    border-radius: 5px;
+    background-clip: padding-box;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(to right, #ddd, #999);
   }
 }
 .bg-row {
@@ -101,12 +155,12 @@ export default defineComponent({
   display: flex;
   align-items: center;
   width: 100%;
-  height: 210px;
+  height: 208px;
 
   .gray-block {
     width: 100%;
     height: 40px;
-    background: #ddd;
+    background: #ccc;
   }
 }
 </style>

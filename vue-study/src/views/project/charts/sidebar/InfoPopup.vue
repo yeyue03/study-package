@@ -93,6 +93,7 @@ export default defineComponent({
   .title {
     font-size: 25px;
     padding: 0 10px;
+    background: linear-gradient(0deg, #666 30%, #333 70%);
   }
 
   .info-box {

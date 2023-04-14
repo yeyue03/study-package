@@ -9,6 +9,10 @@
       <canvas ref="canvasRef">
         您的浏览器不支持canvas
       </canvas>
+
+      <div class="icon-float">
+        <i :class="`iconfont ${formState.icon}`"></i>
+      </div>
     </div>
 
     <div class="tag-box">
@@ -35,14 +39,19 @@ export default defineComponent({
       default: () => {
         return 110;
       }
-    }
+    },
+    axisObj: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    },
   },
   setup(props) {
-    const { canvasWidth, canvasHeight } = toRefs(props); // 获取画布的宽、高
+    const { canvasWidth, canvasHeight, axisObj } = toRefs(props); // 获取画布的宽、高
 
     const formState = reactive({
-      startValue: 10,
-      endValue: 20,
+      ...axisObj.value
     });
 
     const canvasRef = ref();
@@ -63,8 +72,10 @@ export default defineComponent({
 
     const setCanvas = () => {
       ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value);
-
-      ctx.strokeStyle = "#ccc";
+      
+      ctx.beginPath();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#777";
       for (let i = 2; i < xLineNumber; i++) {
         // 循环画竖线 边界不要线，所以i从2开始
         ctx.beginPath();
@@ -80,7 +91,8 @@ export default defineComponent({
         ctx.stroke();
       }
 
-      ctx.strokeStyle = "black";
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
       // 绘制X轴
       ctx.beginPath();
       ctx.moveTo(axisSpace, canvasHeight.value - axisSpace);
@@ -94,6 +106,7 @@ export default defineComponent({
       ctx.stroke();
 
       // 绘制X轴的箭头
+      ctx.fillStyle = '#fff'
       ctx.moveTo(canvasWidth.value - axisSpace, canvasHeight.value - axisSpace - 5);
       ctx.lineTo(canvasWidth.value - axisSpace, canvasHeight.value - axisSpace + 5);
       ctx.lineTo(canvasWidth.value - axisSpace + 10, canvasHeight.value - axisSpace);
@@ -116,6 +129,9 @@ export default defineComponent({
     };
 
     const changeValue = () => {
+      if (formState.optionType == 'temperature-constant' || formState.optionType == 'humidity-constant') {
+        formState.startValue = formState.endValue;
+      }
       setCanvas();
     };
 
@@ -135,12 +151,32 @@ export default defineComponent({
 
 <style lang="less" scopede>
 .axis-wrap {
-  width: 205px;
+  width: 210px;
+  padding: 0 5px 0 0;
+  background: #333;
 }
 .canvas-box {
+  position: relative;
   width: 220px;
   height: 230px;
-  background: #eee;
+}
+.icon-float {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+
+  .iconfont {
+    font-size: 45px;
+    color: red;
+  }
+  .icon-shidu {
+    color: skyblue;
+  }
 }
 .tag-box {
   width: 100%;
