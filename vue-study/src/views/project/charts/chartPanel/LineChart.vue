@@ -1,5 +1,5 @@
 <template>
-  <div ref="lineChartRef" style="width: 100%; height: 300px"></div>
+  <div class="chart" ref="lineChartRef" style="width: 1200px"></div>
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default defineComponent({
     const setOptions = computed(() => {
       return {
         title: {
-          text: '温度监控'
+          text: ''
         },
         tooltip: {
           trigger: 'axis'
@@ -38,6 +38,14 @@ export default defineComponent({
         },
         yAxis: {
           type: 'value',
+          name: '温度监控统计图',
+          nameLocation: 'center',
+          // nameRotate: 90,
+          nameTextStyle:{
+            color:'#000',
+            fontSize: 14,
+            padding: [0, 0, 40, 0]
+          },
           axisLabel: {
             formatter: '{value} °C'
           },
@@ -98,18 +106,17 @@ export default defineComponent({
     let myChart = null;
     const initChart = () => {
       myChart = echarts.init(lineChartRef.value);
+      lineChartRef.value.style.width = '300px';
       myChart.setOption(setOptions.value);
-      window.onresize = function () {
-        //自适应大小
-        myChart.resize();
-      };
+      // 自适应大小
+      // window.onresize = function () {
+      //   myChart.resize();
+      // };
     };
 
     mitt.on("addLineChartData", (obj) => {
       xList.value.push(obj.xval);
       yList.value.push(obj.yval);
-      console.log("=== xList", xList.value);
-      console.log("=== yList", yList.value);
       initChart();
     });
 
@@ -128,3 +135,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="less" scoped>
+.chart {
+  width: 100%;
+  height: 400px
+}
+</style>

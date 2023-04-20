@@ -1,54 +1,53 @@
 <template>
-  <div class="control-wrap">
-    <div class="top-btn">
-      <OptionBtn />
-    </div>
+  <div class="control-box">
+    <template v-for="(list, key) in controlObj" :key="key">
+      <div class="control-row" @drop="dropEvent($event, key)" @dragover="dragoverEvent">
+        <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
-    <div class="control-box">
-      <template v-for="(list, key) in controlObj" :key="key">
-        <div class="control-row" @drop="dropEvent($event, key)" @dragover="dragoverEvent">
-          <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
-
-          <div class="board" v-for="item in list" :key="item.id">
-            <CoordinateAxis :axisObj="item" />
+        <div class="board" v-for="(item, index) in list" :key="item.id">
+          <div class="delete-btn" @click="deleteAxis(key, index)">
+            <i class="iconfont icon-cha"></i>
           </div>
-
-          <div class="bg-row">
-            <div class="gray-block"></div>
-          </div>
+          <CoordinateAxis :axisObj="item" />
         </div>
-      </template>
-    </div>
+
+        <div class="bg-row">
+          <div class="gray-block"></div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
 import { defineComponent, reactive } from 'vue';
 import { message } from 'ant-design-vue';
-import OptionBtn from './OptionsBtn.vue';
 import CoordinateAxis from './CoordinateAxis.vue';
 
 export default defineComponent({
   name: 'ControlRoom',
   components: {
-    OptionBtn,
     CoordinateAxis
   },
   setup() {
     const controlObj = reactive({
-      temperature: [
-        {
-          icon: 'icon-wendu',
-          startValue: 20,
-          endValue: 10,
-          valueType: 'range',
-        }
-      ],
-      humidity: [{
-        icon: 'icon-shidu',
+      temperature: [{
+        id: 1,
+        icon: 'icon-wendu',
+        duration: 70,
         startValue: 20,
         endValue: 10,
-        valueType: 'range'
+        valueType: 'range',
+        index: '01',
+      }],
+      humidity: [{
+        id: 2,
+        icon: 'icon-shidu',
+        duration: 70,
+        startValue: 20,
+        endValue: 10,
+        valueType: 'range',
+        index: '01',
       }],
     })
     
@@ -71,47 +70,40 @@ export default defineComponent({
         endValue = 10;
       }
 
+      let newIndex = controlObj[controlType].length + 1;
+      newIndex = newIndex < 10 ? '0' + newIndex : newIndex;
+
       controlObj[controlType].push({
         id: Math.random(),
+        icon: optionItem.icon,
+        duration: 70,
         startValue,
         endValue,
         valueType: optionItem.valueType,
-        icon: optionItem.icon
+        index: newIndex,
       })
     }
 
     const dragoverEvent = e => {
       e.preventDefault();
     }
+
+    const deleteAxis = (controlType, index) => {
+      controlObj[controlType].splice(index, 1)
+    }
     
     return {
       controlObj,
       dropEvent,
-      dragoverEvent
+      dragoverEvent,
+      deleteAxis
     }
   },
 })
 </script>
 
 <style lang="less" scoped>
-.control-wrap {
-  position: relative;
-  height: 100%;
-  background: #333;
-}
-.top-btn {
-  z-index: 2;
-  width: 100%;
-  height: 40px;
-}
-
 .control-box {
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  overflow: auto;
   width: 100%;
   padding: 90px 0 50px;
 }
@@ -119,9 +111,10 @@ export default defineComponent({
   position: relative;
   display: flex;
   align-items: center;
+  height: 214px;
   margin: 10px 0;
 
-  .iconfont {
+  & > .iconfont {
     z-index: 2;
     width: 40px;
     height: 50px;
@@ -141,6 +134,7 @@ export default defineComponent({
   }
 
   .board {
+    position: relative;
     z-index: 2;
     margin: 0 20px;
     border: solid 3px transparent;
@@ -151,6 +145,23 @@ export default defineComponent({
     background-origin: padding-box, border-box;
     background-image: linear-gradient(to right, #fff, #fff), linear-gradient(to right, #ddd, #999);
   }
+  .delete-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    background: #999;
+    cursor: pointer;
+
+    .iconfont {
+      font-size: 12px;
+      scale: .9;
+    }
+  }
 }
 .bg-row {
   z-index: 1;
@@ -160,7 +171,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   width: 100%;
-  height: 208px;
+  height: 214px;
 
   .gray-block {
     width: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-wrap">
+  <div class="panel-wrap">
     <LineChart />
   </div>
 </template>
@@ -20,9 +20,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.chart-wrap {
+.panel-wrap {
   width: 100%;
   height: 100%;
-  /* background: #333; */
+  background: #fff;
 }
 </style>

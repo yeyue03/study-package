@@ -1,8 +1,9 @@
 <template>
   <div class="axis-wrap">
     <div class="tag-box">
-      <span class="tag-span">Ramp 01</span>
-      <span class="tag-span">1h:00m</span>
+      <span class="tag-span">Ramp {{ formState.index }}</span>
+      <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
+      <a-input-number v-else class="tag-span" :min="1" :max="480" :step="1" :precision="0" :autofocus="true" v-model:value="formState.duration" @blur="showTimeInput" />
     </div>
 
     <div class="canvas-box" :style="canvasStyle">
@@ -23,7 +24,7 @@
 </template>
 
 <script>
-import { ref, defineComponent, nextTick, reactive, toRefs } from "vue";
+import { ref, defineComponent, nextTick, reactive, toRefs, computed } from "vue";
 
 export default defineComponent({
   name: "CoordinateAxis",
@@ -53,6 +54,13 @@ export default defineComponent({
     const formState = reactive({
       ...axisObj.value
     });
+
+    const durationConvertStr = computed(() => {
+      const hour = Math.floor(formState.duration / 60);
+      let minute = formState.duration % 60;
+      minute = minute < 10 ? '0' + minute : minute;
+      return hour + 'h:' + minute + 'm';
+    })
 
     const canvasRef = ref();
     let ctx = null;
@@ -135,15 +143,22 @@ export default defineComponent({
       setCanvas();
     };
 
+    // 是否显示时间段输入框
+    const showTimeInput = () => {
+      formState.isShowTimeInput = !formState.isShowTimeInput;
+    }
+
     return {
       canvasRef,
       formState,
+      durationConvertStr,
       canvasStyle: {
         width: canvasWidth.value + 'px',
         height: canvasHeight.value + 'px',
         'border-color': '#f5f5f5'
       },
       changeValue,
+      showTimeInput,
     };
   },
 });
@@ -180,7 +195,7 @@ export default defineComponent({
 }
 .tag-box {
   width: 100%;
-  padding: 10px 0;
+  height: 52px;
   display: flex;
   justify-content: space-around;
   align-items: center;
