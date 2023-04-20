@@ -3,7 +3,7 @@
     <div class="tag-box">
       <span class="tag-span">Ramp {{ formState.index }}</span>
       <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
-      <a-input-number v-else class="tag-span" :min="1" :max="480" :step="1" :precision="0" :autofocus="true" v-model:value="formState.duration" @blur="showTimeInput" />
+      <a-input-number v-else class="tag-span" :min="1" :max="1440" :step="1" :precision="0" :autofocus="true" v-model:value="formState.duration" @blur="showTimeInput" />
     </div>
 
     <div class="canvas-box" :style="canvasStyle">
@@ -48,7 +48,8 @@ export default defineComponent({
       }
     },
   },
-  setup(props) {
+  emits: ['changeAxis'],
+  setup(props, { emit }) {
     const { canvasWidth, canvasHeight, axisObj } = toRefs(props); // 获取画布的宽、高
 
     const formState = reactive({
@@ -141,11 +142,17 @@ export default defineComponent({
         formState.startValue = formState.endValue;
       }
       setCanvas();
+      changeAxis();
     };
 
     // 是否显示时间段输入框
     const showTimeInput = () => {
       formState.isShowTimeInput = !formState.isShowTimeInput;
+      changeAxis();
+    }
+
+    const changeAxis = () => {
+      emit('changeAxis', formState);
     }
 
     return {

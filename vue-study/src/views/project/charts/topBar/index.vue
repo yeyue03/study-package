@@ -1,7 +1,7 @@
 <template>
   <div class="top-bar">
     <div class="bar-left">
-      <div class="save-btn">
+      <div class="save-btn" @click="saveAxis">
         <i class="iconfont icon-save"></i>
       </div>
       <OptionsBtn v-show="pageName == 'Editor'" />
@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import { ref, defineComponent } from 'vue'
+import { ref, defineComponent } from 'vue';
+import { message } from 'ant-design-vue';
 import OptionsBtn from './OptionsBtn.vue';
 
 export default defineComponent({
@@ -40,9 +41,15 @@ export default defineComponent({
       console.log("= name", name);
       emit('changePageName', name)
     }
+
+    const saveAxis = () => {
+      message.success('点击保存')
+    }
+
     return {
       pageNameList,
-      setPageName
+      setPageName,
+      saveAxis
     }
   },
 })

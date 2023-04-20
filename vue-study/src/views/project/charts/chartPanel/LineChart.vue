@@ -1,5 +1,5 @@
 <template>
-  <div class="chart" ref="lineChartRef" style="width: 1200px"></div>
+  <div class="chart" ref="lineChartRef"></div>
 </template>
 
 <script>
@@ -9,18 +9,25 @@ import {
   onBeforeUnmount,
   onMounted,
   computed,
+  toRefs,
+  watch,
+  markRaw
 } from "vue";
 import echarts from "@/utils/echarts.js";
-import mitt from "@/utils/mitt.js";
 
 export default defineComponent({
   name: "LineChart",
-  props: {},
-  setup() {
+  props: {
+    dataSource: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
+  setup(props) {
+    const { dataSource } = toRefs(props);
     const lineChartRef = ref();
-
-    const xList = ref(["x轴1", "x轴2", "x轴3", "x轴4", "x轴5", "x轴6", "x轴7"]);
-    const yList = ref([820, 932, 901, 934, 1290, 1330, 1320]);
 
     const setOptions = computed(() => {
       return {
@@ -28,13 +35,38 @@ export default defineComponent({
           text: ''
         },
         tooltip: {
-          trigger: 'axis'
+          show: true,
+          trigger: 'axis',
         },
-        legend: {},
+        legend: {
+          textStyle: {
+            fontSize: 12,
+            color: '#fff'
+          }
+        },
         xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          type: 'value',
+          interval: 30, // 步长
+          min: 0, // 起始
+          max: function (value) {
+              return value.max;
+          },
+          axisLabel: {
+            formatter: (value) => {
+              value = parseInt(value);
+              let hour = Math.floor(value / 60);
+              let minute = value % 60;
+
+              hour = hour < 10 ? '0' + hour : hour;
+              minute = minute < 10 ? '0' + minute : minute;
+              return hour + ':' + minute;
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#fff',
+            },
+          },
         },
         yAxis: {
           type: 'value',
@@ -42,91 +74,75 @@ export default defineComponent({
           nameLocation: 'center',
           // nameRotate: 90,
           nameTextStyle:{
-            color:'#000',
+            color:'#fff',
             fontSize: 14,
             padding: [0, 0, 40, 0]
           },
           axisLabel: {
             formatter: '{value} °C'
           },
-          minorSplitLine: {
-            show: true
-          }
+          // minorSplitLine: {
+          //   show: true
+          // }
+          axisLine: {
+            lineStyle: {
+              color: '#fff',
+            },
+          },
         },
         series: [
           {
-            name: 'Highest',
             type: 'line',
-            data: [10, 11, 13, 11, 12, 12, 9],
-            markPoint: {
-              data: [
-                { type: 'max', name: 'Max' },
-                { type: 'min', name: 'Min' }
-              ]
-            },
-            markLine: {
-              data: [{ type: 'average', name: 'Avg' }]
-            },
             smooth: true
           },
-          {
-            name: 'Lowest',
-            type: 'line',
-            data: [1, -2, 2, 5, 3, 2, 0],
-            markPoint: {
-              data: [{ name: '周最低', value: -2, xAxis: 1, yAxis: -1.5 }]
-            },
-            markLine: {
-              data: [
-                { type: 'average', name: 'Avg' },
-                [
-                  {
-                    symbol: 'none',
-                    x: '90%',
-                    yAxis: 'max'
-                  },
-                  {
-                    symbol: 'circle',
-                    label: {
-                      position: 'start',
-                      formatter: 'Max'
-                    },
-                    type: 'max',
-                    name: '最高点'
-                  }
-                ]
-              ]
-            },
-            smooth: true
-          }
-        ]
+        ],
+        dataset: {
+          // dimensions: ['product', '预设', '实际'],
+          // source: [
+          //   { 'product': 70, '预设': 10, '实际': 12 },
+          //   { 'product': 150, '预设': 12, '实际': 15 },
+          //   { 'product': 200, '预设': 15, '实际': 18 },
+          //   { 'product': 280, '预设': 17, '实际': 20 },
+          //   { 'product': 350, '预设': 20, '实际': 22 },
+          // ]
+
+          // source: [
+          //   ['product', '预设', '实际'],
+          //   [70, 10, 15],
+          //   [150, 13, 14],
+          //   [200, 20, 18],
+          //   [250, 25, 28],
+          //   [320, 20, 22],
+          // ]
+
+          source: dataSource.value
+        }
       };
     });
 
-    let myChart = null;
+    watch(setOptions, () => {
+      initChart();
+    })
+
+    const myChart = ref();
     const initChart = () => {
-      myChart = echarts.init(lineChartRef.value);
-      lineChartRef.value.style.width = '300px';
-      myChart.setOption(setOptions.value);
+      if (!myChart.value) {
+        myChart.value = markRaw(echarts.init(lineChartRef.value));
+      }
+      myChart.value.setOption(setOptions.value);
       // 自适应大小
       // window.onresize = function () {
-      //   myChart.resize();
+      //   console.log("== 自适应");
+      //   myChart.value.resize();
       // };
     };
-
-    mitt.on("addLineChartData", (obj) => {
-      xList.value.push(obj.xval);
-      yList.value.push(obj.yval);
-      initChart();
-    });
 
     onMounted(() => {
       initChart();
     });
 
     onBeforeUnmount(() => {
-      myChart.dispose(); // 销毁实例
-      mitt.off("addLineChartData");
+      myChart.value.dispose(); // 销毁实例
     });
 
     return {

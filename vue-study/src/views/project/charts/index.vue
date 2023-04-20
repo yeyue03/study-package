@@ -11,7 +11,7 @@
         <ControlRoom />
       </div>
 
-      <div class="placeholder" v-show="pageName == 'Protocol'">
+      <div class="placeholder" v-show="pageName == 'Protocol' || 'Simulation'">
         <ChartPanel />
       </div>
     </div>
@@ -52,7 +52,7 @@ export default defineComponent({
 .context-box {
   display: flex;
   width: 100%;
-  height: 90%;
+  height: 100%;
   color: #fff;
 }
 .sidebar-wrap {

@@ -8,7 +8,7 @@
           <div class="delete-btn" @click="deleteAxis(key, index)">
             <i class="iconfont icon-cha"></i>
           </div>
-          <CoordinateAxis :axisObj="item" />
+          <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
         </div>
 
         <div class="bg-row">
@@ -23,6 +23,7 @@
 import { defineComponent, reactive } from 'vue';
 import { message } from 'ant-design-vue';
 import CoordinateAxis from './CoordinateAxis.vue';
+import mitt from "@/utils/mitt.js";
 
 export default defineComponent({
   name: 'ControlRoom',
@@ -31,24 +32,28 @@ export default defineComponent({
   },
   setup() {
     const controlObj = reactive({
-      temperature: [{
-        id: 1,
-        icon: 'icon-wendu',
-        duration: 70,
-        startValue: 20,
-        endValue: 10,
-        valueType: 'range',
-        index: '01',
-      }],
-      humidity: [{
-        id: 2,
-        icon: 'icon-shidu',
-        duration: 70,
-        startValue: 20,
-        endValue: 10,
-        valueType: 'range',
-        index: '01',
-      }],
+      temperature: [
+        // {
+        //   id: 1,
+        //   icon: 'icon-wendu',
+        //   duration: 70,
+        //   startValue: 20,
+        //   endValue: 10,
+        //   valueType: 'range',
+        //   index: '01',
+        // }
+      ],
+      humidity: [
+        // {
+        //   id: 2,
+        //   icon: 'icon-shidu',
+        //   duration: 70,
+        //   startValue: 20,
+        //   endValue: 10,
+        //   valueType: 'range',
+        //   index: '01',
+        // }
+      ],
     })
     
     // 拖拽释放事件 controlType: 所在面板类型
@@ -82,6 +87,8 @@ export default defineComponent({
         valueType: optionItem.valueType,
         index: newIndex,
       })
+
+      mitt.emit('changeControlObj', controlObj);
     }
 
     const dragoverEvent = e => {
@@ -89,14 +96,22 @@ export default defineComponent({
     }
 
     const deleteAxis = (controlType, index) => {
-      controlObj[controlType].splice(index, 1)
+      controlObj[controlType].splice(index, 1);
+      mitt.emit('changeControlObj', controlObj);
+    }
+
+    // 子组件值变更后同步变更父组件的值
+    const changeAxis = (childObj, item) => {
+      Object.assign(item, childObj);
+      mitt.emit('changeControlObj', controlObj);
     }
     
     return {
       controlObj,
       dropEvent,
       dragoverEvent,
-      deleteAxis
+      deleteAxis,
+      changeAxis
     }
   },
 })
@@ -134,6 +149,7 @@ export default defineComponent({
   }
 
   .board {
+    overflow: hidden;
     position: relative;
     z-index: 2;
     margin: 0 20px;
@@ -146,21 +162,30 @@ export default defineComponent({
     background-image: linear-gradient(to right, #fff, #fff), linear-gradient(to right, #ddd, #999);
   }
   .delete-btn {
+    display: none;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -6px;
+    right: -6px;
     width: 20px;
     height: 20px;
-    line-height: 20px;
-    text-align: center;
     border-radius: 50%;
     background: #999;
     cursor: pointer;
 
     .iconfont {
+      position: relative;
+      display: block;
+      left: 1px;
+      top: 2px;
       font-size: 12px;
-      scale: .9;
+      transform: scale(.6);
+      -moz-transform: scale(.6);
+      -webkit-transform: scale(.6);
+      -o-transform: scale(.6);
     }
+  }
+  .board:hover .delete-btn {
+    display: block;
   }
 }
 .bg-row {
