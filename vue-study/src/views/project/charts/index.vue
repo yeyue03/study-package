@@ -1,19 +1,17 @@
 <template>
-  <a-row>
-    <a-button @click="showMainType = 'control'">坐标系</a-button>
-    <a-button @click="showMainType = 'chart'">折线图</a-button>
-  </a-row>
   <div class="context-box">
     <div class="sidebar-wrap">
       <Sidebar />
     </div>
 
     <div class="main-wrap">
-      <div class="placeholder" v-show="showMainType == 'control'">
+      <TopBar :pageName="pageName" @changePageName="changePageName" />
+
+      <div class="placeholder" v-show="pageName == 'Editor'">
         <ControlRoom />
       </div>
 
-      <div class="placeholder" v-show="showMainType == 'chart'">
+      <div class="placeholder" v-show="pageName == 'Protocol'">
         <ChartPanel />
       </div>
     </div>
@@ -23,6 +21,7 @@
 <script>
 import { ref, defineComponent } from "vue";
 import Sidebar from './sidebar';
+import TopBar from './topBar';
 import ControlRoom from './control';
 import ChartPanel from './chartPanel';
 
@@ -30,14 +29,20 @@ export default defineComponent({
   name: "ProjectCharts",
   components: {
     Sidebar,
+    TopBar,
     ControlRoom,
     ChartPanel
   },
   setup() {
-    const showMainType = ref('control')
+    const pageName = ref('Editor')
+
+    const changePageName = name => {
+      pageName.value = name;
+    }
 
     return {
-      showMainType,
+      pageName,
+      changePageName
     };
   },
 });
@@ -59,10 +64,12 @@ export default defineComponent({
 .main-wrap {
   position: relative;
   flex: 1;
+  background: #333;
 
   .placeholder {
     width: 100%;
     height: 100%;
+    overflow: auto;
   }
 }
 </style>

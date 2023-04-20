@@ -54,18 +54,6 @@ export default defineComponent({
 .option-box {
   position: relative;
   display: flex;
-  padding-left: 15px;
-}
-.option-box::before {
-  z-index: 2;
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: block;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(180deg, #aaa, #555);
 }
 .option-item {
   position: relative;
@@ -82,8 +70,11 @@ export default defineComponent({
   cursor: pointer;
   
   .iconfont {
-    font-size: 28px;
+    font-size: 26px;
     line-height: 40px;
+  }
+  .icon-shidu {
+    font-size: 22px;
   }
   .line {
     position: absolute;
