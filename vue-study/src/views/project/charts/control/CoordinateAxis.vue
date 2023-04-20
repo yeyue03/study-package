@@ -129,7 +129,7 @@ export default defineComponent({
     };
 
     const changeValue = () => {
-      if (formState.optionType == 'temperature-constant' || formState.optionType == 'humidity-constant') {
+      if (formState.valueType == 'constant') {
         formState.startValue = formState.endValue;
       }
       setCanvas();

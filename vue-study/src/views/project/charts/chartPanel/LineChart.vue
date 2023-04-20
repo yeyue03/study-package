@@ -1,5 +1,5 @@
 <template>
-  <div ref="lineChartRef" style="width: 700px; height: 300px"></div>
+  <div ref="lineChartRef" style="width: 100%; height: 300px"></div>
 </template>
 
 <script>
@@ -8,7 +8,6 @@ import {
   defineComponent,
   onBeforeUnmount,
   onMounted,
-  toRefs,
   computed,
 } from "vue";
 import echarts from "@/utils/echarts.js";

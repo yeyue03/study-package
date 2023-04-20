@@ -24,6 +24,7 @@
 
 <script>
 import { defineComponent, reactive } from 'vue';
+import { message } from 'ant-design-vue';
 import OptionBtn from './OptionsBtn.vue';
 import CoordinateAxis from './CoordinateAxis.vue';
 
@@ -40,28 +41,33 @@ export default defineComponent({
           icon: 'icon-wendu',
           startValue: 20,
           endValue: 10,
-          optionType: 'temperature-range',
+          valueType: 'range',
         }
       ],
       humidity: [{
         icon: 'icon-shidu',
         startValue: 20,
         endValue: 10,
-        optionType: 'humidity-range'
+        valueType: 'range'
       }],
     })
     
     // 拖拽释放事件 controlType: 所在面板类型
     const dropEvent = (e, controlType) => {
       e.preventDefault();
-      const optionType = e.dataTransfer.getData("optionType"); // 按钮类型
-      if (!optionType) {
+      let optionItem = e.dataTransfer.getData("optionItem"); // 按钮类型
+      if (!optionItem) {
         return
+      }
+
+      optionItem = JSON.parse(optionItem);
+      if (controlType != optionItem.controlType) {
+        return message.warning('请选择对应类型按钮');
       }
 
       let startValue = 10;
       let endValue = 20;
-      if (optionType == 'temperature-constant' || optionType == 'humidity-constant') {
+      if (optionItem.valueType == 'constant') {
         endValue = 10;
       }
 
@@ -69,10 +75,9 @@ export default defineComponent({
         id: Math.random(),
         startValue,
         endValue,
-        optionType,
-        icon: controlType == 'temperature' ? 'icon-wendu' : 'icon-shidu'
+        valueType: optionItem.valueType,
+        icon: optionItem.icon
       })
-      console.log("=== optionType", optionType);
     }
 
     const dragoverEvent = e => {

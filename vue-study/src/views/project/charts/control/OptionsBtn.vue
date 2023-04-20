@@ -3,7 +3,7 @@
     <template v-for="item in optionList" :key="item.type">
       <div class="option-item" draggable="true" @dragstart="dragStartEvent($event, item)">
         <i :class="`iconfont ${item.icon}`"></i>
-        <div :class="{ 'line': true, 'rotate': item.isRotate }"></div>
+        <div :class="{ 'line': true, 'rotate': item.valueType == 'range' }"></div>
       </div>
     </template>
   </div>
@@ -18,18 +18,28 @@ export default defineComponent({
     const optionList = ref([
       {
         icon: 'icon-wendu',
-        isRotate: true,
-        type: 'temperature-range'
+        controlType: 'temperature',
+        valueType: 'range'
       },
       {
         icon: 'icon-wendu',
-        isRotate: false,
-        type: 'temperature-constant'
-      }
+        controlType: 'temperature',
+        valueType: 'constant'
+      },
+      {
+        icon: 'icon-shidu',
+        controlType: 'humidity',
+        valueType: 'range'
+      },
+      {
+        icon: 'icon-shidu',
+        controlType: 'humidity',
+        valueType: 'constant'
+      },
     ])
     
     const dragStartEvent = (e, item) => {
-      e.dataTransfer.setData("optionType", item.type);
+      e.dataTransfer.setData("optionItem", JSON.stringify(item));
     };
     
     return {
