@@ -99,6 +99,21 @@ Mock.mock("/api/mock/user/getMenu", "post", {
             },
           ],
         },
+        {
+          key: "02-03",
+          name: "Echarts",
+          path: "/chart/echarts",
+          childrens: [
+            {
+              key: "02-03-01",
+              name: "折线图",
+              path: "/chart/echarts/line",
+              componentName: "EchartsLine",
+              headKey: "02",
+              parentKey: "02-03",
+            },
+          ],
+        },
       ],
     },
     {
