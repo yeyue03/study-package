@@ -1,182 +1,169 @@
 <template>
-  <div class="chart" ref="lineChartRef"></div>
+  <div ref="chartRef"></div>
 </template>
 
 <script>
-import {
-  ref,
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  computed,
-  toRefs,
-  watch,
-  markRaw
-} from "vue";
-import echarts from "@/utils/echarts.js";
+import { ref, defineComponent, onMounted, toRefs, watch } from "vue";
+import { Chart } from "@antv/g2";
 
 export default defineComponent({
   name: "LineChart",
   props: {
-    dataSource: {
-      type: Array,
+    chartData: {
+      type: Object,
       default: () => {
         return []
+      }
+    },
+    chartConfig: {
+      type: Object,
+      default: () => {
+        return {}
       }
     }
   },
   setup(props) {
-    const { dataSource } = toRefs(props);
-    const lineChartRef = ref();
+    const { chartData, chartConfig } = toRefs(props);
+    const chartRef = ref();
+    const newChart = ref();
 
-    const setOptions = computed(() => {
-      return {
-        title: {
-          text: ''
-        },
-        tooltip: {
-          show: true,
-          trigger: 'axis',
-        },
-        legend: {
-          textStyle: {
-            fontSize: 12,
-            color: '#fff'
-          }
-        },
-        grid: {  
-          left: 50,
-          containLabel: true
-        },
-        xAxis: {
-          type: 'value',
-          interval: 30, // 步长
-          min: 0, // 起始
-          max: function (value) {
-            let minute = value.max % 60;
-            minute = Math.abs(30 - minute);
-            return value.max + minute;
-          },
-          axisLabel: {
-            formatter: (value) => {
-              value = parseInt(value);
-              let hour = Math.floor(value / 60);
-              let minute = value % 60;
-
-              hour = hour < 10 ? '0' + hour : hour;
-              minute = minute < 10 ? '0' + minute : minute;
-              return hour + ':' + minute;
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: '#fff',
-            },
-          },
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          }
-        },
-        yAxis: {
-          type: 'value',
-          name: '温度监控统计图',
-          nameLocation: 'center',
-          // nameRotate: 90,
-          nameTextStyle:{
-            color:'#fff',
-            fontSize: 14,
-            padding: [0, 0, 40, 0]
-          },
-          axisLabel: {
-            formatter: '{value} °C'
-          },
-          // minorSplitLine: {
-          //   show: true
-          // }
-          axisLine: {
-            lineStyle: {
-              color: '#fff',
-            },
-            symbolSize: 5,
-          },
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          }
-        },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            lineStyle: {
-              width: 5
-            },
-            symbolSize: 10
-          },
-        ],
-        dataset: {
-          // dimensions: ['product', '预设', '实际'],
-          // source: [
-          //   { 'product': 70, '预设': 10, '实际': 12 },
-          //   { 'product': 150, '预设': 12, '实际': 15 },
-          //   { 'product': 200, '预设': 15, '实际': 18 },
-          //   { 'product': 280, '预设': 17, '实际': 20 },
-          //   { 'product': 350, '预设': 20, '实际': 22 },
-          // ]
-
-          // source: [
-          //   ['product', '预设', '实际'],
-          //   [70, 10, 15],
-          //   [150, 13, 14],
-          //   [200, 20, 18],
-          //   [250, 25, 28],
-          //   [320, 20, 22],
-          // ]
-
-          source: dataSource.value
-        }
-      };
-    });
-
-    watch(setOptions, () => {
-      initChart();
+    watch(chartData, () => {
+      drawChart();
     })
 
-    const myChart = ref();
-    const initChart = () => {
-      if (!myChart.value) {
-        myChart.value = markRaw(echarts.init(lineChartRef.value));
-      }
-      myChart.value.setOption(setOptions.value);
-      // 自适应大小
-      // window.onresize = function () {
-      //   console.log("== 自适应");
-      //   myChart.value.resize();
-      // };
+    // 把分钟数转化为 hh:mm
+    const getDateStr = value => {
+      value = parseInt(value);
+      let hour = Math.floor(value / 60);
+      let minute = value % 60;
+
+      hour = hour < 10 ? '0' + hour : hour;
+      minute = minute < 10 ? '0' + minute : minute;
+      return hour + ':' + minute;
+    }
+
+    const drawChart = () => {
+      newChart.value = newChart.value || new Chart({
+        container: chartRef.value,
+        width: '100%',
+        autoFit: true,
+        height: 350,
+      });
+
+      const chart = newChart.value;
+
+      chart.data(chartData.value || []);
+
+      const config = chartConfig.value || {};
+      chart.scale({
+        time: {
+          nice: true,
+          min: 0, // 起始
+          max: config.max || 120,
+        },
+        value: {
+          nice: true,
+        },
+      });
+
+      chart.tooltip({
+         title: title => getDateStr(title),
+        showCrosshairs: true,
+        shared: true,
+      });
+      chart.legend(false);
+
+      chart.axis('time', {
+        title: {
+          text: config.xtitle || '',
+          style: {
+            fontSize: 15
+          }
+        },
+        // line: {
+        //   style: {
+        //     stroke: '#fff',
+        //   }
+        // },
+        // tickLine: {
+        //   style: {
+        //     stroke: '#fff',
+        //   }
+        // },
+        label: {
+          formatter: value => getDateStr(value),
+          // style: {
+          //   stroke: '#777',
+          //   fontStyle: 'normal',
+          //   fontFamily: '宋体'
+          // }
+        },
+        grid: {
+          line: {
+            type: 'line',
+            style: {
+              stroke: '#aaa',
+              lineDash: [4, 4]
+            }
+          }
+        },
+      });
+
+      chart.axis('value', {
+        title: {
+          text: config.ytitle || '',
+          style: {
+            fontSize: 15
+          }
+        },
+        label: {
+          formatter: (val) => {
+            return val + ' °C';
+          },
+        },
+        grid: {
+          line: {
+            type: 'line',
+            style: {
+              stroke: '#aaa',
+              lineDash: [4, 4]
+            },
+          }
+        },
+      });
+
+      chart
+        .line()
+        .position('time*value')
+        .color('type')
+        .shape('smooth')
+        .size(3);
+
+      chart
+        .point()
+        .position('time*value')
+        .color('type')
+        .shape('circle')
+        .size(5);
+
+      chart.render();
     };
 
     onMounted(() => {
-      initChart();
-    });
+      // const init = document.createEvent('Event')
+      // init.initEvent('resize', true, true);
+      // window.dispatchEvent(init);
+      // setTimeout(() => {
+      //   drawChart();
+      // }, 20);
 
-    onBeforeUnmount(() => {
-      myChart.value.dispose(); // 销毁实例
-    });
+      drawChart();
+    })
 
     return {
-      lineChartRef
+      chartRef
     };
   },
 });
 </script>
 
-<style lang="less" scoped>
-.chart {
-  // width: 100%;
-  width: 500px;
-  height: 400px
-}
-</style>

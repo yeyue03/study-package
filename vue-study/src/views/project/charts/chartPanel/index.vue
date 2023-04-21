@@ -1,8 +1,8 @@
 <template>
   <a-spin :spinning="pageLoading">
     <div class="panel-wrap">
-      <div v-for="(list, key) in dataSourceObj" :key="key">
-        <LineChart :dataSource="list" />
+      <div v-for="(obj, key) in dataSourceObj" :key="key">
+        <LineChart :chartData="obj.data" :chartConfig="obj.config" />
       </div>
     </div>
   </a-spin>
@@ -30,8 +30,8 @@ export default defineComponent({
     const { pageName } = toRefs(props);
 
     const dataSourceObj = reactive({
-      temperature: [],
-      humidity: [],
+      temperature: {},
+      humidity: {},
     })
 
     const pageLoading = ref(false);
@@ -47,19 +47,27 @@ export default defineComponent({
         return
       }
 
-      let arr = [
-        ['', '预设']
-      ];
+      let arr = [];
       let duration = 0;
+
       for (const item of list) {
         if (duration === 0) {
-          arr.push([duration, item.startValue])
+          arr.push({ type: '预设', time: 0, value: item.startValue })
         }
         duration += item.duration;
-        arr.push([duration, item.endValue])
+        arr.push({ type: '预设', time: duration, value: item.endValue })
       }
 
-      dataSourceObj[key] = arr;
+      // 计算x轴间隔30min 的最大值
+      let max = duration % 60;
+      max = duration + Math.abs(30 - max);
+
+      dataSourceObj[key]['data'] = arr;
+      dataSourceObj[key]['config'] = {
+        max,
+        xtitle: '2023年1月1日',
+        ytitle: key == 'temperature' ? '温度监控表' : '湿度监控表'
+      };
     }
 
     mitt.on('changeControlObj', (obj) => {
@@ -85,7 +93,8 @@ export default defineComponent({
 <style scoped>
 .panel-wrap {
   width: 100%;
-  padding-top: 30px;
+  padding: 50px 20px;
+  box-sizing: border-box;
   /* background: #fff; */
 }
 

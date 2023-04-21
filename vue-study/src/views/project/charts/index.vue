@@ -7,12 +7,14 @@
     <div class="main-wrap">
       <TopBar :pageName="pageName" @changePageName="changePageName" />
 
-      <div class="placeholder" v-show="pageName == 'Editor'">
-        <ControlRoom />
-      </div>
+      <div class="placeholder-wrap">
+        <div :class="{'placeholder': true, 'absolute-box': pageName != 'Editor'}">
+          <ControlRoom />
+        </div>
 
-      <div class="placeholder" v-show="pageName == 'Protocol' || pageName == 'Simulation'">
-        <ChartPanel :pageName="pageName" />
+        <div :class="{'placeholder': true, 'absolute-box': pageName == 'Editor'}">
+          <ChartPanel :pageName="pageName" />
+        </div>
       </div>
     </div>
   </div>
@@ -74,10 +76,21 @@ export default defineComponent({
   background: #333;
   box-sizing: border-box;
 
+  .placeholder-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
   .placeholder {
     width: 100%;
     height: 100%;
     overflow: auto;
+  }
+  .absolute-box {
+    position: absolute;
+    top: -2000px;
+    right: 2000px;
   }
 }
 </style>

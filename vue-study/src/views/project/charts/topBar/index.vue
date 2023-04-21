@@ -38,7 +38,6 @@ export default defineComponent({
     const pageNameList = ref(['Editor', 'Simulation', 'Protocol']);
 
     const setPageName = name => {
-      console.log("= name", name);
       emit('changePageName', name)
     }
 
