@@ -44,6 +44,10 @@ export default defineComponent({
             color: '#fff'
           }
         },
+        grid: {  
+          left: 50,
+          containLabel: true
+        },
         xAxis: {
           type: 'value',
           interval: 30, // 步长
