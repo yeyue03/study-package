@@ -12,7 +12,7 @@
       </div>
 
       <div class="placeholder" v-show="pageName == 'Protocol' || 'Simulation'">
-        <ChartPanel />
+        <ChartPanel :pageName="pageName" />
       </div>
     </div>
   </div>

@@ -1,13 +1,15 @@
 <template>
-  <div class="panel-wrap">
-    <div v-for="(list, key) in dataSourceObj" :key="key">
-      <LineChart :dataSource="list" />
+  <a-spin :spinning="pageLoading">
+    <div class="panel-wrap">
+      <div v-for="(list, key) in dataSourceObj" :key="key">
+        <LineChart :dataSource="list" />
+      </div>
     </div>
-  </div>
+  </a-spin>
 </template>
 
 <script>
-import { defineComponent, onBeforeUnmount, reactive } from 'vue';
+import { ref, defineComponent, onBeforeUnmount, reactive, toRefs, watch } from 'vue';
 import LineChart from './LineChart.vue';
 import mitt from "@/utils/mitt.js";
 
@@ -16,10 +18,28 @@ export default defineComponent({
   components: {
     LineChart
   },
-  setup() {
+  props: {
+    pageName: {
+      type: String,
+      default: () => {
+        return ''
+      }
+    }
+  },
+  setup(props) {
+    const { pageName } = toRefs(props);
+
     const dataSourceObj = reactive({
       temperature: [],
       humidity: [],
+    })
+
+    const pageLoading = ref(false);
+    watch(pageName, () => {
+      pageLoading.value = true;
+      setTimeout(() => {
+        pageLoading.value = false;
+      }, 500);
     })
 
     const setDataSourceObj = (key, list) => {
@@ -55,7 +75,8 @@ export default defineComponent({
     })
 
     return {
-      dataSourceObj
+      dataSourceObj,
+      pageLoading
     }
   },
 })
