@@ -49,7 +49,9 @@ export default defineComponent({
           interval: 30, // 步长
           min: 0, // 起始
           max: function (value) {
-              return value.max;
+            let minute = value.max % 60;
+            minute = Math.abs(30 - minute);
+            return value.max + minute;
           },
           axisLabel: {
             formatter: (value) => {
@@ -67,6 +69,11 @@ export default defineComponent({
               color: '#fff',
             },
           },
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
+            }
+          }
         },
         yAxis: {
           type: 'value',
@@ -88,12 +95,22 @@ export default defineComponent({
             lineStyle: {
               color: '#fff',
             },
+            symbolSize: 5,
           },
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
+            }
+          }
         },
         series: [
           {
             type: 'line',
-            smooth: true
+            smooth: true,
+            lineStyle: {
+              width: 5
+            },
+            symbolSize: 10
           },
         ],
         dataset: {
@@ -154,7 +171,8 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .chart {
-  width: 100%;
+  // width: 100%;
+  width: 500px;
   height: 400px
 }
 </style>
