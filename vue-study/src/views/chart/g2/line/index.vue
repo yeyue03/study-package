@@ -22,6 +22,11 @@ export default defineComponent({
       { month: 'Apr', city: 'London', temperature: 8.5 },
       { month: 'May', city: 'Tokyo', temperature: 18.4 },
       { month: 'May', city: 'London', temperature: 11.9 },
+    ];
+
+    const charData02 = [
+      { month: 'Jan', city: 'Tokyo', temperature: 10 },
+      { month: 'Jan', city: 'London', temperature: 5 },
       { month: 'Jun', city: 'Tokyo', temperature: 21.5 },
       { month: 'Jun', city: 'London', temperature: 15.2 },
       { month: 'Jul', city: 'Tokyo', temperature: 25.2 },
@@ -36,19 +41,31 @@ export default defineComponent({
       { month: 'Nov', city: 'London', temperature: 6.6 },
       { month: 'Dec', city: 'Tokyo', temperature: 9.6 },
       { month: 'Dec', city: 'London', temperature: 4.8 },
-    ];
+    ]
 
     const chartRef = ref();
+    const newChart = ref();
 
-    const drawChart = () => {
-      const chart = new Chart({
-        container: chartRef.value,
-        // width: 800,
-        autoFit: true,
-        height: 500,
-      });
+    setTimeout(() => {
+      console.log("=== 第二次赋值");
+      newChart.value.data(charData02);
+      newChart.value.render();
+      // drawChart(charData02);
+    }, 6000);
 
-      chart.data(charData);
+    const drawChart = (dataArr) => {
+      dataArr = dataArr || charData;
+      if (!newChart.value) {
+        newChart.value = new Chart({
+          container: chartRef.value,
+          // width: 800,
+          autoFit: true,
+          height: 500,
+        });
+      }
+
+      const chart = newChart.value;
+      chart.data(dataArr);
 
       chart.scale({
         month: {
