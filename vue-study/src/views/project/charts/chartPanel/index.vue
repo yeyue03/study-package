@@ -88,4 +88,8 @@ export default defineComponent({
   padding-top: 30px;
   /* background: #fff; */
 }
+
+:deep(.ant-spin-container::after) {
+  background: none;
+}
 </style>
