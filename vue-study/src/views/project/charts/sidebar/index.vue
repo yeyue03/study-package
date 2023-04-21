@@ -98,7 +98,6 @@ export default defineComponent({
 }
 
 .info-popup {
-  z-index: 5;
   position: absolute;
   top: -5px;
   left: 190px;

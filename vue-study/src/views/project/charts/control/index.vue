@@ -1,15 +1,17 @@
 <template>
-  <div class="control-box">
+  <div class="control-box" :style="`width: ${rowWidth}`">
     <template v-for="(list, key) in controlObj" :key="key">
-      <div class="control-row" @drop="dropEvent($event, key)" @dragover="dragoverEvent">
+      <div class="control-row" @drop="rowDropEvent($event, key)" @dragover="dragoverEvent">
         <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
-        <div class="board" v-for="(item, index) in list" :key="item.id">
-          <div class="delete-btn" @click="deleteAxis(key, index)">
-            <i class="iconfont icon-cha"></i>
+        <template v-for="(item, index) in list" :key="item.id">
+          <div class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
+            <div class="cha-btn" @click="deleteAxis(key, index)">
+              <i class="iconfont icon-cha"></i>
+            </div>
+            <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
           </div>
-          <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
-        </div>
+        </template>
 
         <div class="bg-row">
           <div class="gray-block"></div>
@@ -17,10 +19,14 @@
       </div>
     </template>
   </div>
+
+  <div class="delete-btn" @drop="deleteDropEvent" @dragover="dragoverEvent">
+    <i class="iconfont icon-shanchu"></i>
+  </div>
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue';
+import { ref, defineComponent, reactive } from 'vue';
 import { message } from 'ant-design-vue';
 import CoordinateAxis from './CoordinateAxis.vue';
 import mitt from "@/utils/mitt.js";
@@ -32,32 +38,12 @@ export default defineComponent({
   },
   setup() {
     const controlObj = reactive({
-      temperature: [
-        // {
-        //   id: 1,
-        //   icon: 'icon-wendu',
-        //   duration: 70,
-        //   startValue: 20,
-        //   endValue: 10,
-        //   valueType: 'range',
-        //   index: '01',
-        // }
-      ],
-      humidity: [
-        // {
-        //   id: 2,
-        //   icon: 'icon-shidu',
-        //   duration: 70,
-        //   startValue: 20,
-        //   endValue: 10,
-        //   valueType: 'range',
-        //   index: '01',
-        // }
-      ],
+      temperature: [],
+      humidity: [],
     })
     
     // 拖拽释放事件 controlType: 所在面板类型
-    const dropEvent = (e, controlType) => {
+    const rowDropEvent = (e, controlType) => {
       e.preventDefault();
       let optionItem = e.dataTransfer.getData("optionItem"); // 按钮类型
       if (!optionItem) {
@@ -89,15 +75,33 @@ export default defineComponent({
       })
 
       mitt.emit('changeControlObj', controlObj);
+      setRowWidth();
     }
 
     const dragoverEvent = e => {
       e.preventDefault();
     }
 
+    const boardDragStart = (e, key, index) => {
+      e.dataTransfer.setData("boardObj", JSON.stringify({ key, index }));
+    };
+
+    // board 拖拽到删除icon 处时触发删除事件
+    const deleteDropEvent = e => {
+      e.preventDefault();
+      let boardObj = e.dataTransfer.getData("boardObj"); // 按钮类型
+      if (!boardObj) {
+        return
+      }
+
+      boardObj = JSON.parse(boardObj);
+      deleteAxis(boardObj.key, boardObj.index);
+    }
+
     const deleteAxis = (controlType, index) => {
       controlObj[controlType].splice(index, 1);
       mitt.emit('changeControlObj', controlObj);
+      setRowWidth();
     }
 
     // 子组件值变更后同步变更父组件的值
@@ -105,10 +109,23 @@ export default defineComponent({
       Object.assign(item, childObj);
       mitt.emit('changeControlObj', controlObj);
     }
+
+    const rowWidth = ref('500px');
+    const setRowWidth = () => {
+      let maxLen = controlObj['temperature'].length;
+      if (maxLen < controlObj['humidity'].length) {
+        maxLen = controlObj['humidity'].length;
+      }
+
+      rowWidth.value = (80 + maxLen * 250 + 300) + 'px';
+    }
     
     return {
+      rowWidth,
       controlObj,
-      dropEvent,
+      rowDropEvent,
+      boardDragStart,
+      deleteDropEvent,
       dragoverEvent,
       deleteAxis,
       changeAxis
@@ -119,7 +136,7 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .control-box {
-  width: 100%;
+  min-width: 100%;
   padding: 90px 0 50px;
 }
 .control-row {
@@ -149,6 +166,7 @@ export default defineComponent({
   }
 
   .board {
+    width: 210px;
     overflow: hidden;
     position: relative;
     z-index: 2;
@@ -161,7 +179,7 @@ export default defineComponent({
     background-origin: padding-box, border-box;
     background-image: linear-gradient(to right, #fff, #fff), linear-gradient(to right, #ddd, #999);
   }
-  .delete-btn {
+  .cha-btn {
     display: none;
     position: absolute;
     top: -6px;
@@ -184,7 +202,7 @@ export default defineComponent({
       -o-transform: scale(.6);
     }
   }
-  .board:hover .delete-btn {
+  .board:hover .cha-btn {
     display: block;
   }
 }
@@ -202,6 +220,20 @@ export default defineComponent({
     width: 100%;
     height: 40px;
     background: #ccc;
+  }
+}
+
+.delete-btn {
+  position: absolute;
+  bottom: 25px;
+  right: 5px;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  .iconfont {
+    font-size: 50px;
+    color: #fff;
   }
 }
 </style>

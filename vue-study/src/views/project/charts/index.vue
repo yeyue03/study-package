@@ -11,7 +11,7 @@
         <ControlRoom />
       </div>
 
-      <div class="placeholder" v-show="pageName == 'Protocol' || 'Simulation'">
+      <div class="placeholder" v-show="pageName == 'Protocol' || pageName == 'Simulation'">
         <ChartPanel :pageName="pageName" />
       </div>
     </div>
@@ -50,21 +50,29 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .context-box {
-  display: flex;
+  position: relative;
   width: 100%;
   height: 100%;
   color: #fff;
 }
 .sidebar-wrap {
+  z-index: 20;
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 200px;
+  min-width: 200px;
   height: 100%;
   background: #aaa;
   border: solid 1px #eee;
 }
 .main-wrap {
+  width: 100%;
+  height: 100%;
+  padding-left: 200px;
   position: relative;
-  flex: 1;
   background: #333;
+  box-sizing: border-box;
 
   .placeholder {
     width: 100%;
