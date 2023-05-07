@@ -62,6 +62,7 @@ export default defineComponent({
           max: config.max || 120,
         },
         value: {
+          min: 0,
           nice: true,
         },
       });

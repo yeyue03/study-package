@@ -30,8 +30,20 @@ export default defineComponent({
     const { pageName } = toRefs(props);
 
     const dataSourceObj = reactive({
-      temperature: {},
-      humidity: {},
+      temperature: {
+        config: {
+          max: 120,
+          xtitle: '2023年1月1日',
+          ytitle: '温度监控表'
+        }
+      },
+      humidity: {
+        config: {
+          max: 120,
+          xtitle: '2023年1月1日',
+          ytitle: '湿度监控表'
+        }
+      },
     })
 
     const pageLoading = ref(false);
