@@ -6,11 +6,20 @@
         <div :class="{ 'line': true, 'rotate': item.valueType == 'range' }"></div>
       </div>
     </template>
+
+    <div class="option-scale">
+      <template v-for="item in scaleBtnList" :key="item.type">
+        <div class="option-item scale-btn" @click="scaleOption(item.type)">
+          <i :class="`iconfont ${item.icon}`"></i>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, defineComponent } from 'vue'
+import mitt from "@/utils/mitt.js";
 
 export default defineComponent({
   name: 'OptionsBtn',
@@ -37,14 +46,35 @@ export default defineComponent({
         valueType: 'constant'
       },
     ])
+
+    const scaleBtnList = ref([
+      {
+        icon: 'icon-fangda',
+        type: 'amplify'
+      },
+      {
+        icon: 'icon-suoxiao',
+        type: 'reduce'
+      },
+      {
+        icon: 'icon-huanyuan',
+        type: 'restore'
+      },
+    ])
     
     const dragStartEvent = (e, item) => {
       e.dataTransfer.setData("optionItem", JSON.stringify(item));
     };
+
+    const scaleOption = (type) => {
+      mitt.emit('scaleOption', type);
+    }
     
     return {
       optionList,
-      dragStartEvent
+      scaleBtnList,
+      dragStartEvent,
+      scaleOption
     }
   },
 })
@@ -92,6 +122,19 @@ export default defineComponent({
     -o-transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
     -moz-transform: rotate(-45deg);
+  }
+}
+
+.option-scale {
+  display: flex;
+  margin-left: 10px;
+}
+.scale-btn {
+  width: 40px;
+  text-align: center;
+
+  .iconfont {
+    font-size: 28px;
   }
 }
 </style>

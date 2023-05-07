@@ -1,23 +1,27 @@
 <template>
-  <div class="control-box" :style="`width: ${rowWidth}`">
-    <template v-for="(list, key) in controlObj" :key="key">
-      <div class="control-row" @drop="rowDropEvent($event, key)" @dragover="dragoverEvent">
-        <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
+  <div class="scale-wrap">
+    <div class="scale-box" :style="scaleStyle">
+      <div class="control-box" :style="`width: ${rowWidth}`">
+        <template v-for="(list, key) in controlObj" :key="key">
+          <div class="control-row" @drop="rowDropEvent($event, key)" @dragover="dragoverEvent">
+            <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
-        <template v-for="(item, index) in list" :key="item.id">
-          <div class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
-            <div class="cha-btn" @click="deleteAxis(key, index)">
-              <i class="iconfont icon-cha"></i>
+            <template v-for="(item, index) in list" :key="item.id">
+              <div class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
+                <div class="cha-btn" @click="deleteAxis(key, index)">
+                  <i class="iconfont icon-cha"></i>
+                </div>
+                <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
+              </div>
+            </template>
+
+            <div class="bg-row">
+              <div class="gray-block"></div>
             </div>
-            <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
           </div>
         </template>
-
-        <div class="bg-row">
-          <div class="gray-block"></div>
-        </div>
       </div>
-    </template>
+    </div>
   </div>
 
   <div class="delete-btn" @drop="deleteDropEvent" @dragover="dragoverEvent">
@@ -26,7 +30,7 @@
 </template>
 
 <script>
-import { ref, defineComponent, reactive } from 'vue';
+import { ref, defineComponent, reactive, computed } from 'vue';
 import { message } from 'ant-design-vue';
 import CoordinateAxis from './CoordinateAxis.vue';
 import mitt from "@/utils/mitt.js";
@@ -119,10 +123,41 @@ export default defineComponent({
 
       rowWidth.value = (80 + maxLen * 250 + 300) + 'px';
     }
+
+    const scaleObj = reactive({
+      width: 100,
+      height: 100,
+      scale: 1
+    })
+    const scaleStyle = computed(() => {
+      return {
+        width: `${scaleObj.width}%`,
+        height: `${scaleObj.height}%`,
+        transform: `scale(${scaleObj.scale})`,
+      }
+    })
+    mitt.on('scaleOption', (type) => {
+      if (type == 'amplify') { // 放大
+        scaleObj.width *= 0.8;
+        scaleObj.height *= 0.8;
+        scaleObj.scale *= 1.25;
+
+      } else if (type == 'reduce') { // 缩小
+        scaleObj.width = scaleObj.width >= 100 ? 100 : scaleObj.width * 1.25;
+        scaleObj.height = scaleObj.height >= 100 ? 100 : scaleObj.height * 1.25;
+        scaleObj.scale *= 0.8;
+
+      } else if (type == 'restore') { // 还原
+        scaleObj.width = 100;
+        scaleObj.height = 100;
+        scaleObj.scale = 1;
+      }
+    })
     
     return {
       rowWidth,
       controlObj,
+      scaleStyle,
       rowDropEvent,
       boardDragStart,
       deleteDropEvent,
@@ -135,16 +170,23 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
+.scale-wrap {
+  width: 100%;
+  padding: 90px 0 50px;
+}
+.scale-box {
+  transform-origin: left top;
+  padding: 0 0 10px;
+}
 .control-box {
   min-width: 100%;
-  padding: 90px 0 50px;
 }
 .control-row {
   position: relative;
   display: flex;
   align-items: center;
   height: 214px;
-  margin: 10px 0;
+  margin: 25px 0;
 
   & > .iconfont {
     z-index: 2;
@@ -226,7 +268,7 @@ export default defineComponent({
 .delete-btn {
   position: absolute;
   bottom: 25px;
-  right: 5px;
+  right: 25px;
   width: 60px;
   height: 60px;
   line-height: 60px;
