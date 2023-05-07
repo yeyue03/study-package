@@ -1,9 +1,13 @@
 <template>
+  <a-row justify="end">
+    <a-button size="small" @click="kzoom('l')">拉长</a-button>
+    <a-button size="small" @click="kzoom('s')" style="margin-left: 8px;">缩短</a-button>
+  </a-row>
   <div ref="chartRef"></div>
 </template>
 
 <script>
-import { ref, defineComponent, onMounted, toRefs, watch } from "vue";
+import { ref, defineComponent, onMounted, toRefs, watch, computed } from "vue";
 import { Chart } from "@antv/g2";
 
 export default defineComponent({
@@ -26,9 +30,11 @@ export default defineComponent({
     const { chartData, chartConfig } = toRefs(props);
     const chartRef = ref();
     const newChart = ref();
+    const maxNum = ref(120);
 
     watch(chartData, () => {
       drawChart();
+      maxNum.value = chartConfig.value?.max;
     })
 
     // 把分钟数转化为 hh:mm
@@ -42,7 +48,7 @@ export default defineComponent({
       return hour + ':' + minute;
     }
 
-    const drawChart = () => {
+    const drawChart = (xMax) => {
       newChart.value = newChart.value || new Chart({
         container: chartRef.value,
         width: '100%',
@@ -51,15 +57,15 @@ export default defineComponent({
       });
 
       const chart = newChart.value;
-
       chart.data(chartData.value || []);
 
       const config = chartConfig.value || {};
+
       chart.scale({
         time: {
           nice: true,
           min: 0, // 起始
-          max: config.max || 120,
+          max: xMax || config.max || 120,
         },
         value: {
           min: 0,
@@ -161,8 +167,33 @@ export default defineComponent({
       drawChart();
     })
 
+    const kzoom = type => {
+      if (type == 'l') {
+        maxNum.value += 30;
+
+      } else if (type == 's' && maxNum.value > 60) {
+        maxNum.value -= 30;
+      }
+
+      const chart = newChart.value;
+      chart.scale({
+        time: {
+          nice: true,
+          min: 0, // 起始
+          max: maxNum.value,
+        },
+        value: {
+          min: 0,
+          nice: true,
+        },
+      });
+
+      chart.render();
+    }
+
     return {
-      chartRef
+      chartRef,
+      kzoom
     };
   },
 });
