@@ -11,6 +11,8 @@
 <script lang="ts">
 import { ref, defineComponent } from 'vue'
 import { message } from 'ant-design-vue';
+import { listenerControlChange } from '../useMitt';
+import type { ControlObj } from '../types';
 
 export default defineComponent({
   name: 'UpOptionsBtn',
@@ -43,8 +45,16 @@ export default defineComponent({
       },
     ])
 
+    const saveDataObj = ref();
+    listenerControlChange((obj: ControlObj) => {
+      saveDataObj.value = obj;
+    })
+
     const choseOption = (type: string) => {
-      message.success(type)
+      message.success(type);
+      if (type == 'save') {
+        console.log('保存的值：', saveDataObj.value)
+      }
     }
     
     return {

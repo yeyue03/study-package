@@ -7,6 +7,14 @@
             <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
             <template v-for="(item, index) in list" :key="item.id">
+              <div v-if="key == 'temperature'" class="reservation-wrap">
+                <div class="board reservation-board">
+                  <div class="clock-timer">
+                    <a-date-picker show-time v-model:value="item.time" @change="onChange" @ok="onOk" />
+                  </div>
+                </div>
+              </div>
+              
               <div class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
                 <div class="cha-btn" @click="deleteAxis(key, index)">
                   <i class="iconfont icon-cha"></i>
@@ -177,6 +185,9 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
+@rowHeight: 214px;
+@2x-rowHeight: 453px;
+
 .scale-wrap {
   width: 100%;
   padding: 90px 0 50px;
@@ -192,7 +203,7 @@ export default defineComponent({
   position: relative;
   display: flex;
   align-items: center;
-  height: 214px;
+  height: @rowHeight;
   margin: 25px 0;
 
   & > .iconfont {
@@ -254,6 +265,20 @@ export default defineComponent({
   .board:hover .cha-btn {
     display: block;
   }
+
+  // 预约板块
+  .reservation-wrap {
+    height: @rowHeight;
+  }
+  .reservation-board {
+    width: 170px;
+    height: @2x-rowHeight;
+  }
+  .clock-timer {
+    width: 100%;
+    height: 100%;
+    background: #333;
+  }
 }
 .bg-row {
   z-index: 1;
@@ -263,7 +288,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   width: 100%;
-  height: 214px;
+  height: @rowHeight;
 
   .gray-block {
     width: 100%;
