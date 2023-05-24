@@ -5,9 +5,18 @@ import { resolve } from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  base: './', // 配置打包相对路径
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
     }
-  }
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        charset: false,
+        additionalData: '@import "./src/assets/style/global.less";',
+      },
+    },
+  },
 })
