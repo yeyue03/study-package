@@ -8,6 +8,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Home',
     component: Home,
   },
+  {
+    path: '/device',
+    name: 'Device',
+    component: () => import('@/views/device/controller/index.vue')
+  }
 ];
  
 const router = createRouter({

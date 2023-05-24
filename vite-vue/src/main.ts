@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import 'ant-design-vue/dist/antd.css'
+import '@/assets/font/iconfont.css';
 import './style.css'
 
 import Antd from 'ant-design-vue';
