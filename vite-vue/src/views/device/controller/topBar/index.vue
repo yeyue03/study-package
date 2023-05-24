@@ -1,10 +1,8 @@
 <template>
   <div class="top-bar">
     <div class="bar-left">
-      <div class="save-btn" @click="saveAxis">
-        <i class="iconfont icon-save"></i>
-      </div>
-      <OptionsBtn v-show="pageName == 'Editor'" />
+      <UpOptionsBtn v-show="pageName == 'Editor'" />
+      <DownOptionsBtn v-show="pageName == 'Editor'" />
     </div>
 
     <div class="nav-box">
@@ -17,13 +15,14 @@
 
 <script lang="ts">
 import { ref, defineComponent } from 'vue';
-import { message } from 'ant-design-vue';
-import OptionsBtn from './OptionsBtn.vue';
+import UpOptionsBtn from './UpOptionsBtn.vue';
+import DownOptionsBtn from './DownOptionsBtn.vue';
 
 export default defineComponent({
   name: 'TopBar',
   components: {
-    OptionsBtn
+    UpOptionsBtn,
+    DownOptionsBtn
   },
   props: {
     pageName: {
@@ -41,14 +40,9 @@ export default defineComponent({
       emit('changePageName', name)
     }
 
-    const saveAxis = () => {
-      message.success('点击保存')
-    }
-
     return {
       pageNameList,
       setPageName,
-      saveAxis
     }
   },
 })
@@ -79,26 +73,6 @@ export default defineComponent({
 
 .bar-left {
   display: flex;
-}
-.save-btn {
-  position: relative;
-  z-index: 2;
-  width: 40px;
-  height: 40px;
-  margin: 3px 20px 0 3px;
-  line-height: 40px;
-  text-align: center;
-  background: #333;
-  border-top: solid 2px #aaa;
-  border-left: solid 2px #aaa;
-  border-bottom: solid 1px #555;
-  border-right: solid 1px #555;
-  box-shadow: -2px -2px 3px 1px #333;
-  cursor: pointer;
-
-  .iconfont {
-    font-size: 28px;
-  }
 }
 
 .nav-box {
