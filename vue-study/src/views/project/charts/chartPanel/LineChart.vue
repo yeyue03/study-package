@@ -74,7 +74,7 @@ export default defineComponent({
       });
 
       chart.tooltip({
-         title: title => getDateStr(title),
+        title: title => getDateStr(title),
         showCrosshairs: true,
         shared: true,
       });

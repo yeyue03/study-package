@@ -105,6 +105,14 @@ Mock.mock("/api/mock/user/getMenu", "post", {
               headKey: "02",
               parentKey: "02-02",
             },
+            {
+              key: "02-02-02",
+              name: "镜像折线图",
+              path: "/chart/g2/mirrorLine",
+              componentName: "G2MirrorLine",
+              headKey: "02",
+              parentKey: "02-02",
+            },
           ],
         },
         {
