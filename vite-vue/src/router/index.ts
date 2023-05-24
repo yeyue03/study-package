@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from '../views/home/index.vue';
+import Home from '@/views/home/index.vue';
  
 // 路由类型:RouteRecordRaw
 const routes: Array<RouteRecordRaw> = [
