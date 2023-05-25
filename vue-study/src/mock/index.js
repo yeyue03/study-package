@@ -113,6 +113,14 @@ Mock.mock("/api/mock/user/getMenu", "post", {
               headKey: "02",
               parentKey: "02-02",
             },
+            {
+              key: "02-02-03",
+              name: "tooltip联动",
+              path: "/chart/g2/tooltipLine",
+              componentName: "G2TooltipLine",
+              headKey: "02",
+              parentKey: "02-02",
+            },
           ],
         },
         {
