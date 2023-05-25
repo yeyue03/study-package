@@ -28,7 +28,7 @@ import LineChart from "./components/LineChart.vue";
 import AddValue from "./components/AddValue.vue";
 
 export default defineComponent({
-  name: "DemoDrag",
+  name: "DemoDragBtn",
   components: {
     LineChart,
     AddValue,
