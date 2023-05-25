@@ -8,6 +8,14 @@
     </template>
 
     <div class="option-scale">
+      <template v-for="item in loopBtnList" :key="item.type">
+        <div class="option-item scale-btn" draggable="true" @dragstart="dragStartEvent($event, item)">
+          <i :class="`iconfont ${item.icon}`"></i>
+        </div>
+      </template>
+    </div>
+
+    <div class="option-scale">
       <template v-for="item in scaleBtnList" :key="item.type">
         <div class="option-item scale-btn" @click="scaleOption(item.type)">
           <i :class="`iconfont ${item.icon}`"></i>
@@ -21,7 +29,6 @@
 import { ref, defineComponent } from 'vue'
 import type { OptionsItem } from '../types';
 import { setScaleOption } from '../useMitt';
-import { message } from 'ant-design-vue';
 
 export default defineComponent({
   name: 'DownOptionsBtn',
@@ -49,6 +56,19 @@ export default defineComponent({
       },
     ])
 
+    const loopBtnList = ref([
+      {
+        name: '预约',
+        icon: 'icon-yuyueguanli',
+        btnType: 'reservation'
+      },
+      {
+        name: '循环',
+        icon: 'icon-xunhuan',
+        btnType: 'loop'
+      },
+    ])
+
     const scaleBtnList = ref([
       {
         name: '放大',
@@ -65,16 +85,6 @@ export default defineComponent({
         icon: 'icon-huanyuan',
         type: 'restore'
       },
-      {
-        name: '预约',
-        icon: 'icon-yuyueguanli',
-        type: 'reservation'
-      },
-      {
-        name: '循环',
-        icon: 'icon-xunhuan',
-        type: 'loop'
-      },
     ])
     
     const dragStartEvent = (e: any, item: OptionsItem) => {
@@ -87,6 +97,7 @@ export default defineComponent({
     
     return {
       optionList,
+      loopBtnList,
       scaleBtnList,
       dragStartEvent,
       scaleOption,

@@ -7,15 +7,17 @@
             <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
             <template v-for="(item, index) in list" :key="item.id">
-              <div v-if="key == 'temperature'" class="reservation-wrap">
-                <div class="board reservation-board">
-                  <div class="clock-timer">
-                    <a-date-picker show-time v-model:value="item.time" @change="onChange" @ok="onOk" />
+              <template v-if="item.btnType">
+                <div class="reservation-wrap">
+                  <div v-if="item.btnType == 'reservation' && key == 'temperature'" class="board reservation-board">
+                    <div class="clock-timer">
+                      <a-date-picker show-time v-model:value="item.date" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </template>
               
-              <div class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
+              <div v-else class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
                 <div class="cha-btn" @click="deleteAxis(key, index)">
                   <i class="iconfont icon-cha"></i>
                 </div>
@@ -43,7 +45,8 @@ import { message } from 'ant-design-vue';
 import CoordinateAxis from './CoordinateAxis.vue';
 import { setControlChange } from '../useMitt';
 import { listenerScaleOption, removeScaleListener } from '../useMitt';
-import type { ControlChildObj } from '../types';
+import type { OptionsItem, ControlChildObj } from '../types';
+import { log } from 'console';
 
 export default defineComponent({
   name: 'ControlRoom',
@@ -55,20 +58,31 @@ export default defineComponent({
       temperature: [],
       humidity: [],
     })
-    
-    // 拖拽释放事件 controlType: 所在面板类型
-    const rowDropEvent = (e: any, controlType: string) => {
-      e.preventDefault();
-      let optionItem = e.dataTransfer.getData("optionItem"); // 按钮类型
-      if (!optionItem) {
-        return
+
+    // 放置通用按钮
+    const setGeneralBtn = (optionItem: OptionsItem, controlType: string) => {
+      function addData() {
+        controlObj[controlType].push({
+          id: Math.random(),
+          icon: optionItem.icon,
+          date: undefined,
+          loop: 1,
+          btnType: optionItem.btnType
+        })
+      }
+      addData();
+
+      if (optionItem.btnType == 'reservation') { // 预约 因为一个预约Box同时跨了温度、湿度两行，所以另一个数组也要加数据，但湿度行不显示该盒子
+        controlType = controlType == 'temperature' ? 'humidity' : 'temperature';
+        addData();
       }
 
-      optionItem = JSON.parse(optionItem);
-      if (controlType != optionItem.controlType) {
-        return message.warning('请选择对应类型按钮');
-      }
+      setControlChange(controlObj);
+      setRowWidth();
+    }
 
+    // 放置坐标版
+    const setAxisBoard = (optionItem: OptionsItem, controlType: string) => {
       let startValue = 10;
       let endValue = 20;
       if (optionItem.valueType == 'constant') {
@@ -90,6 +104,26 @@ export default defineComponent({
 
       setControlChange(controlObj);
       setRowWidth();
+    }
+    
+    // 拖拽释放事件 controlType: 所在面板类型
+    const rowDropEvent = (e: any, controlType: string) => {
+      e.preventDefault();
+      let optionItem = e.dataTransfer.getData("optionItem"); // 按钮类型
+      if (!optionItem) {
+        return
+      }
+
+      optionItem = JSON.parse(optionItem);
+      if (controlType != optionItem.controlType && !optionItem.btnType) {
+        return message.warning('请选择对应类型按钮');
+      }
+
+      if (optionItem.btnType) { // 预约、循环等通用按钮
+        setGeneralBtn(optionItem, controlType);
+      } else {
+        setAxisBoard(optionItem, controlType);
+      }
     }
 
     const dragoverEvent = (e: Event) => {
@@ -268,10 +302,13 @@ export default defineComponent({
 
   // 预约板块
   .reservation-wrap {
+    width: 170px;
+    margin: 0 20px;
     height: @rowHeight;
   }
   .reservation-board {
-    width: 170px;
+    width: 100%;
+    margin: 0;
     height: @2x-rowHeight;
   }
   .clock-timer {
