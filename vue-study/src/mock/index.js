@@ -56,13 +56,21 @@ Mock.mock("/api/mock/user/getMenu", "post", {
             {
               key: "01-02-02",
               name: "按钮拖拽新增",
-              path: "/demo/drag",
-              componentName: "DemoDrag",
+              path: "/demo/dragBtn",
+              componentName: "DemoDragBtn",
               headKey: "01",
               parentKey: "01-02",
             },
             {
               key: "01-02-03",
+              name: "盒子拖拽排序",
+              path: "/demo/dragBox",
+              componentName: "DemoDragBox",
+              headKey: "01",
+              parentKey: "01-02",
+            },
+            {
+              key: "01-02-04",
               name: "盒子放大缩小",
               path: "/demo/scale",
               componentName: "DemoScale",
