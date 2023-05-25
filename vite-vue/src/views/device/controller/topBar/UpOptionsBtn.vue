@@ -5,18 +5,25 @@
         <i :class="`iconfont ${item.icon}`"></i>
       </div>
     </template>
+
+    <!-- 方案保存弹窗 -->
+    <PopSaveScheme ref="popSaveSchemeRef" />
   </div>
 </template>
 
 <script lang="ts">
 import { ref, defineComponent } from 'vue'
-import { message } from 'ant-design-vue';
 import { listenerControlChange } from '../useMitt';
 import type { ControlObj } from '../types';
+import PopSaveScheme from './PopSaveScheme.vue';
 
 export default defineComponent({
   name: 'UpOptionsBtn',
+  components: {
+    PopSaveScheme
+  },
   setup() {
+    const popSaveSchemeRef = ref();
     const optionList = ref([
       {
         name: '保存',
@@ -51,13 +58,13 @@ export default defineComponent({
     })
 
     const choseOption = (type: string) => {
-      message.success(type);
       if (type == 'save') {
-        console.log('保存的值：', saveDataObj.value)
+        popSaveSchemeRef.value.showModal(saveDataObj.value);
       }
     }
     
     return {
+      popSaveSchemeRef,
       optionList,
       choseOption,
     }
