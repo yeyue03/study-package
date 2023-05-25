@@ -171,9 +171,10 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less" scopede>
+<style lang="less" scoped>
 .axis-wrap {
   width: 210px;
+  height: 100%;
   padding: 0 5px 0 0;
   background: #333;
 }
@@ -202,7 +203,7 @@ export default defineComponent({
 }
 .tag-box {
   width: 100%;
-  height: 52px;
+  height: 48px;
   display: flex;
   justify-content: space-around;
   align-items: center;

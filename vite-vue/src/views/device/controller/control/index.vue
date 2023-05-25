@@ -8,17 +8,44 @@
 
             <template v-for="(item, index) in list" :key="item.id">
               <template v-if="item.btnType">
-                <div class="reservation-wrap">
-                  <div v-if="item.btnType == 'reservation' && key == 'temperature'" class="board reservation-board">
+                <!-- 预约 -->
+                <div v-if="item.btnType == 'reservation'" class="reservation-wrap" draggable="true" @dragstart="boardDragStart($event, key, index, item.btnType)">
+                  <div v-if="key == 'temperature'" class="board reservation-board">
+                    <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
+                      <i class="iconfont icon-cha"></i>
+                    </div>
                     <div class="clock-timer">
-                      <a-date-picker show-time v-model:value="item.date" />
+                      <div class="tag-box">
+                        <span class="tag-span">CLOCK TIMER</span>
+                      </div>
+                      <a-date-picker show-time v-model:value="item.date" valueFormat="YYYY-MM-DD HH:mm:ss" @change="changeDate($event, index)" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 循环 -->
+                <div v-if="item.btnType == 'loop'" class="board loop-board" draggable="true" @dragstart="boardDragStart($event, key, index, item.btnType)">
+                  <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
+                    <i class="iconfont icon-cha"></i>
+                  </div>
+                  <div class="loop-box">
+                    <div class="tag-box">
+                      <span class="tag-span">{{ item.isRight ? 'LOOP' : 'JUMP TARGET' }}</span>
+                    </div>
+                    <i :class="`iconfont ${item.icon}`"></i>
+                    <div class="tag-box">
+                      <template v-if="item.isRight">
+                        <span v-if="!item.isshowLoopInput" class="loop-span" @click="showLoopInput(item)">{{ item.loop }}x</span>
+                        <a-input-number v-else class="loop-span" :min="1" :max="100" :step="1" :precision="0" :autofocus="true" v-model:value="item.loop" @blur="showLoopInput(item)" />
+                      </template>
                     </div>
                   </div>
                 </div>
               </template>
               
+              <!-- 坐标轴板块 -->
               <div v-else class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
-                <div class="cha-btn" @click="deleteAxis(key, index)">
+                <div class="cha-btn" @click="deleteBoard(key, index)">
                   <i class="iconfont icon-cha"></i>
                 </div>
                 <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
@@ -61,20 +88,34 @@ export default defineComponent({
 
     // 放置通用按钮
     const setGeneralBtn = (optionItem: OptionsItem, controlType: string) => {
-      function addData() {
+      function addReservationData(controlType: string) {
         controlObj[controlType].push({
           id: Math.random(),
           icon: optionItem.icon,
           date: undefined,
-          loop: 1,
           btnType: optionItem.btnType
         })
       }
-      addData();
+
+      function addLoopData(bool: boolean, timestamp: number) {
+        controlObj[controlType].push({
+          id: Math.random(),
+          icon: bool ? 'icon-jiantou16' : 'icon-jiantou10',
+          loop: 1,
+          isRight: bool,
+          btnType: optionItem.btnType,
+          timestamp
+        })
+      }
 
       if (optionItem.btnType == 'reservation') { // 预约 因为一个预约Box同时跨了温度、湿度两行，所以另一个数组也要加数据，但湿度行不显示该盒子
-        controlType = controlType == 'temperature' ? 'humidity' : 'temperature';
-        addData();
+        addReservationData('temperature');
+        addReservationData('humidity');
+
+      } else if (optionItem.btnType == 'loop') { // 循环 插入左框、右框
+        const timestamp = (new Date()).getTime();
+        addLoopData(false, timestamp);
+        addLoopData(true, timestamp);
       }
 
       setControlChange(controlObj);
@@ -130,8 +171,8 @@ export default defineComponent({
       e.preventDefault();
     }
 
-    const boardDragStart = (e: any, key: string, index: number) => {
-      e.dataTransfer.setData("boardObj", JSON.stringify({ key, index }));
+    const boardDragStart = (e: any, key: string, index: number, btnType: string | undefined) => {
+      e.dataTransfer.setData("boardObj", JSON.stringify({ key, index, btnType }));
     };
 
     // board 拖拽到删除icon 处时触发删除事件
@@ -143,19 +184,39 @@ export default defineComponent({
       }
 
       boardObj = JSON.parse(boardObj);
-      deleteAxis(boardObj.key, boardObj.index);
+      deleteBoard(boardObj.key, boardObj.index, boardObj.btnType);
     }
 
-    const deleteAxis = (controlType: string, index: number) => {
-      controlObj[controlType].splice(index, 1);
-      setControlChange(controlObj);
-      setRowWidth();
+    const deleteBoard = (controlType: string, index: number, btnType: string | undefined) => {
+      if (!btnType) {
+        controlObj[controlType].splice(index, 1);
+        setControlChange(controlObj);
+        setRowWidth();
+
+      } else if (btnType == 'reservation') { // 预约
+        controlObj['humidity'].splice(index, 1);
+        controlObj['temperature'].splice(index, 1);
+
+      } else if (btnType == 'loop') { // 循环
+        const loopItem = controlObj[controlType][index];
+        const timestamp = loopItem.timestamp;
+        controlObj[controlType].splice(index, 1);
+        
+        const findIndex = controlObj[controlType].findIndex((item: ControlChildObj) => item.timestamp == timestamp);
+        controlObj[controlType].splice(findIndex, 1);
+      }
+      
     }
 
     // 子组件值变更后同步变更父组件的值
     const changeAxis = (childObj: ControlChildObj, item: ControlChildObj) => {
       Object.assign(item, childObj);
       setControlChange(controlObj);
+    }
+
+    // 更改预约值，同步修改湿度预约值
+    const changeDate = (date: string | null, index: number) => {
+      controlObj['humidity'][index]['date'] = date;
     }
 
     const rowWidth = ref('500px');
@@ -199,6 +260,11 @@ export default defineComponent({
       }
     })
 
+    // 是否循环次数输入框
+    const showLoopInput = (item: ControlChildObj) => {
+      item.isshowLoopInput = !item.isshowLoopInput;
+    }
+
     onBeforeUnmount(() => {
       removeScaleListener();
     })
@@ -211,8 +277,10 @@ export default defineComponent({
       boardDragStart,
       deleteDropEvent,
       dragoverEvent,
-      deleteAxis,
-      changeAxis
+      deleteBoard,
+      changeAxis,
+      changeDate,
+      showLoopInput
     }
   },
 })
@@ -221,6 +289,7 @@ export default defineComponent({
 <style lang="less" scoped>
 @rowHeight: 214px;
 @2x-rowHeight: 453px;
+@boardBgColor: #333;
 
 .scale-wrap {
   width: 100%;
@@ -250,9 +319,9 @@ export default defineComponent({
     color: #f00;
     border: solid 1px #eee;
     border-left: none;
-    background: #333;
+    background: @boardBgColor;
     box-sizing: border-box;
-    box-shadow: 2px 2px 10px 3px #333;
+    box-shadow: 2px 2px 10px 3px @boardBgColor;
     border-radius: 3px;
   }
   .icon-shidu {
@@ -261,12 +330,13 @@ export default defineComponent({
 
   .board {
     width: 210px;
+    height: @rowHeight;
     overflow: hidden;
     position: relative;
     z-index: 2;
     margin: 0 20px;
     border: solid 3px transparent;
-    box-shadow: 2px 2px 5px 1px #333;
+    box-shadow: 2px 2px 5px 1px @boardBgColor;
     border-radius: 5px;
     background-clip: padding-box;
     background-clip: padding-box, border-box;
@@ -314,9 +384,47 @@ export default defineComponent({
   .clock-timer {
     width: 100%;
     height: 100%;
-    background: #333;
+    background: @boardBgColor;
+  }
+
+  // 循环板块
+  .loop-board {
+    width: 120px;
+    margin: 0 20px;
+    height: @rowHeight;
+  }
+  .loop-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: @boardBgColor;
   }
 }
+
+.tag-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  padding: 0 5px;
+  box-sizing: border-box;
+
+  .tag-span {
+    text-align: left;
+  }
+  .loop-span {
+    width: 80px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .ant-input-number-input {
+    text-align: center;
+  }
+}
+
 .bg-row {
   z-index: 1;
   position: absolute;
