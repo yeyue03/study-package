@@ -8,6 +8,9 @@
 
     <!-- 方案保存弹窗 -->
     <PopSaveScheme ref="popSaveSchemeRef" />
+
+    <!-- 方案列表弹窗 -->
+    <PopSchemeList ref="popSchemeListRef" />
   </div>
 </template>
 
@@ -16,14 +19,18 @@ import { ref, defineComponent } from 'vue'
 import { listenerControlChange } from '../useMitt';
 import type { ControlObj } from '../types';
 import PopSaveScheme from './PopSaveScheme.vue';
+import PopSchemeList from './PopSchemeList.vue';
 
 export default defineComponent({
   name: 'UpOptionsBtn',
   components: {
-    PopSaveScheme
+    PopSaveScheme,
+    PopSchemeList
   },
   setup() {
     const popSaveSchemeRef = ref();
+    const popSchemeListRef = ref();
+
     const optionList = ref([
       {
         name: '保存',
@@ -60,12 +67,15 @@ export default defineComponent({
     const choseOption = (type: string) => {
       if (type == 'save') {
         popSaveSchemeRef.value.showModal(saveDataObj.value);
+      } else if (type == 'scheme') {
+        popSchemeListRef.value.showModal();
       }
     }
     
     return {
-      popSaveSchemeRef,
       optionList,
+      popSaveSchemeRef,
+      popSchemeListRef,
       choseOption,
     }
   },
