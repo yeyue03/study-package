@@ -10,22 +10,20 @@
               <template v-for="(item, index) in list" :key="item.id">
                 <template v-if="item.btnType != 'value'">
                   <!-- 预约 -->
-                  <div v-if="item.btnType == 'reservation'" class="reservation-wrap" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
-                    <div v-if="key == 'temperature'" class="board reservation-board">
-                      <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
-                        <i class="iconfont icon-cha"></i>
+                  <div v-if="item.btnType == 'reservation'" class="board reservation-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
+                    <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
+                      <i class="iconfont icon-cha"></i>
+                    </div>
+                    <div class="clock-timer">
+                      <div class="tag-box">
+                        <span class="tag-span">CLOCK TIMER</span>
                       </div>
-                      <div class="clock-timer">
-                        <div class="tag-box">
-                          <span class="tag-span">CLOCK TIMER</span>
-                        </div>
-                        <a-date-picker show-time v-model:value="item.date" valueFormat="YYYY-MM-DD HH:mm:ss" @change="changeDate($event, index)" />
-                      </div>
+                      <a-date-picker show-time v-model:value="item.date" valueFormat="YYYY-MM-DD HH:mm:ss" @change="changeDate($event, index)" />
                     </div>
                   </div>
 
                   <!-- 循环 -->
-                  <div v-if="item.btnType == 'loop'" class="board loop-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
+                  <div v-else-if="item.btnType == 'loop'" class="board loop-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
                     <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
                       <i class="iconfont icon-cha"></i>
                     </div>
@@ -89,7 +87,7 @@ export default defineComponent({
 
     // 放置通用按钮
     const setGeneralBtn = (optionItem: OptionsItem, controlType: string) => {
-      function addReservationData(controlType: string) {
+      function addReservationData() {
         controlObj[controlType].push({
           id: Math.random(),
           icon: optionItem.icon,
@@ -110,8 +108,7 @@ export default defineComponent({
       }
 
       if (optionItem.btnType == 'reservation') { // 预约 因为一个预约Box同时跨了温度、湿度两行，所以另一个数组也要加数据，但湿度行不显示该盒子
-        addReservationData('temperature');
-        addReservationData('humidity');
+        addReservationData();
 
       } else if (optionItem.btnType == 'loop') { // 循环 插入左框、右框
         const timestamp = (new Date()).getTime();
@@ -210,8 +207,7 @@ export default defineComponent({
         setRowWidth();
 
       } else if (btnType == 'reservation') { // 预约
-        controlObj['humidity'].splice(index, 1);
-        controlObj['temperature'].splice(index, 1);
+        controlObj[controlType].splice(index, 1);
 
       } else if (btnType == 'loop') { // 循环
         const loopItem = controlObj[controlType][index];
@@ -306,7 +302,6 @@ export default defineComponent({
 
 <style lang="less" scoped>
 @rowHeight: 214px;
-@2x-rowHeight: 453px;
 @boardBgColor: #333;
 
 .scale-wrap {
@@ -395,15 +390,10 @@ export default defineComponent({
   }
 
   // 预约板块
-  .reservation-wrap {
+  .reservation-board {
     width: 170px;
     margin: 0 20px;
     height: @rowHeight;
-  }
-  .reservation-board {
-    width: 100%;
-    margin: 0;
-    height: @2x-rowHeight;
   }
   .clock-timer {
     width: 100%;
