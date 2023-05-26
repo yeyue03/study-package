@@ -10,7 +10,7 @@
               <template v-for="(item, index) in list" :key="item.id">
                 <template v-if="item.btnType != 'value'">
                   <!-- 预约 -->
-                  <div v-if="item.btnType == 'reservation'" class="board reservation-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
+                  <div v-if="item.btnType == 'reservation'" class="board reservation-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDrop(key, index, item)" @dragend="boardDragEnd()">
                     <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
                       <i class="iconfont icon-cha"></i>
                     </div>
@@ -23,7 +23,7 @@
                   </div>
 
                   <!-- 循环 -->
-                  <div v-else-if="item.btnType == 'loop'" class="board loop-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
+                  <div v-else-if="item.btnType == 'loop'" class="board loop-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDrop(key, index, item)" @dragend="boardDragEnd()">
                     <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
                       <i class="iconfont icon-cha"></i>
                     </div>
@@ -34,8 +34,8 @@
                       <i :class="`iconfont ${item.icon}`"></i>
                       <div class="tag-box">
                         <template v-if="item.isRightLoop">
-                          <span v-if="!item.isshowLoopInput" class="loop-span" @click="showLoopInput(item)">{{ item.loop }}x</span>
-                          <a-input-number v-else class="loop-span" :min="1" :max="100" :step="1" :precision="0" :autofocus="true" v-model:value="item.loop" @blur="showLoopInput(item)" />
+                          <span v-if="!item.isshowLoopInput" class="loop-span" @click="showLoopInput(item, true, key)">{{ item.loop }}x</span>
+                          <a-input-number v-else class="loop-span" :min="1" :max="100" :step="1" :precision="0" v-focus v-model:value="item.loop" @blur="showLoopInput(item, false, key)" />
                         </template>
                       </div>
                     </div>
@@ -43,7 +43,7 @@
                 </template>
                 
                 <!-- 坐标轴板块 -->
-                <div v-else class="board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
+                <div v-else class="board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDrop(key, index, item)" @dragend="boardDragEnd()">
                   <div class="cha-btn" @click="deleteBoard(key, index)">
                     <i class="iconfont icon-cha"></i>
                   </div>
@@ -103,7 +103,8 @@ export default defineComponent({
           loop: 1,
           isRightLoop: bool,
           btnType: optionItem.btnType,
-          timestamp
+          timestamp,
+          loopChilds: []
         })
       }
 
@@ -171,17 +172,18 @@ export default defineComponent({
     }
 
     let draggingObj: DraggingObj = {};
-    const boardDragStart = (e: any, key: string, index: number, item: ControlChildObj) => {
-      draggingObj = { key, index, btnType: item.btnType, id: item.id };
+    const boardDragStart = (e: any, controlType: string, index: number, item: ControlChildObj) => {
+      draggingObj = { controlType, index, btnType: item.btnType, id: item.id };
       e.dataTransfer.setData("boardObj", JSON.stringify(draggingObj));
     };
 
-    const boardDragEnter = (key: string, index: number, item: ControlChildObj) => {
+    // 拖拽排序 放下时运行
+    const boardDrop = (controlType: string, index: number, item: ControlChildObj) => {
       if (!draggingObj.id || draggingObj.id === item.id) {
         return
       }
 
-      controlObj[key].splice(index, 0, ...controlObj[key].splice(draggingObj.index, 1));
+      controlObj[controlType].splice(index, 0, ...controlObj[controlType].splice(draggingObj.index, 1));
     };
 
     const boardDragEnd = () => {
@@ -197,7 +199,7 @@ export default defineComponent({
       }
 
       boardObj = JSON.parse(boardObj);
-      deleteBoard(boardObj.key, boardObj.index, boardObj.btnType);
+      deleteBoard(boardObj.controlType, boardObj.index, boardObj.btnType);
     }
 
     const deleteBoard = (controlType: string, index: number, btnType: string) => {
@@ -272,9 +274,13 @@ export default defineComponent({
       }
     })
 
-    // 是否循环次数输入框
-    const showLoopInput = (item: ControlChildObj) => {
-      item.isshowLoopInput = !item.isshowLoopInput;
+    // 是否显示循环次数输入框
+    const showLoopInput = (item: ControlChildObj, bool: boolean, controlType: string) => {
+      item.isshowLoopInput = bool;
+      if (!bool) { // 前后loop保持一致
+        const findIndex = controlObj[controlType].findIndex((obj: ControlChildObj) => obj.timestamp == item.timestamp);
+        controlObj[controlType][findIndex].loop = item.loop;
+      }
     }
 
     onBeforeUnmount(() => {
@@ -287,7 +293,7 @@ export default defineComponent({
       scaleStyle,
       rowDropEvent,
       boardDragStart,
-      boardDragEnter,
+      boardDrop,
       boardDragEnd,
       deleteDropEvent,
       dragoverEvent,
@@ -297,6 +303,11 @@ export default defineComponent({
       showLoopInput
     }
   },
+  directives: {
+    focus: {
+      mounted: (el: any) => el.querySelector("input").focus()
+    }
+  }
 })
 </script>
 

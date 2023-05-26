@@ -42,7 +42,7 @@ export interface LineChartDataObj {
 // 拖拽盒子参数
 export interface DraggingObj {
   id?: number;
-  key?: string;
+  controlType?: string;
   index?: number;
   btnType?: string;
 }
