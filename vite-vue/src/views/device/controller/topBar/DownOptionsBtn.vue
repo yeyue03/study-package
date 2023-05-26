@@ -37,22 +37,26 @@ export default defineComponent({
       {
         icon: 'icon-wendu',
         controlType: 'temperature',
-        valueType: 'range'
+        valueType: 'range',
+        btnType: 'value'
       },
       {
         icon: 'icon-wendu',
         controlType: 'temperature',
-        valueType: 'constant'
+        valueType: 'constant',
+        btnType: 'value'
       },
       {
         icon: 'icon-shidu',
         controlType: 'humidity',
-        valueType: 'range'
+        valueType: 'range',
+        btnType: 'value'
       },
       {
         icon: 'icon-shidu',
         controlType: 'humidity',
-        valueType: 'constant'
+        valueType: 'constant',
+        btnType: 'value'
       },
     ])
 

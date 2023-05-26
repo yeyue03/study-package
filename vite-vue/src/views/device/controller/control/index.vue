@@ -8,7 +8,7 @@
 
             <transition-group tag="div" class="board-row">
               <template v-for="(item, index) in list" :key="item.id">
-                <template v-if="item.btnType">
+                <template v-if="item.btnType != 'value'">
                   <!-- 预约 -->
                   <div v-if="item.btnType == 'reservation'" class="reservation-wrap" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
                     <div v-if="key == 'temperature'" class="board reservation-board">
@@ -31,11 +31,11 @@
                     </div>
                     <div class="loop-box">
                       <div class="tag-box">
-                        <span class="tag-span">{{ item.isRight ? 'LOOP' : 'JUMP TARGET' }}</span>
+                        <span class="tag-span">{{ item.isRightLoop ? 'LOOP' : 'JUMP TARGET' }}</span>
                       </div>
                       <i :class="`iconfont ${item.icon}`"></i>
                       <div class="tag-box">
-                        <template v-if="item.isRight">
+                        <template v-if="item.isRightLoop">
                           <span v-if="!item.isshowLoopInput" class="loop-span" @click="showLoopInput(item)">{{ item.loop }}x</span>
                           <a-input-number v-else class="loop-span" :min="1" :max="100" :step="1" :precision="0" :autofocus="true" v-model:value="item.loop" @blur="showLoopInput(item)" />
                         </template>
@@ -103,7 +103,7 @@ export default defineComponent({
           id: Math.random(),
           icon: bool ? 'icon-jiantou16' : 'icon-jiantou10',
           loop: 1,
-          isRight: bool,
+          isRightLoop: bool,
           btnType: optionItem.btnType,
           timestamp
         })
@@ -142,6 +142,7 @@ export default defineComponent({
         endValue,
         valueType: optionItem.valueType,
         index: newIndex,
+        btnType: 'value'
       })
 
       setControlChange(controlObj);
@@ -157,11 +158,11 @@ export default defineComponent({
       }
 
       optionItem = JSON.parse(optionItem);
-      if (controlType != optionItem.controlType && !optionItem.btnType) {
+      if (controlType != optionItem.controlType && optionItem.btnType == 'value') {
         return message.warning('请选择对应类型按钮');
       }
 
-      if (optionItem.btnType) { // 预约、循环等通用按钮
+      if (optionItem.btnType != 'value') { // 预约、循环等通用按钮
         setGeneralBtn(optionItem, controlType);
       } else {
         setAxisBoard(optionItem, controlType);
@@ -202,8 +203,8 @@ export default defineComponent({
       deleteBoard(boardObj.key, boardObj.index, boardObj.btnType);
     }
 
-    const deleteBoard = (controlType: string, index: number, btnType: string | undefined) => {
-      if (!btnType) {
+    const deleteBoard = (controlType: string, index: number, btnType: string) => {
+      if (btnType == 'value') {
         controlObj[controlType].splice(index, 1);
         setControlChange(controlObj);
         setRowWidth();

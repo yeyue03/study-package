@@ -27,6 +27,7 @@ import { computed, defineComponent, reactive, ref } from 'vue';
 // import FuelSurchargeAPI from '@/api/tms/fuelSurcharge';
 import { message, Form } from 'ant-design-vue';
 import type { ControlObj } from '../types';
+import { json } from 'stream/consumers';
 
 const useForm = Form.useForm;
 export default defineComponent({
@@ -53,7 +54,7 @@ export default defineComponent({
       resetFields();
       visible.value = true;
       saveDataObj.value = obj;
-      console.log('保存的值：', saveDataObj.value)
+      console.log('保存的值：', JSON.stringify(saveDataObj.value));
     }
 
     const handleCancel = () => {
