@@ -3,7 +3,7 @@
     <div class="tag-box">
       <span class="tag-span">Ramp {{ formState.index }}</span>
       <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
-      <a-input-number v-else class="tag-span" :min="1" :max="1440" :step="1" :precision="0" :autofocus="true" v-model:value="formState.duration" @blur="showTimeInput" />
+      <a-input-number v-else class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-focus v-model:value="formState.duration" @blur="showTimeInput" />
     </div>
 
     <div class="canvas-box" :style="canvasStyle">
@@ -168,6 +168,11 @@ export default defineComponent({
       showTimeInput,
     };
   },
+  directives: {
+    focus: {
+      mounted: (el: any) => el.querySelector("input").focus()
+    }
+  }
 });
 </script>
 
