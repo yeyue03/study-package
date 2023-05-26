@@ -6,51 +6,53 @@
           <div class="control-row" @drop="rowDropEvent($event, key)" @dragover="dragoverEvent">
             <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
-            <template v-for="(item, index) in list" :key="item.id">
-              <template v-if="item.btnType">
-                <!-- 预约 -->
-                <div v-if="item.btnType == 'reservation'" class="reservation-wrap" draggable="true" @dragstart="boardDragStart($event, key, index, item.btnType)">
-                  <div v-if="key == 'temperature'" class="board reservation-board">
+            <transition-group tag="div" class="board-row">
+              <template v-for="(item, index) in list" :key="item.id">
+                <template v-if="item.btnType">
+                  <!-- 预约 -->
+                  <div v-if="item.btnType == 'reservation'" class="reservation-wrap" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
+                    <div v-if="key == 'temperature'" class="board reservation-board">
+                      <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
+                        <i class="iconfont icon-cha"></i>
+                      </div>
+                      <div class="clock-timer">
+                        <div class="tag-box">
+                          <span class="tag-span">CLOCK TIMER</span>
+                        </div>
+                        <a-date-picker show-time v-model:value="item.date" valueFormat="YYYY-MM-DD HH:mm:ss" @change="changeDate($event, index)" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 循环 -->
+                  <div v-if="item.btnType == 'loop'" class="board loop-board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
                     <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
                       <i class="iconfont icon-cha"></i>
                     </div>
-                    <div class="clock-timer">
+                    <div class="loop-box">
                       <div class="tag-box">
-                        <span class="tag-span">CLOCK TIMER</span>
+                        <span class="tag-span">{{ item.isRight ? 'LOOP' : 'JUMP TARGET' }}</span>
                       </div>
-                      <a-date-picker show-time v-model:value="item.date" valueFormat="YYYY-MM-DD HH:mm:ss" @change="changeDate($event, index)" />
+                      <i :class="`iconfont ${item.icon}`"></i>
+                      <div class="tag-box">
+                        <template v-if="item.isRight">
+                          <span v-if="!item.isshowLoopInput" class="loop-span" @click="showLoopInput(item)">{{ item.loop }}x</span>
+                          <a-input-number v-else class="loop-span" :min="1" :max="100" :step="1" :precision="0" :autofocus="true" v-model:value="item.loop" @blur="showLoopInput(item)" />
+                        </template>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- 循环 -->
-                <div v-if="item.btnType == 'loop'" class="board loop-board" draggable="true" @dragstart="boardDragStart($event, key, index, item.btnType)">
-                  <div class="cha-btn" @click="deleteBoard(key, index, item.btnType)">
+                </template>
+                
+                <!-- 坐标轴板块 -->
+                <div v-else class="board" draggable="true" @dragstart="boardDragStart($event, key, index, item)" @drop="boardDragEnter(key, index, item)" @dragend="boardDragEnd()">
+                  <div class="cha-btn" @click="deleteBoard(key, index)">
                     <i class="iconfont icon-cha"></i>
                   </div>
-                  <div class="loop-box">
-                    <div class="tag-box">
-                      <span class="tag-span">{{ item.isRight ? 'LOOP' : 'JUMP TARGET' }}</span>
-                    </div>
-                    <i :class="`iconfont ${item.icon}`"></i>
-                    <div class="tag-box">
-                      <template v-if="item.isRight">
-                        <span v-if="!item.isshowLoopInput" class="loop-span" @click="showLoopInput(item)">{{ item.loop }}x</span>
-                        <a-input-number v-else class="loop-span" :min="1" :max="100" :step="1" :precision="0" :autofocus="true" v-model:value="item.loop" @blur="showLoopInput(item)" />
-                      </template>
-                    </div>
-                  </div>
+                  <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
                 </div>
               </template>
-              
-              <!-- 坐标轴板块 -->
-              <div v-else class="board" draggable="true" @dragstart="boardDragStart($event, key, index)">
-                <div class="cha-btn" @click="deleteBoard(key, index)">
-                  <i class="iconfont icon-cha"></i>
-                </div>
-                <CoordinateAxis :axisObj="item" @changeAxis="changeAxis($event, item)" />
-              </div>
-            </template>
+            </transition-group>
 
             <div class="bg-row">
               <div class="gray-block"></div>
@@ -72,8 +74,7 @@ import { message } from 'ant-design-vue';
 import CoordinateAxis from './CoordinateAxis.vue';
 import { setControlChange } from '../useMitt';
 import { listenerScaleOption, removeScaleListener } from '../useMitt';
-import type { OptionsItem, ControlChildObj } from '../types';
-import { log } from 'console';
+import type { OptionsItem, ControlChildObj, DraggingObj } from '../types';
 
 export default defineComponent({
   name: 'ControlRoom',
@@ -171,9 +172,23 @@ export default defineComponent({
       e.preventDefault();
     }
 
-    const boardDragStart = (e: any, key: string, index: number, btnType: string | undefined) => {
-      e.dataTransfer.setData("boardObj", JSON.stringify({ key, index, btnType }));
+    let draggingObj: DraggingObj = {};
+    const boardDragStart = (e: any, key: string, index: number, item: ControlChildObj) => {
+      draggingObj = { key, index, btnType: item.btnType, id: item.id };
+      e.dataTransfer.setData("boardObj", JSON.stringify(draggingObj));
     };
+
+    const boardDragEnter = (key: string, index: number, item: ControlChildObj) => {
+      if (!draggingObj.id || draggingObj.id === item.id) {
+        return
+      }
+
+      controlObj[key].splice(index, 0, ...controlObj[key].splice(draggingObj.index, 1));
+    };
+
+    const boardDragEnd = () => {
+      draggingObj = {};
+    }
 
     // board 拖拽到删除icon 处时触发删除事件
     const deleteDropEvent = (e: any) => {
@@ -275,6 +290,8 @@ export default defineComponent({
       scaleStyle,
       rowDropEvent,
       boardDragStart,
+      boardDragEnter,
+      boardDragEnd,
       deleteDropEvent,
       dragoverEvent,
       deleteBoard,
@@ -342,6 +359,7 @@ export default defineComponent({
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
     background-image: linear-gradient(to right, #fff, #fff), linear-gradient(to right, #ddd, #999);
+    transition: all linear 0.3s;
   }
   .cha-btn {
     display: none;
@@ -368,6 +386,11 @@ export default defineComponent({
   }
   .board:hover .cha-btn {
     display: block;
+  }
+  .board-row {
+    position: relative;
+    display: flex;
+    align-items: center;
   }
 
   // 预约板块

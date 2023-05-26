@@ -16,7 +16,10 @@ export interface ControlChildObj {
   endValue: number | string;
   valueType: string;
   index: number;
-  isShowTimeInput?: boolean
+  isShowTimeInput?: boolean;
+  isshowLoopInput?: boolean;
+  btnType?: string;
+  timestamp?: number;
 }
 
 // 设置（坐标轴）页面对象内的对象参数类型
@@ -30,4 +33,12 @@ export interface LineChartDataObj {
   type: string;
   time: number;
   value: number | string;
+}
+
+// 拖拽盒子参数
+export interface DraggingObj {
+  id?: number;
+  key?: string;
+  index?: number;
+  btnType?: string;
 }
