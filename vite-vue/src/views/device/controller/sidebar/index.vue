@@ -1,8 +1,8 @@
 <template>
   <div class="scheme-box">
-    <template v-for="(item, index) in schemeList" :key="item.id">
+    <template v-for="(item, index) in deviceList" :key="item.id">
       <div class="item-border" @click="clickScheme(item)">
-        <div :class="{'item-box': true, 'active-box': item.id == activeSchemeObj.id}">
+        <div :class="{'item-box': true, 'active-box': item.id == activeDeviceObj.id}">
           <span>{{ item.name }}</span>
           <a-row class="img-box" type="flex" align="bottom" justify="space-between">
             <a-row>
@@ -35,11 +35,11 @@ export default defineComponent({
   components: {
     InfoPopup
   },
-  emits: ['selectScheme'],
+  emits: ['selectDevice'],
   setup(_, { emit }) {
     const visibleInfo = ref(false);
-    const activeSchemeObj = reactive({}); 
-    const schemeList = ref([
+    const activeDeviceObj = reactive({ id: 1, name: 'HPP 260' }); 
+    const deviceList = ref([
       { id: 1, name: 'HPP 260' },
       { id: 2, name: 'HPP 260' },
       { id: 3, name: 'HPP 263' },
@@ -56,8 +56,8 @@ export default defineComponent({
     const infoPopTop = ref(0);
 
     const clickScheme = (item) => {
-      Object.assign(activeSchemeObj, item);
-      emit('selectScheme', item);
+      Object.assign(activeDeviceObj, item);
+      emit('selectDevice', item);
     }
 
     const showInfoPopup = (item, index: number) => {
@@ -74,8 +74,8 @@ export default defineComponent({
     return {
       visibleInfo,
       infoPopTop,
-      schemeList,
-      activeSchemeObj,
+      deviceList,
+      activeDeviceObj,
       clickScheme,
       showInfoPopup,
       hideInfoPopup

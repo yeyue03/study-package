@@ -1,7 +1,7 @@
 <template>
   <div class="context-box">
-    <div class="sidebar-wrap" :style="`width: ${ isSelectedScheme ? '200px' : '100%'}`">
-      <Sidebar @selectScheme="selectScheme" />
+    <div class="sidebar-wrap">
+      <Sidebar @selectDevice="selectDevice" />
     </div>
 
     <div class="main-wrap">
@@ -37,11 +37,9 @@ export default defineComponent({
   },
   setup() {
     const pageName = ref('Editor')
-    const isSelectedScheme = ref(false);
 
-    const selectScheme = (obj) => {
+    const selectDevice = (obj) => {
       console.log("=== schemeObj: ", obj);
-      isSelectedScheme.value = true;
     }
 
     const changePageName = (name: string) => {
@@ -50,8 +48,7 @@ export default defineComponent({
 
     return {
       pageName,
-      isSelectedScheme,
-      selectScheme,
+      selectDevice,
       changePageName,
     };
   },
@@ -70,7 +67,7 @@ export default defineComponent({
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  width: 200px;
   min-width: 200px;
   height: 100%;
   background: #999;
