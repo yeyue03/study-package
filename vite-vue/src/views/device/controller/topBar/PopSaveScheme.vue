@@ -15,18 +15,18 @@
     </template>
 
     <a-form ref="formRef" :label-col="labelCol" :wrapper-col="wrapperCol">
-      <a-form-item label="方案名称" v-bind="validateInfos.schemeName" name="schemeName">
-        <a-input v-model:value="formState.schemeName" :maxLength="50" />
+      <a-form-item label="计划模板名称" v-bind="validateInfos.name" name="name">
+        <a-input v-model:value="formState.name" :maxLength="50" />
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref } from 'vue';
-// import FuelSurchargeAPI from '@/api/tms/fuelSurcharge';
+import { computed, defineComponent, reactive, ref, inject } from 'vue';
 import { message, Form } from 'ant-design-vue';
 import type { ControlObj } from '../types';
+import { planTemplateAdd } from '../controller.api';
 
 const useForm = Form.useForm;
 export default defineComponent({
@@ -34,25 +34,27 @@ export default defineComponent({
   setup() {
     const visible = ref(false);
     const submitLoading = ref(false);
-    const saveDataObj = ref();
+    const saveDataObj = ref(); // 保存的计划数据
 
     const addType = ref('add');
     const formRef = ref();
     const formState = reactive({
-      schemeName: '',
+      name: '',
     });
     const rules = computed(() => {
       return {
-        schemeName: [{ type: 'string', required: true, message: '请输入方案名称', trigger: 'blur' }],
+        name: [{ type: 'string', required: true, message: '请输入方案名称', trigger: 'blur' }],
       }
     });
 
     const { resetFields, validate, validateInfos } = useForm(formState, rules);
 
-    const showModal = (obj: ControlObj) => {
+    const standardType = ref('temperature');
+    const showModal = (obj: ControlObj, sType: string) => {
       resetFields();
       visible.value = true;
       saveDataObj.value = obj;
+      standardType.value = sType || 'temperature'
       console.log('保存的值：', saveDataObj.value);
     }
 
@@ -60,28 +62,34 @@ export default defineComponent({
       visible.value = false
     }
 
+    const injectDeviceObj = inject('changeDeviceObj', {})
     // 提交
     const onSubmit = () => {
+      if (!injectDeviceObj.value?.id) {
+        return message.warning('请先选取设备');
+      }
+
       validate()
         .then(async () => {
           submitLoading.value = true;
-          message.success('操作成功');
 
-          // let params = JSON.parse(JSON.stringify(formState));
-          // let funName = 'AddFuelSurcharge';
-          // if (addType.value === 'edit') {
-          //   funName = 'EditFuelSurcharge';
-          // }
-          // FuelSurchargeAPI[funName](params).then(res => {
-          //   submitLoading.value = false;
-          //   if (res.code === 200) {
-          //     handleCancel();
-          //     // emit('submitSuccess');
-          //     message.success('操作成功');
-          //   }
-          // }).catch(err => {
-          //   submitLoading.value = false;
-          // })
+          console.log("=== injectDeviceObj: ", injectDeviceObj.value);
+          const deviceObj = injectDeviceObj.value;
+          const params = {
+            deviceId: deviceObj.id,
+            name: formState.name,
+            settings: JSON.stringify(saveDataObj.value),
+            standardType: standardType.value
+          }
+          
+          planTemplateAdd(params).then(res => {
+            console.log("== 保存 res: ", res);
+            message.success('操作成功');
+            submitLoading.value = false;
+            handleCancel();
+          }).catch(() => {
+            submitLoading.value = false;
+          })
         })
     }
 

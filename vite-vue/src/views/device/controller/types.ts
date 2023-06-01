@@ -24,6 +24,7 @@ export interface ControlChildObj {
   isShowTimeInput?: boolean;
   isshowLoopInput?: boolean;
   loopChilds?: []
+  loopItemIndex?: number;
 }
 
 // 设置（坐标轴）页面对象内的对象参数类型
@@ -35,7 +36,7 @@ export interface ControlObj {
 // 折线图数据组内参数类似
 export interface LineChartDataObj {
   type: string;
-  time: number;
+  time: number | string;
   value: number | string;
 }
 
@@ -45,4 +46,6 @@ export interface DraggingObj {
   controlType?: string;
   index?: number;
   btnType?: string;
+  loopItemIndex?: number;
+  timestamp?: number;
 }

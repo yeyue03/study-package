@@ -17,9 +17,8 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <div class="btn-box">
-            <a>替换</a>
-            <a>删除</a>
-            <a>保存为新方案</a>
+            <a @click="replacePlan(record.settings)">替换</a>
+            <a @click="deletePlanTemplate(record.id)">删除</a>
           </div>
         </template>
       </template>
@@ -29,8 +28,9 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-// import FuelSurchargeAPI from '@/api/tms/fuelSurcharge';
-// import { message } from "ant-design-vue";
+import { message } from "ant-design-vue";
+import { planTemplateList, planTemplateDelete } from '../controller.api';
+import { setReplacePlan } from '../useMitt';
 
 export default defineComponent({
   name: "PopSaveScheme",
@@ -41,7 +41,7 @@ export default defineComponent({
     const columns = computed(() => {
       return [
         {
-          title: "方案名称",
+          title: "计划模板名称",
           dataIndex: "name",
           key: "name",
           width: 400,
@@ -55,23 +55,42 @@ export default defineComponent({
       ]
     })
 
-    const dataSource = [
-      {
-        key: "1",
-        name: '方案01'
-      },
-      {
-        key: "2",
-        name: '方案02'
-      },
-      {
-        key: "3",
-        name: '测试方案003'
-      },
-    ];
+    const nowDeviceId = ref(0);
+    const dataSource = ref([]);
 
-    const showModal = () => {
+    // deviceId
+    const getTemplateList = () => {
+      dataSource.value = [];
+      const params = {
+        deviceId: nowDeviceId.value
+      }
+      planTemplateList(params).then(data => {
+        dataSource.value = data || [];
+      })
+    }
+
+    const deletePlanTemplate = (id: number) => {
+      planTemplateDelete(id).then(() => {
+        message.success('删除成功');
+        getTemplateList();
+      })
+    }
+
+    // 把计划详情替换到当前模板
+    const replacePlan = (settings: string) => {
+      if (!settings) {
+        message.warning('该模板值为空')
+      }
+
+      setReplacePlan(settings);
+      handleCancel();
+    }
+
+    const showModal = (deviceId: number) => {
+      nowDeviceId.value = deviceId;
+      getTemplateList();
       visible.value = true;
+      console.log(" == deviceId: ", deviceId);
     };
 
     const handleCancel = () => {
@@ -85,6 +104,8 @@ export default defineComponent({
       submitLoading,
       showModal,
       handleCancel,
+      deletePlanTemplate,
+      replacePlan
     };
   },
 });

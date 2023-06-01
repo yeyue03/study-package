@@ -49,23 +49,25 @@ class AxiosUtils {
     );
   }
   // 封装一个request方法
-  private request(url: string, method: string, data: any = {}) {
+  private request(config: any, options?: any) {
+    let conf: any = JSON.parse(JSON.stringify(config))
+    
     return this.http({
-      url,
-      method,
-      params: method == "get" ? data : "",
-      data: method == "post" ? data : "",
+      url: conf.url,
+      method: conf.method,
+      params: conf.method == "get" ? conf.data : "",
+      data: conf.method == "post" ? conf.data : "",
     });
   }
  
   // public公开的,意思就是让别人用  private自己封装的 需要隐藏起来 不让别人用
   // 封装get方法
-  public get(url: string, data: any) {
-    return this.request(url, "get", data);
+  public get(config: any, options?: any) {
+    return this.request({ ...config, method: "GET" }, options);
   }
   // 封装post方法
-  public post(url: string, data: any) {
-    return this.request(url, "post", data);
+  public post(config: any, options?: any) {
+    return this.request({ ...config, method: "POST" }, options);
   }
 }
  

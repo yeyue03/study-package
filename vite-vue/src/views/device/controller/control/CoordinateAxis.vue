@@ -18,7 +18,7 @@
 
     <div class="tag-box">
       <span class="tag-span">{{ formState.startValue }}</span>
-      <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @change="changeValue" />
+      <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
     </div>
   </div>
 </template>
