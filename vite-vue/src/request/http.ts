@@ -6,7 +6,7 @@ class AxiosUtils {
   constructor() {
     this.http = axios.create({
       // 根路径
-      baseURL: "http://119.23.246.178:80",
+      baseURL: "/",
       // 请求延迟时间 如果超过这个时间就会断开拦截
       timeout: 3000,
       // headers: { "X-Custom-Header": "foobar" },

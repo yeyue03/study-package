@@ -2,7 +2,7 @@ import request from "@/request/http";
 
 const UserApi = {
   GetMenu: () => {
-    return request.get("/mock/user/getMenu");
+    return request.get("/user/menu");
   },
 };
 
