@@ -9,7 +9,7 @@ export interface OptionsItem {
 
 // 设置（坐标轴）页面对象内的子数组对象参数类型
 export interface PanelChildObj {
-  id: number;
+  id: string;
   icon: string;
   btnType: string; // 按钮类型 value-温度湿度 reservation-预约 loop-循环（温度湿度不用改参数） 没有则为温度、湿度
   duration?: number; // 时长(分钟)

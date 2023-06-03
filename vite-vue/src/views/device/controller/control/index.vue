@@ -127,6 +127,7 @@
 <script lang="ts">
   import { ref, defineComponent, reactive, computed, onBeforeUnmount, inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
+  import { nanoid } from 'nanoid';
   import CoordinateAxis from './CoordinateAxis.vue';
   import { setControlChange, setPlanDetailChange } from '../useMitt';
   import { listenerScaleOption, removeScaleListener, listenerControlRefresh, listenerReplacePlan } from '../useMitt';
@@ -213,7 +214,7 @@
       const setGeneralBtn = (optionItem: OptionsItem, panelType: string) => {
         function addReservationData() {
           panelObj[panelType].push({
-            id: Math.random(),
+            id: nanoid(),
             icon: optionItem.icon,
             date: undefined,
             btnType: optionItem.btnType,
@@ -222,7 +223,7 @@
 
         function addLoopData(bool: boolean, timestamp: number) {
           panelObj[panelType].push({
-            id: Math.random(),
+            id: nanoid(),
             icon: bool ? 'icon-jiantou16' : 'icon-jiantou10',
             loop: 1,
             isRightLoop: bool,
@@ -258,7 +259,7 @@
         newIndex = newIndex < 10 ? '0' + newIndex : newIndex;
 
         panelObj[panelType].push({
-          id: Math.random(),
+          id: nanoid(),
           icon: optionItem.icon,
           duration: 70,
           startValue,
