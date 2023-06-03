@@ -1,14 +1,14 @@
 // 操作按钮数组内参数类型
 export interface OptionsItem {
   icon: string,
-  controlType?: string,
+  panelType?: string,
   valueType?: string,
   name?: string,
   btnType?: string
 }
 
 // 设置（坐标轴）页面对象内的子数组对象参数类型
-export interface ControlChildObj {
+export interface PanelChildObj {
   id: number;
   icon: string;
   btnType: string; // 按钮类型 value-温度湿度 reservation-预约 loop-循环（温度湿度不用改参数） 没有则为温度、湿度
@@ -28,9 +28,9 @@ export interface ControlChildObj {
 }
 
 // 设置（坐标轴）页面对象内的对象参数类型
-export interface ControlObj {
-  temperature: ControlChildObj[]; // 温度数组
-  humidity: ControlChildObj[]; // 湿度数组
+export interface PanelObj {
+  temperature: PanelChildObj[]; // 温度数组
+  humidity: PanelChildObj[]; // 湿度数组
 }
 
 // 折线图数据组内参数类似
@@ -43,7 +43,7 @@ export interface LineChartDataObj {
 // 拖拽盒子参数
 export interface DraggingObj {
   id?: number;
-  controlType?: string;
+  panelType?: string;
   index?: number;
   btnType?: string;
   loopItemIndex?: number;

@@ -137,8 +137,6 @@ export default defineComponent({
 .scheme-box {
   position: relative;
   overflow-y: auto;
-  display: flex;
-  flex-wrap: wrap;
   width: 100%;
   height: 100%;
 }

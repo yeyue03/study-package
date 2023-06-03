@@ -19,22 +19,22 @@
       const optionList = ref([
         {
           icon: 'icon-wendu',
-          controlType: 'temperature',
+          panelType: 'temperature',
           valueType: 'range',
         },
         {
           icon: 'icon-wendu',
-          controlType: 'temperature',
+          panelType: 'temperature',
           valueType: 'constant',
         },
         {
           icon: 'icon-shidu',
-          controlType: 'humidity',
+          panelType: 'humidity',
           valueType: 'range',
         },
         {
           icon: 'icon-shidu',
-          controlType: 'humidity',
+          panelType: 'humidity',
           valueType: 'constant',
         },
       ]);

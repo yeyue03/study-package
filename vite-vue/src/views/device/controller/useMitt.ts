@@ -1,6 +1,6 @@
 // import mitt from '/@/utils/mitt';
 import mitt from '@/utils/mitt';
-import type { ControlObj } from './types';
+import type { PanelObj } from './types';
 export interface ControlInterfacce {
   activeName: string | number;
 }
@@ -8,10 +8,10 @@ export interface ControlInterfacce {
 const emitter = mitt();
 
 // 监控温度、湿度面板值 star
-export function setControlChange(obj: ControlObj) {
+export function setControlChange(obj: PanelObj) {
   emitter.emit('changeControlObj', obj);
 }
-export function listenerControlChange(callback: (obj: ControlObj) => void) {
+export function listenerControlChange(callback: (obj: PanelObj) => void) {
   emitter.on('changeControlObj', callback);
 }
 export function removeControlListener() {
@@ -32,7 +32,7 @@ export function listenerChangePlan(callback: (obj: any) => void) {
 export function setPlanDetailChange(obj: any) {
   emitter.emit('planDetail', obj);
 }
-export function listenerPlanDetailChange(callback: (obj: ControlObj) => void) {
+export function listenerPlanDetailChange(callback: (obj: PanelObj) => void) {
   emitter.on('planDetail', callback);
 }
 export function removePlanDetailListener() {

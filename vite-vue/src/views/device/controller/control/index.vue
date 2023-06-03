@@ -3,7 +3,7 @@
     <div class="scale-wrap">
       <div class="scale-box" :style="scaleStyle">
         <div class="control-box" :style="`width: ${rowWidth}`">
-          <template v-for="(list, key) in controlObj" :key="key">
+          <template v-for="(list, key) in panelObj" :key="key">
             <div class="control-row" @drop="rowDropEvent($event, key)" @dragover="dragoverEvent">
               <i :class="`iconfont ${key == 'temperature' ? 'icon-wendu' : 'icon-shidu'}`"></i>
 
@@ -130,7 +130,7 @@
   import CoordinateAxis from './CoordinateAxis.vue';
   import { setControlChange, setPlanDetailChange } from '../useMitt';
   import { listenerScaleOption, removeScaleListener, listenerControlRefresh, listenerReplacePlan } from '../useMitt';
-  import type { OptionsItem, ControlChildObj, DraggingObj } from '../types';
+  import type { OptionsItem, PanelChildObj, DraggingObj } from '../types';
   import { planDetal } from '../controller.api';
 
   export default defineComponent({
@@ -144,7 +144,7 @@
       },
     },
     setup() {
-      const controlObj = reactive({
+      const panelObj = reactive({
         temperature: [],
         humidity: [],
       });
@@ -152,11 +152,11 @@
       const detailLoading = ref(false);
       const injectDeviceObj = inject('changeDeviceObj', {});
       const getPlanDetal = (deviceId) => {
-        Object.assign(controlObj, {
+        Object.assign(panelObj, {
           temperature: [],
           humidity: [],
         });
-        setControlChange(controlObj);
+        setControlChange(panelObj);
 
         if (!deviceId) {
           return;
@@ -172,8 +172,8 @@
             if (res) {
               console.log('== 计划详情存在: ', res);
               if (res.settings) {
-                Object.assign(controlObj, JSON.parse(res.settings));
-                setControlChange(controlObj);
+                Object.assign(panelObj, JSON.parse(res.settings));
+                setControlChange(panelObj);
               }
               setPlanDetailChange(res);
             }
@@ -203,16 +203,16 @@
         }
 
         const settingsObj = JSON.parse(settings);
-        Object.assign(controlObj, settingsObj);
+        Object.assign(panelObj, settingsObj);
         console.log('=== settingsObj: ', settingsObj);
 
-        setControlChange(controlObj);
+        setControlChange(panelObj);
       });
 
       // 放置通用按钮
-      const setGeneralBtn = (optionItem: OptionsItem, controlType: string) => {
+      const setGeneralBtn = (optionItem: OptionsItem, panelType: string) => {
         function addReservationData() {
-          controlObj[controlType].push({
+          panelObj[panelType].push({
             id: Math.random(),
             icon: optionItem.icon,
             date: undefined,
@@ -221,7 +221,7 @@
         }
 
         function addLoopData(bool: boolean, timestamp: number) {
-          controlObj[controlType].push({
+          panelObj[panelType].push({
             id: Math.random(),
             icon: bool ? 'icon-jiantou16' : 'icon-jiantou10',
             loop: 1,
@@ -242,22 +242,22 @@
           addLoopData(true, timestamp);
         }
 
-        setControlChange(controlObj);
+        setControlChange(panelObj);
         setRowWidth();
       };
 
       // 放置坐标版
-      const setAxisBoard = (optionItem: OptionsItem, controlType: string) => {
+      const setAxisBoard = (optionItem: OptionsItem, panelType: string) => {
         let startValue = 10;
         let endValue = 20;
         if (optionItem.valueType == 'constant') {
           endValue = 10;
         }
 
-        let newIndex = controlObj[controlType].length + 1;
+        let newIndex = panelObj[panelType].length + 1;
         newIndex = newIndex < 10 ? '0' + newIndex : newIndex;
 
-        controlObj[controlType].push({
+        panelObj[panelType].push({
           id: Math.random(),
           icon: optionItem.icon,
           duration: 70,
@@ -268,12 +268,12 @@
           btnType: 'value',
         });
 
-        setControlChange(controlObj);
+        setControlChange(panelObj);
         setRowWidth();
       };
 
-      // 拖拽释放事件 controlType: 所在面板类型
-      const rowDropEvent = (e: any, controlType: string) => {
+      // 拖拽释放事件 panelType: 所在面板类型
+      const rowDropEvent = (e: any, panelType: string) => {
         e.preventDefault();
         let optionItem = e.dataTransfer.getData('optionItem'); // 按钮类型
         if (!optionItem) {
@@ -281,15 +281,15 @@
         }
 
         optionItem = JSON.parse(optionItem);
-        if (controlType != optionItem.controlType && optionItem.btnType == 'value') {
+        if (panelType != optionItem.panelType && optionItem.btnType == 'value') {
           return message.warning('请选择对应类型按钮');
         }
 
         if (optionItem.btnType != 'value') {
           // 预约、循环等通用按钮
-          setGeneralBtn(optionItem, controlType);
+          setGeneralBtn(optionItem, panelType);
         } else {
-          setAxisBoard(optionItem, controlType);
+          setAxisBoard(optionItem, panelType);
         }
       };
 
@@ -299,7 +299,7 @@
 
       let draggingObj: DraggingObj = {};
       /**
-       * @param {string} controlType temperature-温度行数组 humidity-湿度行数组
+       * @param {string} panelType temperature-温度行数组 humidity-湿度行数组
        * @param {number} index 当前数组索引
        * @param {Object} item 当前数组的项
        * @param {Object} loopItem 当前数组项下loopChilds数组里的值
@@ -307,13 +307,13 @@
        */
       const boardDragStart = (
         e: any,
-        controlType: string,
+        panelType: string,
         index: number,
-        item: ControlChildObj,
-        loopItem: ControlChildObj,
+        item: PanelChildObj,
+        loopItem: PanelChildObj,
         loopItemIndex: number
       ) => {
-        draggingObj = { controlType, index, btnType: item.btnType, id: item.id, timestamp: item.timestamp };
+        draggingObj = { panelType, index, btnType: item.btnType, id: item.id, timestamp: item.timestamp };
 
         if (loopItemIndex || loopItemIndex === 0) {
           // 存在则说明当前项在循环box内
@@ -324,12 +324,12 @@
       };
 
       // 拖拽排序 放下时运行
-      const boardDrop = (controlType: string, index: number, item: ControlChildObj, loopItemIndex: number) => {
+      const boardDrop = (panelType: string, index: number, item: PanelChildObj, loopItemIndex: number) => {
         if (!draggingObj.id || draggingObj.id === item.id) {
           return;
         }
 
-        const boardList = controlObj[controlType];
+        const boardList = panelObj[panelType];
         if (!loopItemIndex && !draggingObj.loopItemIndex && loopItemIndex !== 0 && draggingObj.loopItemIndex !== 0) {
           // 交互排序的两盒子都不在循环box内
           if (item.btnType != 'loop' && draggingObj.btnType != 'loop') {
@@ -339,7 +339,7 @@
           } else if (item.btnType != 'loop' && draggingObj.btnType == 'loop') {
             // 拖拽盒子是循环box
             const dragSliceItem = boardList.splice(index, 1)[0];
-            const findIndex = boardList.findIndex((obj: ControlChildObj) => draggingObj.timestamp == obj.timestamp);
+            const findIndex = boardList.findIndex((obj: PanelChildObj) => draggingObj.timestamp == obj.timestamp);
             boardList[findIndex].loopChilds.push(dragSliceItem);
           } else if (item.btnType == 'loop' && draggingObj.btnType != 'loop') {
             // 拖拽盒子 不是循环box
@@ -347,7 +347,7 @@
               message.warning('不可拖动');
             } else {
               const dragSliceItem = boardList.splice(draggingObj.index, 1)[0];
-              const findIndex = boardList.findIndex((obj: ControlChildObj) => item.timestamp == obj.timestamp);
+              const findIndex = boardList.findIndex((obj: PanelChildObj) => item.timestamp == obj.timestamp);
               boardList[findIndex].loopChilds.push(dragSliceItem);
             }
           } else {
@@ -360,7 +360,7 @@
             message.warning('不可拖动');
           } else {
             const dragSliceItem = boardList.splice(draggingObj.index, 1)[0];
-            const findIndex = boardList.findIndex((obj: ControlChildObj) => item.timestamp == obj.timestamp);
+            const findIndex = boardList.findIndex((obj: PanelChildObj) => item.timestamp == obj.timestamp);
             boardList[findIndex].loopChilds.push(dragSliceItem);
           }
         } else if (!loopItemIndex && loopItemIndex !== 0 && (draggingObj.loopItemIndex || draggingObj.loopItemIndex === 0)) {
@@ -373,7 +373,7 @@
           if (item.timestamp != draggingObj.timestamp) {
             // 在不同循环box里
             const dragSliceItem = boardList[draggingObj.index]['loopChilds'].splice(draggingObj.loopItemIndex, 1)[0];
-            const findIndex = boardList.findIndex((obj: ControlChildObj) => item.timestamp == obj.timestamp);
+            const findIndex = boardList.findIndex((obj: PanelChildObj) => item.timestamp == obj.timestamp);
             boardList[findIndex]['loopChilds'].splice(loopItemIndex, 0, dragSliceItem);
           } else {
             const dragSliceItem = boardList[draggingObj.index]['loopChilds'].splice(draggingObj.loopItemIndex, 1)[0];
@@ -381,7 +381,7 @@
           }
         }
 
-        setControlChange(controlObj);
+        setControlChange(panelObj);
       };
 
       const boardDragEnd = () => {
@@ -397,52 +397,52 @@
         }
 
         boardObj = JSON.parse(boardObj);
-        deleteBoard(boardObj.controlType, boardObj.index, boardObj.btnType, boardObj.loopItemIndex);
+        deleteBoard(boardObj.panelType, boardObj.index, boardObj.btnType, boardObj.loopItemIndex);
       };
 
-      const deleteBoard = (controlType: string, index: number, btnType: string, loopItemIndex: number | undefined) => {
+      const deleteBoard = (panelType: string, index: number, btnType: string, loopItemIndex: number | undefined) => {
         console.log('=== index, btnType, loopItemIndex', index, btnType, loopItemIndex);
 
         if (loopItemIndex) {
           // 坐标板块在循环box内
-          controlObj[controlType][index]['loopChilds'].splice(loopItemIndex, 1);
+          panelObj[panelType][index]['loopChilds'].splice(loopItemIndex, 1);
         } else if (btnType == 'value') {
-          controlObj[controlType].splice(index, 1);
-          setControlChange(controlObj);
+          panelObj[panelType].splice(index, 1);
+          setControlChange(panelObj);
           setRowWidth();
         } else if (btnType == 'reservation') {
           // 预约
-          controlObj[controlType].splice(index, 1);
+          panelObj[panelType].splice(index, 1);
         } else if (btnType == 'loop') {
           // 循环
-          const loopItem = controlObj[controlType][index];
+          const loopItem = panelObj[panelType][index];
           const timestamp = loopItem.timestamp;
           const loopChilds = loopItem.loopChilds;
-          controlObj[controlType].splice(index, 1);
+          panelObj[panelType].splice(index, 1);
 
-          const findIndex = controlObj[controlType].findIndex((item: ControlChildObj) => item.timestamp == timestamp);
-          controlObj[controlType].splice(findIndex, 1);
-          controlObj[controlType].splice(index, 0, ...loopChilds);
+          const findIndex = panelObj[panelType].findIndex((item: PanelChildObj) => item.timestamp == timestamp);
+          panelObj[panelType].splice(findIndex, 1);
+          panelObj[panelType].splice(index, 0, ...loopChilds);
         }
       };
 
       // 子组件值变更后同步变更父组件的值
-      const changeAxis = (childObj: ControlChildObj, item: ControlChildObj) => {
+      const changeAxis = (childObj: PanelChildObj, item: PanelChildObj) => {
         Object.assign(item, childObj);
-        setControlChange(controlObj);
+        setControlChange(panelObj);
       };
 
       // 更改预约值，同步修改湿度预约值
-      const changeDate = (date: string | null, controlType: string, index: number) => {
-        controlObj[controlType][index]['date'] = date;
-        setControlChange(controlObj);
+      const changeDate = (date: string | null, panelType: string, index: number) => {
+        panelObj[panelType][index]['date'] = date;
+        setControlChange(panelObj);
       };
 
       const rowWidth = ref('500px');
       const setRowWidth = () => {
-        let maxLen = controlObj['temperature'].length;
-        if (maxLen < controlObj['humidity'].length) {
-          maxLen = controlObj['humidity'].length;
+        let maxLen = panelObj['temperature'].length;
+        if (maxLen < panelObj['humidity'].length) {
+          maxLen = panelObj['humidity'].length;
         }
 
         rowWidth.value = 80 + maxLen * 250 + 300 + 'px';
@@ -481,14 +481,14 @@
       });
 
       // 是否显示循环次数输入框
-      const showLoopInput = (item: ControlChildObj, bool: boolean, controlType: string) => {
+      const showLoopInput = (item: PanelChildObj, bool: boolean, panelType: string) => {
         item.isshowLoopInput = bool;
         if (!bool) {
           // 前后loop保持一致
-          const findIndex = controlObj[controlType].findIndex((obj: ControlChildObj) => obj.timestamp == item.timestamp);
-          controlObj[controlType][findIndex].loop = item.loop;
+          const findIndex = panelObj[panelType].findIndex((obj: PanelChildObj) => obj.timestamp == item.timestamp);
+          panelObj[panelType][findIndex].loop = item.loop;
         }
-        setControlChange(controlObj);
+        setControlChange(panelObj);
       };
 
       onBeforeUnmount(() => {
@@ -497,7 +497,7 @@
 
       return {
         rowWidth,
-        controlObj,
+        panelObj,
         scaleStyle,
         detailLoading,
         rowDropEvent,

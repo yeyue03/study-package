@@ -25,7 +25,7 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, inject } from 'vue';
 import { message, Form } from 'ant-design-vue';
-import type { ControlObj } from '../types';
+import type { PanelObj } from '../types';
 import { planTemplateAdd } from '../controller.api';
 
 const useForm = Form.useForm;
@@ -50,7 +50,7 @@ export default defineComponent({
     const { resetFields, validate, validateInfos } = useForm(formState, rules);
 
     const standardType = ref('temperature');
-    const showModal = (obj: ControlObj, sType: string) => {
+    const showModal = (obj: PanelObj, sType: string) => {
       resetFields();
       visible.value = true;
       saveDataObj.value = obj;

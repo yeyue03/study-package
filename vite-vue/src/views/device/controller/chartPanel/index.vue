@@ -46,7 +46,7 @@ import {
   setChangePlan,
   setControlChange
 } from '../useMitt';
-  import type { ControlChildObj, ControlObj, LineChartDataObj } from '../types';
+  import type { PanelChildObj, PanelObj, LineChartDataObj } from '../types';
   import { message } from 'ant-design-vue';
   import dayjs from 'dayjs';
   import { realChartData } from '../controller.api';
@@ -186,7 +186,7 @@ import {
       let dataArr: LineChartDataObj[] = [];
       let duration = 0;
       let nowTimeStamp = 0;
-      const setDataSource = (key: string, list: ControlChildObj[]) => {
+      const setDataSource = (key: string, list: PanelChildObj[]) => {
         if (!list) {
           return;
         }
@@ -216,7 +216,7 @@ import {
         standardType.value = type;
       });
 
-      listenerControlChange((obj: ControlObj) => {
+      listenerControlChange((obj: PanelObj) => {
         dataSource.value = [];
         nowTimeStamp = new Date().getTime();
 

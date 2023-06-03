@@ -49,7 +49,7 @@
 <script lang="ts">
   import { ref, defineComponent, inject } from 'vue';
   import { listenerControlChange, listenerPlanDetailChange, setStandardType, setControlRefresh, listenerChangePlan } from '../useMitt';
-  import type { ControlObj } from '../types';
+  import type { PanelObj } from '../types';
   import PopSaveScheme from './PopSaveScheme.vue';
   import PopSchemeList from './PopSchemeList.vue';
   import {planAdd, planDataAdd, planEnable, planDisable} from '../controller.api';
@@ -78,7 +78,7 @@
       const injectDeviceObj = inject('changeDeviceObj', {}); // 设备信息
 
       const saveDataObj = ref();
-      listenerControlChange((obj: ControlObj) => {
+      listenerControlChange((obj: PanelObj) => {
         console.log('== listtener 更新', obj);
         saveDataObj.value = obj;
       });
