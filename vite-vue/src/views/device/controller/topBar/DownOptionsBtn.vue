@@ -46,18 +46,6 @@
           valueType: 'constant',
           btnType: 'value',
         },
-        {
-          icon: 'icon-shidu',
-          panelType: 'humidity',
-          valueType: 'range',
-          btnType: 'value',
-        },
-        {
-          icon: 'icon-shidu',
-          panelType: 'humidity',
-          valueType: 'constant',
-          btnType: 'value',
-        },
       ]);
 
       const loopBtnList = ref([
@@ -92,7 +80,7 @@
       ]);
 
       const dragStartEvent = (e: any, item: OptionsItem) => {
-        e.dataTransfer.setData('optionItem', JSON.stringify(item));
+        e.dataTransfer.setData('dragOptionItem', JSON.stringify(item));
       };
 
       const scaleOption = (type: string) => {

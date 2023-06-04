@@ -1,0 +1,125 @@
+<template>
+  <div class="board">
+    <div class="loop-box">
+      <div class="tag-box">
+        <span class="tag-span">{{ formState.isRightLoop ? "LOOP" : "JUMP TARGET" }}</span>
+      </div>
+      <i :class="`iconfont ${formState.icon}`"></i>
+      <div class="tag-box">
+        <template v-if="formState.isRightLoop">
+          <span
+            v-if="!formState.isshowLoopInput"
+            class="loop-span"
+            @click="showLoopInput(true)"
+            >{{ formState.loop }}x</span
+          >
+          <a-input-number
+            v-else
+            class="loop-span"
+            :min="1"
+            :max="100"
+            :step="1"
+            :precision="0"
+            v-focus
+            v-model:value="formState.loop"
+            @blur="showLoopInput(false)"
+          />
+        </template>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { reactive, toRefs, defineComponent } from "vue";
+
+export default defineComponent({
+  name: "PanelLoop",
+  props: {
+    panelObj: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    // 所占行数，用于计算高度
+    rowLen: {
+      type: Number,
+      default: () => {
+        return 1
+      }
+    }
+  },
+  emits: ["changePanel"],
+  setup(props, { emit }) {
+    const { panelObj, rowLen } = toRefs(props);
+    console.log("=== panelObj: ", panelObj, rowLen);
+
+    const formState = reactive({
+      ...panelObj.value,
+    });
+
+    // 是否显示循环次数输入框
+    const showLoopInput = (bool: boolean) => {
+      formState.isshowLoopInput = bool;
+      if (!bool) {
+        emit("changePanel", formState);
+      }
+    };
+
+    const changeDate = () => {
+      emit("changePanel", formState);
+    };
+
+    return {
+      formState,
+      showLoopInput,
+      changeDate,
+    };
+  },
+  directives: {
+    focus: {
+      mounted: (el: any) => el.querySelector('input').focus(),
+    },
+  },
+});
+</script>
+
+<style lang="less" scoped>
+@rowHeight: 214px;
+@boardBgColor: #333;
+
+.board {
+  width: 120px !important;
+}
+.loop-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: @boardBgColor;
+}
+
+.tag-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  padding: 0 5px;
+  box-sizing: border-box;
+
+  .tag-span {
+    text-align: left;
+  }
+}
+.loop-span {
+  width: 80px;
+  margin: 0 auto;
+  text-align: center;
+}
+.ant-input-number-input {
+  text-align: center;
+}
+</style>

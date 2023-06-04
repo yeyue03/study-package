@@ -1,24 +1,26 @@
 <template>
-  <div class="axis-wrap">
-    <div class="tag-box">
-      <span class="tag-span">Ramp {{ formState.index }}</span>
-      <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
-      <a-input-number v-else class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-focus v-model:value="formState.duration" @blur="showTimeInput" />
-    </div>
-
-    <div class="canvas-box" :style="canvasStyle">
-      <canvas ref="canvasRef">
-        您的浏览器不支持canvas
-      </canvas>
-
-      <div class="icon-float">
-        <i :class="`iconfont ${formState.icon}`"></i>
+  <div class="board">
+    <div class="axis-wrap">
+      <div class="tag-box">
+        <span class="tag-span">Ramp {{ formState.index }}</span>
+        <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
+        <a-input-number v-else class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-focus v-model:value="formState.duration" @blur="showTimeInput" />
       </div>
-    </div>
 
-    <div class="tag-box">
-      <span class="tag-span">{{ formState.startValue }}</span>
-      <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
+      <div class="canvas-box" :style="canvasStyle">
+        <canvas ref="canvasRef">
+          您的浏览器不支持canvas
+        </canvas>
+
+        <div class="icon-float">
+          <i :class="`iconfont ${formState.icon}`"></i>
+        </div>
+      </div>
+
+      <div class="tag-box">
+        <span class="tag-span">{{ formState.startValue }}</span>
+        <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
+      </div>
     </div>
   </div>
 </template>
@@ -27,7 +29,7 @@
 import { ref, defineComponent, nextTick, reactive, toRefs, computed } from "vue";
 
 export default defineComponent({
-  name: "CoordinateAxis",
+  name: "PanelCoordinateAxis",
   props: {
     canvasWidth: {
       type: Number,
@@ -177,6 +179,10 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
+@rowHeight: 214px;
+.board {
+  height: @rowHeight !important;
+}
 .axis-wrap {
   width: 210px;
   height: 100%;

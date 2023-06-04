@@ -40,7 +40,7 @@
       ChartPanel,
     },
     setup() {
-      const pageName = ref('Protocol');
+      const pageName = ref('Editor');
 
       const deviceObj = ref();
 

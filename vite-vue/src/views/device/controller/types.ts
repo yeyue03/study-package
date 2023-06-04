@@ -1,10 +1,10 @@
 // 操作按钮数组内参数类型
 export interface OptionsItem {
-  icon: string,
-  panelType?: string,
-  valueType?: string,
-  name?: string,
-  btnType?: string
+  icon: string;
+  panelType?: string;
+  valueType?: string;
+  name?: string;
+  btnType?: string;
 }
 
 // 设置（坐标轴）页面对象内的子数组对象参数类型
