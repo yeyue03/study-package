@@ -4,7 +4,17 @@
       <div class="tag-box">
         <span class="tag-span">Ramp {{ formState.index }}</span>
         <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
-        <a-input-number v-else class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-focus v-model:value="formState.duration" @blur="showTimeInput" />
+        <template v-else>
+          <template v-if="formState.valueType == 'range'">
+            <a-select v-model:value="formState.powerSize" defaultOpen autofocus @change="showTimeInput" @blur="showTimeInput">
+              <a-select-option value="1">功率1</a-select-option>
+              <a-select-option value="2">功率2</a-select-option>
+            </a-select>
+          </template>
+          <template v-else>
+            <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-focus v-model:value="formState.duration" @blur="showTimeInput" />
+          </template>
+        </template>
       </div>
 
       <div class="canvas-box" :style="canvasStyle">
@@ -18,7 +28,8 @@
       </div>
 
       <div class="tag-box">
-        <span class="tag-span">{{ formState.startValue }}</span>
+        <span v-if="formState.valueType == 'constant'" class="tag-span">{{ formState.startValue }}</span>
+        <a-input-number v-else class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.startValue" @blur="changeValue" />
         <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
       </div>
     </div>
@@ -59,10 +70,15 @@ export default defineComponent({
     });
 
     const durationConvertStr = computed(() => {
-      const hour = Math.floor(formState.duration / 60);
-      let minute: number | string = formState.duration % 60;
-      minute = minute < 10 ? '0' + minute : minute;
-      return hour + 'h:' + minute + 'm';
+      if (formState.valueType == 'constant') {
+        const hour = Math.floor(formState.duration / 60);
+        let minute: number | string = formState.duration % 60;
+        minute = minute < 10 ? '0' + minute : minute;
+        return hour + 'h:' + minute + 'm';
+
+      } else { // 显示功率
+        return '功率' + formState.powerSize
+      }
     })
 
     const canvasRef = ref();

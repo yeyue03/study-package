@@ -248,9 +248,10 @@ export default defineComponent({
         _obj[panelType] = {
           id: nanoid(),
           icon: iconObj[panelType],
-          duration: 70,
+          duration: 1,
           startValue,
           endValue,
+          powerSize: optionItem.valueType == 'range' ? '1' : '',
           valueType: optionItem.valueType,
           index: newIndex,
           btnType: "value",
