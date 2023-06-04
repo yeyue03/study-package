@@ -103,6 +103,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    justify-content: flex-end;
     font-size: 16px;
   }
   .panel-type-item {

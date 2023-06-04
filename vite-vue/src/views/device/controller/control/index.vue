@@ -244,6 +244,9 @@ export default defineComponent({
           powerSize: optionItem.valueType == 'range' ? '1' : '',
           valueType: optionItem.valueType,
           index: newIndex,
+          bandMax: 0,
+          bandMin: 0,
+          panelType,
           btnType: "value",
         }
       }

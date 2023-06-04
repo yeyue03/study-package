@@ -30,8 +30,8 @@
 
       <div class="tag-box">
         <span v-if="formState.valueType == 'constant'" class="tag-span">{{ formState.startValue }}</span>
-        <a-input-number v-else class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.startValue" @blur="changeValue" />
-        <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
+        <a-input-number v-else class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-model:value="formState.startValue" @blur="changeValue" />
+        <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
       </div>
     </div>
 
@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, nextTick, reactive, toRefs, computed } from "vue";
+import { ref, defineComponent, nextTick, reactive, toRefs, watch, computed, inject } from "vue";
 
 export default defineComponent({
   name: "PanelCoordinateAxis",
@@ -115,6 +115,33 @@ export default defineComponent({
       } else { // 显示功率
         return '功率' + formState.powerSize
       }
+    })
+
+    const injectDeviceObj = inject("changeDeviceObj", {});
+    const valueMin = computed(() => {
+      let min = 1;
+      if (formState.panelType == 'temperature') {
+        min = injectDeviceObj.value?.temperatureStart;
+      } else if (formState.panelType == 'humidity') {
+        min = injectDeviceObj.value?.humidityStart;
+      } else if (formState.panelType == 'beam') {
+        min = injectDeviceObj.value?.beamStart;
+      }
+
+      return min || 1;
+    })
+
+    const valueMax = computed(() => {
+      let max = 100;
+      if (formState.panelType == 'temperature') {
+        max = injectDeviceObj.value?.temperatureEnd;
+      } else if (formState.panelType == 'humidity') {
+        max = injectDeviceObj.value?.humidityEnd;
+      } else if (formState.panelType == 'beam') {
+        max = injectDeviceObj.value?.beanEnd;
+      }
+
+      return max || 100;
     })
 
     const canvasRef = ref();
@@ -235,6 +262,8 @@ export default defineComponent({
         height: canvasHeight.value + 'px',
         'border-color': '#f5f5f5'
       },
+      valueMax,
+      valueMin,
       changeValue,
       showTimeInput,
       showBand,
