@@ -29,8 +29,9 @@ export default [
           port: '8080',
           type: 'type',
           serialNo: 'NSSED001',
+          defineName: '自定义设备名称自定义设备名称',
           url: '/test',
-          alarmType: 'phone', // 报警类型
+          alarmType: '电话', // 报警类型
           isTemperature: true, // 是否有温度
           temperatureStart: 5,
           temperatureEnd: 70,
@@ -48,8 +49,9 @@ export default [
           port: '8080',
           type: 'type',
           serialNo: 'sdfdf02',
+          defineName: '设备名称',
           url: '/test',
-          alarmType: 'email', // 报警类型
+          alarmType: '邮件', // 报警类型
           isTemperature: true, // 是否有温度
           temperatureStart: 5,
           temperatureEnd: 68,
@@ -59,7 +61,7 @@ export default [
           isBeam: true, // 是否有光照
           beamStart: 10,
           beanEnd: 72,
-          isLink: true, // 是否链接
+          isLink: false, // 是否链接
         }
       ];
     },

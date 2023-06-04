@@ -49,6 +49,27 @@
         </a-col>
       </a-row>
 
+      <a-row type="flex" align="middle">
+        <a-col :span="leftSpan">温度设定值</a-col>
+        <a-col :span="rightSpan">
+          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.temperature" />
+        </a-col>
+      </a-row>
+
+      <a-row type="flex" align="middle">
+        <a-col :span="leftSpan">湿度设定值</a-col>
+        <a-col :span="rightSpan">
+          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.humidity" />
+        </a-col>
+      </a-row>
+
+      <a-row type="flex" align="middle">
+        <a-col :span="leftSpan">光照设定值</a-col>
+        <a-col :span="rightSpan">
+          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.beam" />
+        </a-col>
+      </a-row>
+
       <a-row justify="center" class="bottom-btn">
         <a-button size="small" @click="savePopup">Save</a-button>
         <a-button size="small" @click="hideInfoPopup">Close</a-button>
@@ -70,6 +91,7 @@ export default defineComponent({
 
     const showInfoPopup = (obj) => {
       Object.assign(formState, obj);
+      console.log("=== obj: ", obj);
     }
     
     const hideInfoPopup = () => {
@@ -111,20 +133,24 @@ export default defineComponent({
     padding: 0 10px;
     background: linear-gradient(0deg, #666 30%, #333 70%);
   }
-
   .info-box {
     padding: 10px;
     font-size: 15px;
   }
-
-  .ant-select {
+  .ant-row {
+    margin: 5px 0;
+  }
+  .ant-select,
+  .ant-input-number {
     width: 100%;
   }
-}
-.bottom-btn {
-  margin-top: 10px;
-  .ant-btn {
-    margin: 0 8px;
+
+  .bottom-btn {
+    margin-top: 16px;
+
+    .ant-btn {
+      margin: 0 8px;
+    }
   }
 }
 </style>
