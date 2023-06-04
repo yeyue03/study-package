@@ -31,7 +31,6 @@ export default defineComponent({
   emits: ["changePanel"],
   setup(props, { emit }) {
     const { panelObj } = toRefs(props);
-    console.log("=== panelObj: ", panelObj);
 
     const formState = reactive({
       ...panelObj.value,

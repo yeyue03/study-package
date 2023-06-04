@@ -30,6 +30,8 @@
   import TopBar from './topBar/index.vue';
   import ControlRoom from './control/index.vue';
   import ChartPanel from './chartPanel/index.vue';
+  import { planDetal } from "./controller.api";
+  import { listenerPlanDetailRefresh } from './useMitt';
 
   export default defineComponent({
     name: 'ProjectCharts',
@@ -41,18 +43,46 @@
     },
     setup() {
       const pageName = ref('Editor');
-
       const deviceObj = ref();
+      const planDetailObj = ref({});
 
-      const selectDevice = (obj) => {
-        deviceObj.value = obj;
-      };
       provide('changeDeviceObj', deviceObj);
       provide('changePageName', pageName);
+      provide('changeDevicePlanDetail', planDetailObj);
 
       const changePageName = (name: string) => {
         pageName.value = name;
       };
+
+      const selectDevice = (obj) => {
+        deviceObj.value = obj;
+        getPlanDetail(obj?.id);
+      };
+
+      // 获取设备计划详情
+      const getPlanDetail = (deviceId: number) => {
+        planDetailObj.value = {};
+        if (!deviceId) {
+          return;
+        }
+
+        // detailLoading.value = true;
+        const params = {
+          deviceId
+        };
+        planDetal(params).then((res) => {
+          if (res) {
+            planDetailObj.value = res
+          }
+        })
+      };
+
+      // 刷新详情
+      listenerPlanDetailRefresh(() => {
+        if (deviceObj?.value && deviceObj.value?.id) {
+          getPlanDetail(deviceObj.value?.id);
+        }
+      });
 
       return {
         pageName,

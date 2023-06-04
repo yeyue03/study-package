@@ -28,18 +28,6 @@ export function listenerChangePlan(callback: (obj: any) => void) {
 }
 //
 
-// 监控计划详情对象 star
-export function setPlanDetailChange(obj: any) {
-  emitter.emit('planDetail', obj);
-}
-export function listenerPlanDetailChange(callback: (obj: PanelObj) => void) {
-  emitter.on('planDetail', callback);
-}
-export function removePlanDetailListener() {
-  emitter.clear();
-}
-// 监控计划详情对象 end
-
 // 监控放大、缩小、还原按钮点击 star
 export function setScaleOption(type: string) {
   emitter.emit('scaleOption', type);
@@ -64,17 +52,17 @@ export function removeStandardTypeListener() {
 }
 // 监控标准类型变更 end
 
-// 监控文档湿度刷新 star
-export function setControlRefresh() {
+// 监控设备计划刷新 star
+export function setPlanDetailRefresh() {
   emitter.emit('controlRefresh');
 }
-export function listenerControlRefresh(callback: () => void) {
+export function listenerPlanDetailRefresh(callback: () => void) {
   emitter.on('controlRefresh', callback);
 }
-export function removeControlRefreshListener() {
+export function removePlanDetailRefreshListener() {
   emitter.clear();
 }
-// 监控文档湿度刷新 end
+// 监控设备计划刷新 end
 
 // 监控计划替换为模板 star
 export function setReplacePlan(settings: string) {

@@ -42,18 +42,10 @@ export default defineComponent({
         return {};
       },
     },
-    // 所占行数，用于计算高度
-    rowLen: {
-      type: Number,
-      default: () => {
-        return 1
-      }
-    }
   },
   emits: ["changePanel"],
   setup(props, { emit }) {
-    const { panelObj, rowLen } = toRefs(props);
-    console.log("=== panelObj: ", panelObj, rowLen);
+    const { panelObj } = toRefs(props);
 
     const formState = reactive({
       ...panelObj.value,

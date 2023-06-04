@@ -1,80 +1,78 @@
 <template>
-  <a-spin :spinning="detailLoading">
-    <div class="scale-wrap">
-      <div class="now-shandard">当前标准：{{ standardTypeObj[standardType] || '' }}</div>
-      <div class="scale-box" :style="scaleStyle">
-        <div class="control-box" :style="`width: ${rowWidth}`">
-          <div
-            class="control-row" 
-            @drop="rowDropEvent($event)"
-            @dragover="dragoverEvent"
-          >
-            <transition-group tag="div" class="board-row">
-              <template v-for="(item, index) in settingsArr" :key="item.id">
-                <div
-                  v-if="item.btnType != 'reservation'"
-                  class="board-wrap"
-                  :draggable="true"
-                  @dragstart="boardDragStart($event, index, item)"
-                  @drop="boardDrop(index, item)"
-                  @dragend="boardDragEnd()"
-                  :style="{height: boardHeight}"
-                >
-                  <div class="cha-btn" @click="deleteBoard(index, item.btnType, item.timestamp)">
-                    <i class="iconfont icon-cha"></i>
-                  </div>
-                  
-                  <!-- 循环 -->
-                  <template v-if="item.btnType == 'loop'">
-                    <PanelLoop
-                      :panelObj="item"
-                      :rowLen="needPanelRowList.length"
-                      @changePanel="changePanel($event, item)"
-                    />
-                  </template>
-                  
-                  <!-- 坐标轴板块 -->
-                  <template v-else>
-                    <template v-for="panelType in needPanelRowList" :key="panelType">
-                      <PanelCoordinateAxis
-                        :axisObj="item[panelType]"
-                        @changePanel="changePanel($event, item[panelType])"
-                      />
-                    </template>
-                  </template>
+  <div class="scale-wrap">
+    <div class="now-shandard">当前标准：{{ standardTypeObj[standardType] || '' }}</div>
+    <div class="scale-box" :style="scaleStyle">
+      <div class="control-box" :style="`width: ${rowWidth}`">
+        <div
+          class="control-row" 
+          @drop="rowDropEvent($event)"
+          @dragover="dragoverEvent"
+        >
+          <transition-group tag="div" class="board-row">
+            <template v-for="(item, index) in settingsArr" :key="item.id">
+              <div
+                v-if="item.btnType != 'reservation'"
+                class="board-wrap"
+                :draggable="true"
+                @dragstart="boardDragStart($event, index, item)"
+                @drop="boardDrop(index, item)"
+                @dragend="boardDragEnd()"
+                :style="{height: boardHeight}"
+              >
+                <div class="cha-btn" @click="deleteBoard(index, item.btnType, item.timestamp)">
+                  <i class="iconfont icon-cha"></i>
                 </div>
-
-                <!-- 预约 -->
-                <div v-else class="board-wrap" :style="{height: boardHeight}">
-                  <div class="cha-btn" @click="deleteBoard(index, item.btnType, item.timestamp)">
-                    <i class="iconfont icon-cha"></i>
-                  </div>
-
-                  <PanelReservation
+                
+                <!-- 循环 -->
+                <template v-if="item.btnType == 'loop'">
+                  <PanelLoop
                     :panelObj="item"
                     :rowLen="needPanelRowList.length"
                     @changePanel="changePanel($event, item)"
                   />
-                </div>
-              </template>
-            </transition-group>
+                </template>
+                
+                <!-- 坐标轴板块 -->
+                <template v-else>
+                  <template v-for="panelType in needPanelRowList" :key="panelType">
+                    <PanelCoordinateAxis
+                      :axisObj="item[panelType]"
+                      @changePanel="changePanel($event, item[panelType])"
+                    />
+                  </template>
+                </template>
+              </div>
 
-            <!-- 背景灰线 -->
-            <div class="control-bg-box" :style="{height: boardHeight}">
-              <template v-for="panelType in needPanelRowList" :key="panelType">
-                <div class="bg-row">
-                  <i v-if="panelType == 'temperature'" class="iconfont icon-wendu"></i>
-                  <i v-else-if="panelType == 'humidity'" class="iconfont icon-shidu"></i>
-                  <i v-else class="iconfont icon-guangzhao"></i>
-                  <div class="gray-block"></div>
+              <!-- 预约 -->
+              <div v-else class="board-wrap" :style="{height: boardHeight}">
+                <div class="cha-btn" @click="deleteBoard(index, item.btnType, item.timestamp)">
+                  <i class="iconfont icon-cha"></i>
                 </div>
-              </template>
-            </div>
+
+                <PanelReservation
+                  :panelObj="item"
+                  :rowLen="needPanelRowList.length"
+                  @changePanel="changePanel($event, item)"
+                />
+              </div>
+            </template>
+          </transition-group>
+
+          <!-- 背景灰线 -->
+          <div class="control-bg-box" :style="{height: boardHeight}">
+            <template v-for="panelType in needPanelRowList" :key="panelType">
+              <div class="bg-row">
+                <i v-if="panelType == 'temperature'" class="iconfont icon-wendu"></i>
+                <i v-else-if="panelType == 'humidity'" class="iconfont icon-shidu"></i>
+                <i v-else class="iconfont icon-guangzhao"></i>
+                <div class="gray-block"></div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
     </div>
-  </a-spin>
+  </div>
 
   <div class="delete-btn" @drop="deleteDropEvent" @dragover="dragoverEvent">
     <i class="iconfont icon-shanchu"></i>
@@ -96,17 +94,14 @@ import { nanoid } from "nanoid";
 import PanelCoordinateAxis from "./PanelCoordinateAxis.vue";
 import PanelReservation from "./PanelReservation.vue";
 import PanelLoop from "./PanelLoop.vue";
-import { setControlChange, setPlanDetailChange } from "../useMitt";
+import { setControlChange } from "../useMitt";
 import {
   listenerScaleOption,
   removeScaleListener,
-  listenerControlRefresh,
   listenerReplacePlan,
   listenerStandardType
 } from "../useMitt";
 import type { OptionsItem, PanelChildObj, DraggingObj } from "../types";
-import { planDetal } from "../controller.api";
-import { kMaxLength } from "buffer";
 
 export default defineComponent({
   name: "ControlRoom",
@@ -123,40 +118,9 @@ export default defineComponent({
     });
     const settingsArr = ref([]);
 
-    const detailLoading = ref(false);
     const injectDeviceObj = inject("changeDeviceObj", {});
-    const getPlanDetal = (deviceId) => {
-      settingsArr.value = [];
-      setControlChange(settingsArr.value);
-
-      if (!deviceId) {
-        return;
-      }
-
-      detailLoading.value = true;
-      const params = {
-        deviceId,
-      };
-      planDetal(params)
-        .then((res) => {
-          detailLoading.value = false;
-          if (res) {
-            console.log("== 计划详情存在: ", res);
-            if (res.settings) {
-              settingsArr.value = JSON.parse(res.settings);
-              setControlChange(settingsArr.value);
-            }
-            setPlanDetailChange(res);
-          }
-        })
-        .catch(() => {
-          detailLoading.value = false;
-        });
-    };
-
     watch(injectDeviceObj, (newVal) => {
       console.log(">>>>>>>>>>>>>>>> 设备变更：", newVal);
-      getPlanDetal(newVal?.id);
       let _arr = [];
       if (newVal.isTemperature) {
         _arr.push('temperature');
@@ -169,6 +133,17 @@ export default defineComponent({
       }
       needPanelRowList.value = _arr;
     });
+
+    const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
+    watch(injectDevicePlanDetail, (newObj) => {
+      console.log("== 详情inject: ", newObj);
+      settingsArr.value = [];
+      if (newObj.settings) {
+        settingsArr.value = JSON.parse(newObj.settings);
+        setControlChange(settingsArr.value);
+        setRowWidth();
+      }
+    })
 
     const boardHeight = computed(() => {
       return (needPanelRowList.value.length * 214 + 20 + (needPanelRowList.value.length - 1) * 20) + 'px';
@@ -183,13 +158,6 @@ export default defineComponent({
     })
     listenerStandardType((type: string) => {
       standardType.value = type;
-    });
-
-    // 刷新详情
-    listenerControlRefresh(() => {
-      if (injectDeviceObj?.value && injectDeviceObj.value?.id) {
-        getPlanDetal(injectDeviceObj.value?.id);
-      }
     });
 
     // 用模板替换当前计划
@@ -381,8 +349,18 @@ export default defineComponent({
 
     const rowWidth = ref("500px");
     const setRowWidth = () => {
-      const maxLen = settingsArr.value.length
-      rowWidth.value = 80 + maxLen * 250 + 300 + "px";
+      let _width = 80;
+      for (const item of settingsArr.value) {
+        if (item.btnType == 'value') {
+          _width += 370;
+        } else if (item.btnType == 'reservation') {
+          _width += 210;
+        } else if (item.btnType == 'loop') {
+          _width += 160;
+        }
+      }
+      _width += 300
+      rowWidth.value = _width + "px";
     };
 
     const scaleObj = reactive({
@@ -431,7 +409,6 @@ export default defineComponent({
       settingsArr,
       panelObj,
       scaleStyle,
-      detailLoading,
       rowDropEvent,
       boardDragStart,
       boardDrop,

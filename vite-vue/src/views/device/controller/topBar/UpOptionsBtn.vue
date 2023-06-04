@@ -47,8 +47,8 @@
 </template>
 
 <script lang="ts">
-  import { ref, defineComponent, inject } from 'vue';
-  import { listenerControlChange, listenerPlanDetailChange, setStandardType, setControlRefresh, listenerChangePlan } from '../useMitt';
+  import { ref, defineComponent, watch, inject } from 'vue';
+  import { listenerControlChange, setStandardType, setPlanDetailRefresh, listenerChangePlan } from '../useMitt';
   import type { PanelObj } from '../types';
   import PopSaveScheme from './PopSaveScheme.vue';
   import PopSchemeList from './PopSchemeList.vue';
@@ -91,12 +91,13 @@
       });
 
       const planId = ref(); // 计划id
-      listenerPlanDetailChange((obj: any) => {
-        console.log('======== 详情：', obj);
-        planId.value = obj.id;
-        isRun.value = obj.isRun;
-        standardType.value = obj.standardType || 'temperature';
-      });
+      const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
+      watch(injectDevicePlanDetail, (newObj) => {
+        console.log("== 详情 up = inject: ", newObj);
+        planId.value = newObj.id;
+        isRun.value = newObj.isRun;
+        standardType.value = newObj.standardType || 'temperature';
+      })
 
       const defaultFormat = 'YYYY-MM-DD HH:mm';
 
@@ -114,7 +115,7 @@
             console.log('== 保存 res: ', res);
             message.success('操作成功');
             submitLoading.value = false;
-            setControlRefresh();
+            setPlanDetailRefresh();
           })
           .catch(() => {
             submitLoading.value = false;
@@ -151,7 +152,7 @@
             console.log('== 保存 res: ', res);
             message.success('操作成功');
             submitLoading.value = false;
-            setControlRefresh();
+            setPlanDetailRefresh();
           })
           .catch(() => {
             submitLoading.value = false;
@@ -170,7 +171,7 @@
         const fetch = bool ? planEnable : planDisable;
         fetch(params).then((res) => {
           console.log('启动、暂停：', res);
-          setControlRefresh();
+          setPlanDetailRefresh();
         });
       };
 
