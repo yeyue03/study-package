@@ -1,6 +1,7 @@
 <template>
   <a-spin :spinning="detailLoading">
     <div class="scale-wrap">
+      <div class="now-shandard">当前标准：{{ standardTypeObj[standardType] || '' }}</div>
       <div class="scale-box" :style="scaleStyle">
         <div class="control-box" :style="`width: ${rowWidth}`">
           <div
@@ -101,9 +102,11 @@ import {
   removeScaleListener,
   listenerControlRefresh,
   listenerReplacePlan,
+  listenerStandardType
 } from "../useMitt";
 import type { OptionsItem, PanelChildObj, DraggingObj } from "../types";
 import { planDetal } from "../controller.api";
+import { kMaxLength } from "buffer";
 
 export default defineComponent({
   name: "ControlRoom",
@@ -162,6 +165,17 @@ export default defineComponent({
     const boardHeight = computed(() => {
       return (needPanelRowList.value.length * 214 + 20 + (needPanelRowList.value.length - 1) * 20) + 'px';
     })
+
+    // 当前标准
+    const standardType = ref('temperature');
+    const standardTypeObj = reactive({
+      temperature: '温度',
+      humidity: '湿度',
+      both: '温湿度',
+    })
+    listenerStandardType((type: string) => {
+      standardType.value = type;
+    });
 
     // 刷新详情
     listenerControlRefresh(() => {
@@ -374,45 +388,42 @@ export default defineComponent({
 
     const rowWidth = ref("500px");
     const setRowWidth = () => {
-      let maxLen = panelObj["temperature"].length;
-      if (maxLen < panelObj["humidity"].length) {
-        maxLen = panelObj["humidity"].length;
-      }
-
+      const maxLen = settingsArr.value.length
       rowWidth.value = 80 + maxLen * 250 + 300 + "px";
     };
 
     const scaleObj = reactive({
       width: 100,
       height: 100,
-      scale: 1,
-    });
+      scale: 1
+    })
     const scaleStyle = computed(() => {
+      const _width = scaleObj.width >= 100 ? 100 : scaleObj.width;
+      const _height = scaleObj.width >= 100 ? 100 : scaleObj.width;
       return {
-        width: `${scaleObj.width}%`,
-        height: `${scaleObj.height}%`,
+        width: `${_width}%`,
+        height: `${_height}%`,
         transform: `scale(${scaleObj.scale})`,
-      };
-    });
+      }
+    })
 
     listenerScaleOption((type: string) => {
-      if (type == "amplify") {
-        // 放大
+      if (type == 'amplify') { // 放大
         scaleObj.width *= 0.8;
         scaleObj.height *= 0.8;
         scaleObj.scale *= 1.25;
-      } else if (type == "reduce") {
-        // 缩小
-        scaleObj.width = scaleObj.width >= 100 ? 100 : scaleObj.width * 1.25;
-        scaleObj.height = scaleObj.height >= 100 ? 100 : scaleObj.height * 1.25;
+
+      } else if (type == 'reduce') { // 缩小
+        scaleObj.width = scaleObj.width * 1.25;
+        scaleObj.height = scaleObj.height * 1.25;
         scaleObj.scale *= 0.8;
-      } else if (type == "restore") {
-        // 还原
+
+      } else if (type == 'restore') { // 还原
         scaleObj.width = 100;
         scaleObj.height = 100;
         scaleObj.scale = 1;
       }
-    });
+    })
 
     // 是否显示循环次数输入框
     const showLoopInput = (
@@ -439,6 +450,8 @@ export default defineComponent({
       needPanelRowList,
       boardHeight,
       rowWidth,
+      standardType,
+      standardTypeObj,
       settingsArr,
       panelObj,
       scaleStyle,
@@ -464,6 +477,10 @@ export default defineComponent({
 .scale-wrap {
   width: 100%;
   padding: 90px 0 50px;
+}
+.now-shandard {
+  width: 100%;
+  text-align: center;
 }
 .scale-box {
   transform-origin: left top;
