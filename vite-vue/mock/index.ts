@@ -113,5 +113,17 @@ export default [
         },
       ]
     }
+  },
+  {
+    url: '/plan/getByDeviceId', // plan详情数据
+    method: 'GET',
+    response: () => {
+      return {
+        id: 1,
+        isRun: false,
+        standardType: 'temperature',
+        settings: `[{"id":"lagkRiUwl8NGvpwwMSqNY","icon":"icon-yuyueguanli","date":"2023-06-04 20:12","btnType":"reservation"},{"id":"936WnIX2LpaCUoq6TA-hn","btnType":"value","temperature":{"id":"TXfiXuxTO0v4i2ZJO0VOB","icon":"icon-wendu","duration":1,"startValue":10,"endValue":20,"powerSize":"1","valueType":"range","index":"01","btnType":"value","isShowBand":true,"isShowMaxBandInput":false,"bandMax":3,"isShowMinBandInput":false,"bandMin":-3},"humidity":{"id":"IHMAIuFwmv_PP5cfF007u","icon":"icon-shidu","duration":1,"startValue":10,"endValue":20,"powerSize":"1","valueType":"range","index":"01","btnType":"value","isShowBand":true,"isShowMaxBandInput":false,"bandMax":4,"isShowMinBandInput":false,"bandMin":-4},"beam":{"id":"pUMg0ihZIb_n8Z_iUg9It","icon":"icon-guangzhao","duration":1,"startValue":10,"endValue":20,"powerSize":"1","valueType":"range","index":"01","btnType":"value","isShowBand":true,"isShowMaxBandInput":false,"bandMax":2,"isShowMinBandInput":false,"bandMin":-5}},{"id":"QtoyvPAlxeywMavJHcZ3B","icon":"icon-jiantou10","loop":3,"isRightLoop":false,"btnType":"loop","timestamp":1685880704894},{"id":"w4gYDXIpVUl7sqgQAhuk4","btnType":"value","temperature":{"id":"pxiGjA3lkv57qhDDDTmKA","icon":"icon-wendu","duration":10,"startValue":10,"endValue":10,"powerSize":"","valueType":"constant","index":"02","btnType":"value","isShowBand":true,"isShowMaxBandInput":false,"bandMax":5,"isShowMinBandInput":false,"bandMin":-4},"humidity":{"id":"pwoZ6NBAWcjX60q0FXIb8","icon":"icon-shidu","duration":1,"startValue":10,"endValue":10,"powerSize":"","valueType":"constant","index":"02","btnType":"value","isShowBand":true,"isShowMaxBandInput":false,"bandMax":2,"isShowMinBandInput":false,"bandMin":-5},"beam":{"id":"3P64gOuaFLzY5za8vU5-T","icon":"icon-guangzhao","duration":1,"startValue":10,"endValue":10,"powerSize":"","valueType":"constant","index":"02","btnType":"value","isShowBand":true,"isShowMaxBandInput":false,"bandMax":4,"isShowMinBandInput":false,"bandMin":-2}},{"id":"a5PnDV2PD5gA0Ph1u84hq","icon":"icon-jiantou16","loop":3,"isRightLoop":true,"btnType":"loop","timestamp":1685880704894,"isshowLoopInput":false}]`
+      }
+    }
   }
 ] as MockMethod[];

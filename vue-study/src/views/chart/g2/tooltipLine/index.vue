@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { ref, defineComponent, nextTick } from "vue";
+import { ref, defineComponent, nextTick, onMounted } from "vue";
 import { Chart } from "@antv/g2";
 import dayjs from "dayjs";
 
@@ -20,26 +20,38 @@ export default defineComponent({
 
     const defaultFormat = 'hh:mm:ss'
     const nowTimestamp = (new Date()).getTime();
-    let startDayTimestamp = (new Date(dayjs(nowTimestamp).startOf('day').format(defaultFormat))).getTime();
+    let startDayTimestamp = nowTimestamp - 3 * 60 * 60 * 1000
     const initChart = () => {
       const dateArr = [];
-      for (let i=0; startDayTimestamp > nowTimestamp; i++) {
+      for (let i=0; startDayTimestamp < nowTimestamp; i++) {
         dateArr.push({
           date: dayjs(startDayTimestamp).format(defaultFormat),
-          price: getRandom()
+          price: getRandom(),
+          realPrice: getRandom(),
+          temperature: getRandom(),
+          realTemperature: getRandom()
         })
         startDayTimestamp += 60 * 1000 * 5
       }
 
+      console.log("==== dateArr: ", dateArr);
       const chart = new Chart({
         container: chartRef.value,
         autoFit: true,
         height: 500,
         defaultInteractions: [],
       });
+      // chart.tooltip({
+      //   title: '测试',
+      //   showCrosshairs: true,
+      // });
+
       chart.tooltip({
+        shared: true,
         showCrosshairs: true,
-      });
+        title: '测试',
+      })
+
       chart.removeInteraction("tooltip");
       chart.scale("date", {
         sync: true,
@@ -67,6 +79,8 @@ export default defineComponent({
       view1.interaction("tooltip");
       view1.interaction("sibling-tooltip");
       view1.line().position("date*price").color("#0f0");
+      view1.line().position("date*realPrice").color("#0ff");
+      view1.line().position("date*temperature").shape(['smooth', 'dash']).color("#f00");
 
       const view2 = chart.createView({
         region: {
@@ -88,7 +102,8 @@ export default defineComponent({
 
       chart.render();
     };
-    nextTick(() => {
+    
+    onMounted(() => {
       initChart();
     })
 

@@ -97,7 +97,7 @@ export default defineComponent({
       }
     },
   },
-  emits: ['changeAxis'],
+  emits: ['changePanel'],
   setup(props, { emit }) {
     const { canvasWidth, canvasHeight, axisObj } = toRefs(props); // 获取画布的宽、高
 
@@ -205,10 +205,6 @@ export default defineComponent({
       changeAxis();
     }
 
-    const changeAxis = () => {
-      emit('changeAxis', formState);
-    }
-
     // 是否显示方差box
     const showBand = () => {
       formState.isShowBand = !formState.isShowBand;
@@ -218,6 +214,11 @@ export default defineComponent({
     const showBandInput = (key: string) => {
       formState[key] = !formState[key];
       changeAxis();
+    }
+
+    // 变更数据
+    const changeAxis = () => {
+      emit('changePanel', formState);
     }
 
     // SPWT 是否on

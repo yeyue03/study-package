@@ -126,11 +126,8 @@ export default defineComponent({
     const detailLoading = ref(false);
     const injectDeviceObj = inject("changeDeviceObj", {});
     const getPlanDetal = (deviceId) => {
-      Object.assign(panelObj, {
-        temperature: [],
-        humidity: [],
-      });
-      setControlChange(panelObj);
+      settingsArr.value = [];
+      setControlChange(settingsArr.value);
 
       if (!deviceId) {
         return;
@@ -146,8 +143,8 @@ export default defineComponent({
           if (res) {
             console.log("== 计划详情存在: ", res);
             if (res.settings) {
-              Object.assign(panelObj, JSON.parse(res.settings));
-              setControlChange(panelObj);
+              settingsArr.value = JSON.parse(res.settings);
+              setControlChange(settingsArr.value);
             }
             setPlanDetailChange(res);
           }
@@ -158,8 +155,19 @@ export default defineComponent({
     };
 
     watch(injectDeviceObj, (newVal) => {
-      console.log("设备变更：", newVal);
+      console.log(">>>>>>>>>>>>>>>> 设备变更：", newVal);
       getPlanDetal(newVal?.id);
+      let _arr = [];
+      if (newVal.isTemperature) {
+        _arr.push('temperature');
+      }
+      if (newVal.isHumidity) {
+        _arr.push('humidity');
+      }
+      if (newVal.isBeam) {
+        _arr.push('beam');
+      }
+      needPanelRowList.value = _arr;
     });
 
     const boardHeight = computed(() => {
@@ -232,7 +240,7 @@ export default defineComponent({
         })
       }
 
-      setControlChange(panelObj);
+      setControlChange(settingsArr.value);
       setRowWidth();
     };
 
@@ -275,6 +283,7 @@ export default defineComponent({
       settingsArr.value.push(_obj);
 
       console.log("=== settingsArr: ", settingsArr.value);
+      setControlChange(settingsArr.value);
       setRowWidth();
     };
 
@@ -360,30 +369,14 @@ export default defineComponent({
     };
 
     // 子组件值变更后同步变更父组件的值
-    const changePanel = (
-      childObj: PanelChildObj,
-      item: PanelChildObj,
-      panelType: string | undefined
-    ) => {
+    const changePanel = (childObj: PanelChildObj, item: PanelChildObj, panelType: string | undefined) => {
       Object.assign(item, childObj);
       if (childObj.btnType == "loop" && childObj.isRightLoop) {
         // 前后loop保持一致
-        const findIndex = panelObj[panelType].findIndex(
-          (obj: PanelChildObj) => obj.timestamp == item.timestamp
-        );
+        const findIndex = panelObj[panelType].findIndex((obj: PanelChildObj) => obj.timestamp == item.timestamp);
         panelObj[panelType][findIndex].loop = item.loop;
       }
-      setControlChange(panelObj);
-    };
-
-    // 更改预约值，同步修改湿度预约值
-    const changeDate = (
-      date: string | null,
-      panelType: string,
-      index: number
-    ) => {
-      panelObj[panelType][index]["date"] = date;
-      setControlChange(panelObj);
+      setControlChange(settingsArr.value);
     };
 
     const rowWidth = ref("500px");
@@ -425,23 +418,6 @@ export default defineComponent({
       }
     })
 
-    // 是否显示循环次数输入框
-    const showLoopInput = (
-      item: PanelChildObj,
-      bool: boolean,
-      panelType: string
-    ) => {
-      item.isshowLoopInput = bool;
-      if (!bool) {
-        // 前后loop保持一致
-        const findIndex = panelObj[panelType].findIndex(
-          (obj: PanelChildObj) => obj.timestamp == item.timestamp
-        );
-        panelObj[panelType][findIndex].loop = item.loop;
-      }
-      setControlChange(panelObj);
-    };
-
     onBeforeUnmount(() => {
       removeScaleListener();
     });
@@ -464,8 +440,6 @@ export default defineComponent({
       dragoverEvent,
       deleteBoard,
       changePanel,
-      changeDate,
-      showLoopInput,
     };
   },
 });

@@ -77,10 +77,11 @@
 
       const injectDeviceObj = inject('changeDeviceObj', {}); // 设备信息
 
-      const saveDataObj = ref();
+      const settingsArr = ref();
+      // 监听获取 settings 数据
       listenerControlChange((obj: PanelObj) => {
-        console.log('== listtener 更新', obj);
-        saveDataObj.value = obj;
+        console.log('== listtener 阿更新', obj);
+        settingsArr.value = obj;
       });
 
       const planData = ref();
@@ -121,28 +122,18 @@
       };
       const savePlan = () => {
         submitLoading.value = true;
-        const savePlanObj = saveDataObj.value;
-        console.log('=== saveDataObj: ', savePlanObj);
+        const _setArr = settingsArr.value;
+        console.log('=== settingsArr: ', JSON.stringify(_setArr));
         // dayjs(nowTimeStamp).format(defaultFormat)
 
-        // 获取 startTime 逻辑 star：标准温度取温度预约时间，湿度取湿度，温湿度谁前取谁，都没有取下一分钟
-        const stdType = standardType.value;
-        const temperatureStartTime = savePlanObj['temperature'][0]?.date;
-        const humidityStartTime = savePlanObj['humidity'][0]?.date;
-        const nextMinute = dayjs(new Date().getTime() + 60000).format(defaultFormat);
+        // 获取 startTime 逻辑 有预约取预约，没有取下一分钟
         let startTime = '';
-        if (stdType == 'temperature') {
-          startTime = temperatureStartTime || nextMinute;
-        } else if (stdType == 'humidity') {
-          startTime = humidityStartTime || nextMinute;
-        } else if (stdType == 'both') {
-          if (temperatureStartTime && humidityStartTime) {
-            const tTimestamp = new Date(temperatureStartTime).getTime();
-            const hTimestamp = new Date(humidityStartTime).getTime();
-            startTime = tTimestamp > hTimestamp ? humidityStartTime : temperatureStartTime;
-          } else {
-            startTime = temperatureStartTime || humidityStartTime || nextMinute;
-          }
+        if (_setArr[0] && _setArr[0].btnType == 'reservation') {
+          startTime = _setArr[0].date;
+        }
+        if (!startTime) {
+          const nextMinute = dayjs(new Date().getTime() + 60000).format(defaultFormat);
+          startTime = nextMinute;
         }
         // 获取 startTime 逻辑 end
 
@@ -150,7 +141,7 @@
         const params = {
           standardType: standardType.value,
           deviceId: deviceObj.id,
-          settings: JSON.stringify(savePlanObj),
+          settings: JSON.stringify(_setArr),
           startTime,
           isRun: false,
         };
@@ -191,7 +182,7 @@
             savePlan();
             savePlanData();
           } else if (type == 'saveTemplate') {
-            popSaveSchemeRef.value.showModal(saveDataObj.value, standardType.value);
+            popSaveSchemeRef.value.showModal(settingsArr.value, standardType.value);
           } else if (type == 'scheme') {
             popSchemeListRef.value.showModal(injectDeviceObj.value?.id);
           } else if (type == 'standard') {

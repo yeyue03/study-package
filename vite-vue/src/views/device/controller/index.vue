@@ -48,6 +48,7 @@
         deviceObj.value = obj;
       };
       provide('changeDeviceObj', deviceObj);
+      provide('changePageName', pageName);
 
       const changePageName = (name: string) => {
         pageName.value = name;
