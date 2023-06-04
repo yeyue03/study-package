@@ -1,5 +1,5 @@
 <template>
-  <div class="board">
+  <div :class="{'board': true, 'band-board': formState.isShowBand}">
     <div class="axis-wrap">
       <div class="tag-box">
         <span class="tag-span">Ramp {{ formState.index }}</span>
@@ -17,6 +17,7 @@
         </template>
       </div>
 
+      <!-- 坐标轴画布 -->
       <div class="canvas-box" :style="canvasStyle">
         <canvas ref="canvasRef">
           您的浏览器不支持canvas
@@ -31,6 +32,41 @@
         <span v-if="formState.valueType == 'constant'" class="tag-span">{{ formState.startValue }}</span>
         <a-input-number v-else class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.startValue" @blur="changeValue" />
         <a-input-number class="tag-span" :min="1" :max="70" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
+      </div>
+    </div>
+
+    <!-- 方差 -->
+    <div class="arrow-box" @click="showBand">
+      <i :class="`iconfont ${formState.isShowBand ? 'icon-zuojiantou' : 'icon-youjiantou'}`"></i>
+    </div>
+    <div v-if="formState.isShowBand" class="band-box">
+      <div class="tag-box">
+        <span class="tag-span">Tol. band</span>
+      </div>
+      <div class="band-span">
+        <div>
+          <span class="max-span">max: </span>
+          <span v-if="!formState.isShowMaxBandInput" @click="showBandInput('isShowMaxBandInput')">{{ formState.bandMax }} %rh</span>
+          <a-input-number v-else class="tag-input" :min="0" :max="100" :step="1" :precision="0" v-focus v-model:value="formState.bandMax" @blur="showBandInput('isShowMaxBandInput')" />
+        </div>
+        <div>
+          <span class="max-span">min: </span>
+          <span v-if="!formState.isShowMinBandInput" @click="showBandInput('isShowMinBandInput')">{{ formState.bandMin }} %rh</span>
+          <a-input-number v-else class="tag-input" :min="-100" :max="0" :step="1" :precision="0" v-focus v-model:value="formState.bandMin" @blur="showBandInput('isShowMinBandInput')" />
+        </div>
+      </div>
+      <div class="radio-wrap">
+        <span class="tag-span">SPWT</span>
+        <div class="radio-box">
+          <div class="radio-label" @click="selectSpwt(true)">
+            <span>On</span>
+            <span :class="{'circle': true, 'circle-active': formState.isSpwt}"></span>
+          </div>
+          <div class="radio-label" @click="selectSpwt(false)">
+            <span>Off</span>
+            <span :class="{'circle': true, 'circle-active': !formState.isSpwt}"></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -173,6 +209,22 @@ export default defineComponent({
       emit('changeAxis', formState);
     }
 
+    // 是否显示方差box
+    const showBand = () => {
+      formState.isShowBand = !formState.isShowBand;
+    }
+
+    // 是否显示方差输入框
+    const showBandInput = (key: string) => {
+      formState[key] = !formState[key];
+      changeAxis();
+    }
+
+    // SPWT 是否on
+    const selectSpwt = (bool: boolean) => {
+      formState.isSpwt = bool;
+    }
+
     return {
       canvasRef,
       formState,
@@ -184,6 +236,9 @@ export default defineComponent({
       },
       changeValue,
       showTimeInput,
+      showBand,
+      showBandInput,
+      selectSpwt
     };
   },
   directives: {
@@ -196,10 +251,17 @@ export default defineComponent({
 
 <style lang="less" scoped>
 @rowHeight: 214px;
+@boardBgColor: #333;
+
 .board {
+  display: flex;
   height: @rowHeight !important;
 }
+.band-board {
+  width: 330px !important;
+}
 .axis-wrap {
+  overflow: hidden;
   width: 210px;
   height: 100%;
   padding: 0 5px 0 0;
@@ -241,6 +303,73 @@ export default defineComponent({
   }
   .ant-input-number-input {
     text-align: center;
+  }
+}
+
+// 方差
+.arrow-box {
+  position: absolute;
+  top: 80px;
+  right: -15px;
+  width: 15px;
+  color: #333;
+  background: #aaa;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  cursor: pointer;
+}
+.band-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 120px;
+  padding: 0 10px;
+  color: #fff;
+  background: @boardBgColor;
+  box-sizing: border-box;
+  border-left: solid 3px #ccc;
+  
+  .band-span {
+    display: flex;
+    flex-direction: column;
+  }
+  .max-span {
+    display: inline-block;
+    width: 34px;
+  }
+  .tag-input {
+    width: 60px;
+  }
+  .radio-wrap {
+    width: 100%;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .radio-box {
+    display: flex;
+  }
+  .radio-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30px;
+    cursor: pointer;
+  }
+  .circle {
+    width: 10px;
+    height: 10px;
+    margin-top: 5px;
+    background: #000;
+    border: solid 2px #fff;
+    border-radius: 50%;
+  }
+  .circle-active {
+    background: #ffcc22;
+  }
+  .ant-radio-wrapper{
+    color: #fff;
   }
 }
 </style>

@@ -479,9 +479,9 @@ export default defineComponent({
   margin: 25px 0;
 
   .board {
-    width: 210px;
+    width: 215px;
     height: 100%;
-    overflow: hidden;
+    // overflow: hidden;
     position: relative;
     border: solid 3px transparent;
     box-shadow: 2px 2px 5px 1px @boardBgColor;
