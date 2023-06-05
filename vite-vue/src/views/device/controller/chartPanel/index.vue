@@ -97,6 +97,16 @@ import {
           return message.warning('请选择查询类别');
         }
 
+        const startTimeStamp = (new Date(queryParam.dateArr[0])).getTime();
+        const endTimeStamp = (new Date(queryParam.dateArr[1])).getTime();
+        const diffV = endTimeStamp - startTimeStamp;
+        
+        if (queryParam.dateType == 'minute' && diffV > 172800000) {
+          return message.warning('日期范围超过两天，类别不可选分钟');
+        } else if ((queryParam.dateType == 'minute' || queryParam.dateType == 'hour') && diffV > 7776000000) {
+          return message.warning('日期范围超过90天，类别不可选分钟或小时');
+        }
+
         clearInterval(_interval.value);
         _interval.value = null;
 
