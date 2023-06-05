@@ -1,31 +1,29 @@
 <template>
-  <a-spin :spinning="pageLoading">
-    <div class="panel-wrap">
-      <div v-show="pageName == 'Protocol'" class="search-box">
-        <div class="search-item">
-          <div class="item-box">
-            <span>日期：</span>
-            <a-range-picker v-model:value="queryParam.dateArr" showTime format="YYYY-MM-DD HH:mm" valueFormat="YYYY-MM-DD HH:mm" />
-          </div>
-
-          <div class="item-box">
-            <span>查询类别：</span>
-            <a-select v-model:value="queryParam.dateType">
-              <a-select-option value="day">按天</a-select-option>
-              <a-select-option value="hour">小时</a-select-option>
-              <a-select-option value="minute">分钟</a-select-option>
-            </a-select>
-          </div>
+  <div class="panel-wrap">
+    <div v-show="pageName == 'Protocol'" class="search-box">
+      <div class="search-item">
+        <div class="item-box">
+          <span>日期：</span>
+          <a-range-picker v-model:value="queryParam.dateArr" showTime format="YYYY-MM-DD HH:mm" valueFormat="YYYY-MM-DD HH:mm" />
         </div>
 
-        <a-button type="primary" @click="setIntervalFun">查询</a-button>
+        <div class="item-box">
+          <span>查询类别：</span>
+          <a-select v-model:value="queryParam.dateType">
+            <a-select-option value="day">按天</a-select-option>
+            <a-select-option value="hour">小时</a-select-option>
+            <a-select-option value="minute">分钟</a-select-option>
+          </a-select>
+        </div>
       </div>
 
-      <div :class="{'scale-box': true, 'scale-center': scaleObj.scale < 1}" :style="scaleStyle">
-        <LineChart :pageName="pageName" :chartData="chartData" />
-      </div>
+      <a-button type="primary" @click="setIntervalFun">查询</a-button>
     </div>
-  </a-spin>
+
+    <div :class="{'scale-box': true, 'scale-center': scaleObj.scale < 1}" :style="scaleStyle">
+      <LineChart :pageName="pageName" :chartData="chartData" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -176,7 +174,6 @@ import {
         });
       }
 
-      const pageLoading = ref(false);
       const settingsArr = ref([]); // 设置的数据
 
       // 组装折线图需要的数据
@@ -188,7 +185,6 @@ import {
         if (!_setArr || !_setArr.length) {
           return;
         }
-        pageLoading.value = true;
 
         let dataArr = [];
         let startTimeStamp = (new Date()).getTime() + 60000;
@@ -270,7 +266,6 @@ import {
 
         console.log("==== 折线图：", dataArr);
         dataSource.value = dataArr;
-        pageLoading.value = false;
       };
 
       const changePageName = inject('changePageName');
@@ -341,7 +336,6 @@ import {
         scaleObj,
         scaleStyle,
         chartData,
-        pageLoading,
         getRealValueList,
         setIntervalFun,
       };
