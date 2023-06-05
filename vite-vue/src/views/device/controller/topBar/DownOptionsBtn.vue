@@ -1,13 +1,15 @@
 <template>
   <div class="option-box">
-    <template v-for="item in optionList" :key="item.type">
-      <div class="option-item" draggable="true" @dragstart="dragStartEvent($event, item)">
-        <i :class="`iconfont ${item.icon}`"></i>
-        <div :class="{ line: true, rotate: item.valueType == 'range' }"></div>
-      </div>
-    </template>
+    <div v-show="pageName == 'Editor'" class="option-scale">
+      <template v-for="item in optionList" :key="item.type">
+        <div class="option-item" draggable="true" @dragstart="dragStartEvent($event, item)">
+          <i :class="`iconfont ${item.icon}`"></i>
+          <div :class="{ line: true, rotate: item.valueType == 'range' }"></div>
+        </div>
+      </template>
+    </div>
 
-    <div class="option-scale">
+    <div v-show="pageName == 'Editor'" class="option-scale">
       <template v-for="item in loopBtnList" :key="item.type">
         <div class="option-item scale-btn" draggable="true" @dragstart="dragStartEvent($event, item)">
           <i :class="`iconfont ${item.icon}`"></i>
@@ -32,6 +34,14 @@
 
   export default defineComponent({
     name: 'DownOptionsBtn',
+    props: {
+      pageName: {
+        type: String,
+        default: () => {
+          return '';
+        },
+      },
+    },
     setup() {
       const optionList = ref([
         {

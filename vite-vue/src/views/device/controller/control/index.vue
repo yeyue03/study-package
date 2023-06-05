@@ -147,6 +147,8 @@ export default defineComponent({
       }
     })
 
+    const changePageName = inject('changePageName');
+
     const boardHeight = computed(() => {
       return (needPanelRowList.value.length * 214 + 20 + (needPanelRowList.value.length - 1) * 20) + 'px';
     })
@@ -452,20 +454,22 @@ export default defineComponent({
     })
 
     listenerScaleOption((type: string) => {
-      if (type == 'amplify') { // 放大
-        scaleObj.width *= 0.8;
-        scaleObj.height *= 0.8;
-        scaleObj.scale *= 1.25;
+      if (changePageName.value == 'Editor') {
+        if (type == 'amplify') { // 放大
+          scaleObj.width *= 0.8;
+          scaleObj.height *= 0.8;
+          scaleObj.scale *= 1.25;
 
-      } else if (type == 'reduce') { // 缩小
-        scaleObj.width = scaleObj.width * 1.25;
-        scaleObj.height = scaleObj.height * 1.25;
-        scaleObj.scale *= 0.8;
+        } else if (type == 'reduce') { // 缩小
+          scaleObj.width = scaleObj.width * 1.25;
+          scaleObj.height = scaleObj.height * 1.25;
+          scaleObj.scale *= 0.8;
 
-      } else if (type == 'restore') { // 还原
-        scaleObj.width = 100;
-        scaleObj.height = 100;
-        scaleObj.scale = 1;
+        } else if (type == 'restore') { // 还原
+          scaleObj.width = 100;
+          scaleObj.height = 100;
+          scaleObj.scale = 1;
+        }
       }
     })
 

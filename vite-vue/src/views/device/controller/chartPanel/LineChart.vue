@@ -59,8 +59,11 @@
           view2.value.data(chartData.value);
           newChart.value.render();
         } else {
-          // const chartHight = document.body.clientHeight - 200; // 暂时替换
-          const chartHight = document.body.clientHeight - 100;
+          // let chartHight = document.body.clientHeight - 200; // 暂时替换
+          let chartHight = document.body.clientHeight - 100;
+          if (pageName.value == 'Protocol') {
+            chartHight -= 40; // 减去搜索框高度
+          }
           newChart.value =
             newChart.value ||
             new Chart({

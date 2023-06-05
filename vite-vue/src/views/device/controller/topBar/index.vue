@@ -2,7 +2,7 @@
   <div class="top-bar">
     <div class="bar-left">
       <UpOptionsBtn v-show="pageName == 'Editor'" />
-      <DownOptionsBtn v-show="pageName == 'Editor'" />
+      <DownOptionsBtn :pageName="pageName" />
     </div>
 
     <div class="nav-box">

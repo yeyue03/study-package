@@ -21,7 +21,9 @@
         <a-button type="primary" @click="setIntervalFun">查询</a-button>
       </div>
 
-      <LineChart :pageName="pageName" :chartData="chartData" />
+      <div :class="{'scale-box': true, 'scale-center': scaleObj.scale < 1}" :style="scaleStyle">
+        <LineChart :pageName="pageName" :chartData="chartData" />
+      </div>
     </div>
   </a-spin>
 </template>
@@ -43,8 +45,7 @@ import {
   listenerControlChange,
   removeControlListener,
   listenerStandardType,
-  setChangePlan,
-  setControlChange
+  listenerScaleOption,
 } from '../useMitt';
   import type { PanelChildObj, PanelObj, LineChartDataObj } from '../types';
   import { message } from 'ant-design-vue';
@@ -162,6 +163,7 @@ import {
         });
       };
 
+      // 实际曲线页面时，进入页面即查询实际值
       if (pageName.value == 'Protocol') {
         watch(injectDeviceObj, () => {
           const nowTimestamp = new Date().getTime();
@@ -177,6 +179,7 @@ import {
       const pageLoading = ref(false);
       const settingsArr = ref([]); // 设置的数据
 
+      // 组装折线图需要的数据
       const setDataSource = () => {
         dataSource.value = [];
         const _setArr = settingsArr.value;
@@ -288,6 +291,43 @@ import {
         settingsArr.value = arr || [];
       });
 
+      // 放大缩小相关变量
+      const scaleObj = reactive({
+        width: 100,
+        height: 100,
+        scale: 1
+      })
+      const scaleStyle = computed(() => {
+        const _width = scaleObj.width >= 100 ? 100 : scaleObj.width;
+        const _height = scaleObj.width >= 100 ? 100 : scaleObj.width;
+        return {
+          width: `${_width}%`,
+          height: `${_height}%`,
+          transform: `scale(${scaleObj.scale})`,
+        }
+      })
+
+      // 监听放大缩小按钮点击
+      listenerScaleOption((type: string) => {
+        if (changePageName.value == pageName.value) {
+          if (type == 'amplify') { // 放大
+            scaleObj.width *= 0.8;
+            scaleObj.height *= 0.8;
+            scaleObj.scale *= 1.25;
+
+          } else if (type == 'reduce') { // 缩小
+            scaleObj.width = scaleObj.width * 1.25;
+            scaleObj.height = scaleObj.height * 1.25;
+            scaleObj.scale *= 0.8;
+
+          } else if (type == 'restore') { // 还原
+            scaleObj.width = 100;
+            scaleObj.height = 100;
+            scaleObj.scale = 1;
+          }
+        }
+      })
+
       onBeforeUnmount(() => {
         clearInterval(_interval.value);
         _interval.value = null;
@@ -298,6 +338,8 @@ import {
         queryParam,
         dataSource,
         realDataSource,
+        scaleObj,
+        scaleStyle,
         chartData,
         pageLoading,
         getRealValueList,
@@ -308,31 +350,35 @@ import {
 </script>
 
 <style lang="less" scoped>
-  .panel-wrap {
-    width: 100%;
-    padding: 50px 20px;
-    box-sizing: border-box;
-    /* background: #fff; */
-  }
+.panel-wrap {
+  width: 100%;
+  padding: 50px 20px;
+  box-sizing: border-box;
+}
+.scale-box {
+  transform-origin: left top;
+}
+.scale-center {
+  transform-origin: center;
+}
+:deep(.ant-spin-container::after) {
+  background: none;
+}
 
-  :deep(.ant-spin-container::after) {
-    background: none;
-  }
-
-  .search-box {
+.search-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  .search-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    .search-item {
-      display: flex;
-      align-items: center;
-    }
-    .item-box {
-      margin-right: 8px;
-    }
-    .ant-select {
-      width: 120px;
-    }
   }
+  .item-box {
+    margin-right: 8px;
+  }
+  .ant-select {
+    width: 120px;
+  }
+}
 </style>
