@@ -325,6 +325,9 @@ export default defineComponent({
   .icon-shidu {
     color: skyblue;
   }
+  .icon-guangzhao {
+    color: #ffff00;
+  }
 }
 .tag-box {
   width: 100%;

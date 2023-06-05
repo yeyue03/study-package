@@ -15,7 +15,7 @@
                 class="board-wrap"
                 :draggable="true"
                 @dragstart="boardDragStart($event, index, item)"
-                @drop="boardDrop(index, item)"
+                @drop.stop="boardDrop($event, index, item)"
                 @dragend="boardDragEnd()"
                 :style="{height: boardHeight}"
               >
@@ -102,6 +102,7 @@ import {
   listenerStandardType
 } from "../useMitt";
 import type { OptionsItem, PanelChildObj, DraggingObj } from "../types";
+import dayjs from 'dayjs';
 
 export default defineComponent({
   name: "ControlRoom",
@@ -112,6 +113,7 @@ export default defineComponent({
   },
   setup() {
     const needPanelRowList = ref(['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
+    const defaultFormat = 'YYYY-MM-DD HH:mm';
     const panelObj = reactive({
       temperature: [],
       humidity: [],
@@ -173,25 +175,25 @@ export default defineComponent({
       setControlChange(panelObj);
     });
 
-    // 放置通用按钮
-    const setGeneralBtn = (optionItem: OptionsItem) => {
-      const _arr = settingsArr.value;
+    // 放置通用按钮，dropIndex 存在则把新增的元素放在当前索引后面
+    const setGeneralBtn = (optionItem: OptionsItem, dropIndex: number) => {
+      const _setArr = settingsArr.value;
       if (optionItem.btnType == "reservation") { // 插入预约框
-        if (_arr[0] && _arr[0].btnType == 'reservation') {
+        if (_setArr[0] && _setArr[0].btnType == 'reservation') {
           return message.warning('已有预约框')
 
         } else {
-          _arr.unshift({
+          _setArr.unshift({
             id: nanoid(),
             icon: optionItem.icon,
-            date: undefined,
+            date: dayjs((new Date()).getTime() + 60000).format(defaultFormat),
             btnType: optionItem.btnType,
           })
         }
 
       } else if (optionItem.btnType == "loop") { // 循环 插入左框、右框
         const timestamp = new Date().getTime();
-        _arr.push({
+        const newArr = [{
           id: nanoid(),
           icon: "icon-jiantou10",
           loop: 1,
@@ -205,19 +207,31 @@ export default defineComponent({
           isRightLoop: true,
           btnType: optionItem.btnType,
           timestamp
-        })
+        }]
+
+        if (dropIndex) {
+          const lastItem = _setArr.slice(0, dropIndex + 1).filter(item => item.btnType == 'loop').pop();
+          if (lastItem && !lastItem.isRightLoop) {
+            return message.warning('此处不可插入循环框');
+          } else {
+            _setArr.splice(dropIndex + 1, 0, ...newArr);
+          }
+
+        } else {
+          _setArr.push(...newArr);
+        }
       }
 
       setControlChange(settingsArr.value);
       setRowWidth();
     };
 
-    // 放置坐标版
-    const setAxisBoard = (optionItem: OptionsItem) => {
+    // 放置坐标版，dropIndex 存在则把新增的元素放在当前索引后面
+    const setAxisBoard = (optionItem: OptionsItem, dropIndex: number) => {
       let startValue = 10;
       let endValue = 20;
       if (optionItem.valueType == "constant") { // 恒定值
-        endValue = 10;
+        endValue = startValue;
       }
 
       let newIndex = settingsArr.value.length + 1;
@@ -233,10 +247,20 @@ export default defineComponent({
         beam: 'icon-guangzhao',
       }
 
-      const lastItem = settingsArr.value.filter(item => item.btnType == 'value').pop(); // 获取前一个坐标轴元素
+      // 获取前一个坐标轴元素
+      let lastItem = null;
+      if (dropIndex) {
+        lastItem = settingsArr.value.slice(0, dropIndex + 1).filter(item => item.btnType == 'value').pop();
+      } else {
+        lastItem = settingsArr.value.filter(item => item.btnType == 'value').pop();
+      }
+
       for (const panelType of needPanelRowList.value) {
         if (lastItem) {
           startValue = lastItem[panelType]['endValue']; // 后一个坐标轴开始值等于前一个坐标轴结束值
+          if (optionItem.valueType == "constant") { // 恒定值
+            endValue = startValue;
+          }
         }
 
         _obj[panelType] = {
@@ -255,7 +279,11 @@ export default defineComponent({
         }
       }
 
-      settingsArr.value.push(_obj);
+      if (dropIndex) {
+        settingsArr.value.splice(dropIndex + 1, 0, _obj);
+      } else {
+        settingsArr.value.push(_obj);
+      }
 
       console.log("=== settingsArr: ", settingsArr.value);
       setControlChange(settingsArr.value);
@@ -263,7 +291,7 @@ export default defineComponent({
     };
 
     // 拖拽释放事件 panelType: 所在面板类型
-    const rowDropEvent = (e: any) => {
+    const rowDropEvent = (e: any, dropIndex: number) => {
       e.preventDefault();
       let optionItem = e.dataTransfer.getData("dragOptionItem"); // 按钮类型
       if (!optionItem) {
@@ -271,10 +299,11 @@ export default defineComponent({
       }
 
       optionItem = JSON.parse(optionItem);
+      console.log("=== 行放下 optionItem：", optionItem);
       if (optionItem.btnType == "value") {
-        setAxisBoard(optionItem);
+        setAxisBoard(optionItem, dropIndex);
       } else { // 预约、循环等通用按钮
-        setGeneralBtn(optionItem);
+        setGeneralBtn(optionItem, dropIndex);
       }
     };
 
@@ -299,8 +328,16 @@ export default defineComponent({
       e.dataTransfer.setData("boardObj", JSON.stringify(draggingObj));
     };
 
-    // 拖拽排序 放下时运行（规律：往左移插入元素左侧，往右移插入元素右侧）
-    const boardDrop = (dropIndex: number, item: PanelChildObj) => {
+    /**
+     * 拖拽排序 放下时运行（规律：往左移插入元素左侧，往右移插入元素右侧）
+     * @param {Object} e 当前事件
+     * @param {number} dropIndex 放下时box所在索引
+     * @param {Object} item 放下时box所在的项
+     */
+    const boardDrop = (e: Event, dropIndex: number, item: PanelChildObj) => {
+      e.preventDefault();
+      rowDropEvent(e, dropIndex);
+      
       if (!draggingObj.id || draggingObj.id === item.id) {
         return;
       }
