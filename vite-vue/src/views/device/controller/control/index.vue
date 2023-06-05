@@ -37,7 +37,7 @@
                   <template v-for="panelType in needPanelRowList" :key="panelType">
                     <PanelCoordinateAxis
                       :axisObj="item[panelType]"
-                      @changePanel="changePanel($event, item[panelType])"
+                      @changePanel="changePanel($event, item[panelType], item)"
                     />
                   </template>
                 </template>
@@ -340,7 +340,12 @@ export default defineComponent({
     };
 
     // 子组件值变更后同步变更父组件的值
-    const changePanel = (childObj: PanelChildObj, item: PanelChildObj) => {
+    /**
+     * @param {Object} childObj 更改后的对象
+     * @param {Object} item 原先的对象
+     * @param {Object} parentItem 父对象，只有温度、湿度、光照会有
+     */
+    const changePanel = (childObj: PanelChildObj, item: PanelChildObj, parentItem: any) => {
       Object.assign(item, childObj);
 
       // 前后loop保持一致
@@ -348,6 +353,13 @@ export default defineComponent({
         const _setArr = settingsArr.value;
         const findIndex = _setArr.findIndex((obj: PanelChildObj) => obj.timestamp == item.timestamp);
         _setArr[findIndex].loop = item.loop;
+
+      } else if (parentItem) {
+        // 同一列中温度、湿度、光照时长、功率同一
+        for (const panelType of needPanelRowList.value) {
+          parentItem[panelType]['powerSize'] = childObj['powerSize'];
+          parentItem[panelType]['duration'] = childObj['duration'];
+        }
       }
       setControlChange(settingsArr.value);
     };

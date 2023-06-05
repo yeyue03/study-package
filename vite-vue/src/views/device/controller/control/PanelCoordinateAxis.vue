@@ -104,6 +104,11 @@ export default defineComponent({
     const formState = reactive({
       ...axisObj.value
     });
+    watch(axisObj, (newObj) => {
+      Object.assign(formState, newObj)
+    }, {
+      deep: true
+    })
 
     const durationConvertStr = computed(() => {
       if (formState.valueType == 'constant') {
