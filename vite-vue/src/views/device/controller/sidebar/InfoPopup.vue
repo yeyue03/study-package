@@ -91,7 +91,6 @@ export default defineComponent({
 
     const showInfoPopup = (obj) => {
       Object.assign(formState, obj);
-      console.log("=== obj: ", obj);
     }
     
     const hideInfoPopup = () => {

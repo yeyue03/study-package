@@ -32,7 +32,7 @@
       const view2 = ref();
 
       watch(chartData, (newVal) => {
-        console.log(" === newVal: ", pageName.value, newVal);
+        console.log(" === 直线图数据: ", pageName.value, newVal);
         drawChart();
       });
 
@@ -62,7 +62,7 @@
           // let chartHight = document.body.clientHeight - 200; // 暂时替换
           let chartHight = document.body.clientHeight - 100;
           if (pageName.value == 'Protocol') {
-            chartHight -= 40; // 减去搜索框高度
+            chartHight -= 35 // 减去搜索框高度
           }
           newChart.value =
             newChart.value ||
@@ -101,6 +101,7 @@
             },
             padding: [10, 60, 30, 60],
           });
+          
           view1.value.tooltip({
             shared: true,
             showCrosshairs: true,
@@ -138,9 +139,11 @@
             });
             view1.value.line().position('date*temperatureMax').color('#f00').shape('dash').tooltip(false);
             view1.value.line().position('date*temperatureMin').color('#f00').shape('dash').tooltip(false);
+
           } else { // 实际
             view1.value.line().position('date*value').color('dec');
           }
+          
           view1.value.axis('value', {
             title: {
               text: 'temperature (℃)',

@@ -180,7 +180,6 @@ import {
       const setDataSource = () => {
         dataSource.value = [];
         const _setArr = settingsArr.value;
-        console.log("=== _setArr: ", _setArr);
         
         if (!_setArr || !_setArr.length) {
           return;
@@ -264,13 +263,11 @@ import {
           }
         }
 
-        console.log("==== 折线图：", dataArr);
         dataSource.value = dataArr;
       };
 
       const changePageName = inject('changePageName');
       watch(changePageName, (showPage: string) => {
-        // console.log("=== showPage: ", showPage);
         // 切换到预览页面则重新组装数据
         if (showPage == 'Simulation') {
           setDataSource();

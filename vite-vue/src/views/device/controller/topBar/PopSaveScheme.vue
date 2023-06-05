@@ -55,7 +55,6 @@ export default defineComponent({
       visible.value = true;
       saveDataObj.value = obj;
       standardType.value = sType || 'temperature'
-      console.log('保存的值：', saveDataObj.value);
     }
 
     const handleCancel = () => {
@@ -73,7 +72,6 @@ export default defineComponent({
         .then(async () => {
           submitLoading.value = true;
 
-          console.log("=== injectDeviceObj: ", injectDeviceObj.value);
           const deviceObj = injectDeviceObj.value;
           const params = {
             deviceId: deviceObj.id,
@@ -83,10 +81,10 @@ export default defineComponent({
           }
           
           planTemplateAdd(params).then(res => {
-            console.log("== 保存 res: ", res);
             message.success('操作成功');
             submitLoading.value = false;
             handleCancel();
+            
           }).catch(() => {
             submitLoading.value = false;
           })

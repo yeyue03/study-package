@@ -80,20 +80,18 @@
       const settingsArr = ref();
       // 监听获取 settings 数据
       listenerControlChange((obj: PanelObj) => {
-        console.log('== listtener 阿更新', obj);
+        console.log('== 设备 settingsArr 变更：', obj);
         settingsArr.value = obj;
       });
 
       const planData = ref();
       listenerChangePlan((obj: any) => {
-        console.log('== changePlan 更新', obj);
         planData.value = obj;
       });
 
       const planId = ref(); // 计划id
       const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
       watch(injectDevicePlanDetail, (newObj) => {
-        console.log("== 详情 up = inject: ", newObj);
         planId.value = newObj.id;
         isRun.value = newObj.isRun;
         standardType.value = newObj.standardType || 'temperature';
@@ -112,7 +110,6 @@
 
         planDataAdd(savePlanData.value)
           .then((res) => {
-            console.log('== 保存 res: ', res);
             message.success('操作成功');
             submitLoading.value = false;
             setPlanDetailRefresh();
@@ -124,8 +121,6 @@
       const savePlan = () => {
         submitLoading.value = true;
         const _setArr = settingsArr.value;
-        console.log('=== settingsArr: ', JSON.stringify(_setArr));
-        // dayjs(nowTimeStamp).format(defaultFormat)
 
         // 获取 startTime 逻辑 有预约取预约，没有取下一分钟
         let startTime = '';
@@ -149,7 +144,6 @@
 
         planAdd(params)
           .then((res) => {
-            console.log('== 保存 res: ', res);
             message.success('操作成功');
             submitLoading.value = false;
             setPlanDetailRefresh();
@@ -170,7 +164,6 @@
         };
         const fetch = bool ? planEnable : planDisable;
         fetch(params).then((res) => {
-          console.log('启动、暂停：', res);
           setPlanDetailRefresh();
         });
       };

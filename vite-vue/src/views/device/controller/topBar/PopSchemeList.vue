@@ -90,7 +90,6 @@ export default defineComponent({
       nowDeviceId.value = deviceId;
       getTemplateList();
       visible.value = true;
-      console.log(" == deviceId: ", deviceId);
     };
 
     const handleCancel = () => {

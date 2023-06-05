@@ -122,7 +122,7 @@ export default defineComponent({
 
     const injectDeviceObj = inject("changeDeviceObj", {});
     watch(injectDeviceObj, (newVal) => {
-      console.log(">>>>>>>>>>>>>>>> 设备变更：", newVal);
+      console.log("设备变更信息：", newVal);
       let _arr = [];
       if (newVal.isTemperature) {
         _arr.push('temperature');
@@ -138,7 +138,7 @@ export default defineComponent({
 
     const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
     watch(injectDevicePlanDetail, (newObj) => {
-      console.log("== 详情inject: ", newObj);
+      console.log("== 设备计划详情inject: ", newObj);
       settingsArr.value = [];
       if (newObj.settings) {
         settingsArr.value = JSON.parse(newObj.settings);
@@ -172,7 +172,6 @@ export default defineComponent({
 
       const settingsObj = JSON.parse(settings);
       Object.assign(panelObj, settingsObj);
-      console.log("=== settingsObj: ", settingsObj);
 
       setControlChange(panelObj);
     });
@@ -287,7 +286,6 @@ export default defineComponent({
         settingsArr.value.push(_obj);
       }
 
-      console.log("=== settingsArr: ", settingsArr.value);
       setControlChange(settingsArr.value);
       setRowWidth();
     };
@@ -301,7 +299,6 @@ export default defineComponent({
       }
 
       optionItem = JSON.parse(optionItem);
-      console.log("=== 行放下 optionItem：", optionItem);
       if (optionItem.btnType == "value") {
         setAxisBoard(optionItem, dropIndex);
       } else { // 预约、循环等通用按钮
@@ -381,9 +378,6 @@ export default defineComponent({
     };
 
     const deleteBoard = (index: number, btnType: string, timestamp: number) => {
-      console.log("=== index: ", index, btnType, timestamp);
-      console.log("=== settingsArr: ", JSON.parse(JSON.stringify(settingsArr.value)));
-      
       if (btnType == "loop") { // 循环
         settingsArr.value.splice(index, 1);
 

@@ -72,9 +72,8 @@ export default defineComponent({
       if (!item.isLink) {
         return message.warning('该设备不可连接，请联系管理员');
       }
-      Object.assign(activeDeviceObj, item);
-      console.log("=== sider activeDeviceObj: ", activeDeviceObj);
       
+      Object.assign(activeDeviceObj, item);
       emit('selectDevice', item);
     }
 
