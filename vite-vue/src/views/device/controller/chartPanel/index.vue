@@ -68,25 +68,30 @@ import {
       const defaultFormat = 'YYYY-MM-DD HH:mm';
       const dataSource = ref([]);
       const realDataSource = ref([]);
+
+      // 折线图源数据
       const chartData = computed(() => {
         let arr = [];
         if (pageName.value == 'Simulation') {
           // setChangePlan(dataSource);
           arr = dataSource.value;
         } else if (pageName.value == 'Protocol') {
-          arr = [...realDataSource.value, dataSource.value];
+          arr = [...realDataSource.value, ...dataSource.value];
         }
 
         return arr;
       });
+      
       const queryParam = reactive({
         dateArr: [],
         dateType: '',
       });
 
+      const needPanelRowList = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
       const injectDeviceObj = inject('changeDeviceObj', {});
       const _interval = ref();
 
+      // 查询开启计时器
       const setIntervalFun = () => {
         if (!injectDeviceObj.value?.id) {
           return message.warning('请先选取设备');
@@ -126,35 +131,9 @@ import {
         realChartData(params).then((data) => {
           if (data && data.length) {
             let arr = [];
-            for (const item of data) {
-              arr.push({
-                type: 'temperature',
-                time: item.date,
-                dec: '实际',
-                value: item.temperature,
-              });
-
-              arr.push({
-                type: 'humidity',
-                time: item.date,
-                dec: '实际',
-                value: item.humidity,
-              });
-
-              arr.push({
-                type: 'temperature',
-                time: item.date,
-                dec: '预设',
-                value: item.setTemperature,
-              });
-
-              arr.push({
-                type: 'humidity',
-                time: item.date,
-                dec: '预设',
-                value: item.setHumidity,
-              });
-            }
+            // for (const item of data) {
+              
+            // }
 
             realDataSource.value = arr;
           }
@@ -192,59 +171,38 @@ import {
         let loopIndex = 0; // 循环box左侧 index
         let loopNum = 0; // 循环次数
 
+        const returnArr = (parentObj, timestamp, valKey) => {
+          const _date = dayjs(timestamp).format(defaultFormat);
+          let resArr = [];
+
+          for (const panelType of needPanelRowList.value) {
+            const _val = parentObj[panelType][valKey];
+            resArr.push({
+              panelType,
+              date: _date,
+              value: _val,
+              bandMax: _val + parentObj[panelType]['bandMax'],
+              bandMin: _val + parentObj[panelType]['bandMin'],
+            })
+          }
+
+          return resArr;
+        }
+
         for (let i=0; i<_setArr.length; i++) {
           const item = _setArr[i];
 
           if (item.btnType == 'value') {
-            const Tobj = item.temperature;
-            const Hobj = item.humidity;
-            const Bobj = item.beam;
-
-            let _obj = {}
-
-            if (duration === 0) { // 起始值为第一个 startValue
-              _obj.date = dayjs(startTimeStamp).format(defaultFormat);
-              if (Tobj) {
-                _obj.temperature = Tobj.startValue;
-                _obj.temperatureMax = Tobj.startValue + Tobj.bandMax;
-                _obj.temperatureMin = Tobj.startValue + Tobj.bandMin;
-              }
-              if (Hobj) {
-                _obj.humidity = Hobj.startValue;
-                _obj.humidityMax = Hobj.startValue + Hobj.bandMax;
-                _obj.humidityMin = Hobj.startValue + Hobj.bandMin;
-              }
-              if (Bobj) {
-                _obj.beam = Bobj.startValue;
-                _obj.beamMax = Bobj.startValue + Bobj.bandMax;
-                _obj.beamMin = Bobj.startValue + Bobj.bandMin;
-              }
-              dataArr.push(JSON.parse(JSON.stringify(_obj)));
-              _obj = {};
+            // 起始值为第一个 startValue
+            if (duration === 0) {
+              const resArr = returnArr(item, startTimeStamp, 'startValue');
+              dataArr.push(...resArr);
             }
 
-            const itemDuration = Tobj?.duration || Hobj?.duration || Bobj?.duration
-            duration += itemDuration;
+            duration += item.duration;
             const durTimeStamp = startTimeStamp + duration * 60 * 1000;
-            
-            _obj.date = dayjs(durTimeStamp).format(defaultFormat);
-
-            if (Tobj) {
-              _obj.temperature = Tobj.endValue;
-              _obj.temperatureMax = Tobj.endValue + Tobj.bandMax;
-              _obj.temperatureMin = Tobj.endValue + Tobj.bandMin;
-            }
-            if (Hobj) {
-              _obj.humidity = Hobj.endValue;
-              _obj.humidityMax = Hobj.endValue + Hobj.bandMax;
-              _obj.humidityMin = Hobj.endValue + Hobj.bandMin;
-            }
-            if (Bobj) {
-              _obj.beam = Bobj.endValue;
-              _obj.beamMax = Bobj.endValue + Bobj.bandMax;
-              _obj.beamMin = Bobj.endValue + Bobj.bandMin;
-            }
-            dataArr.push(_obj);
+            const resArr = returnArr(item, durTimeStamp, 'endValue');
+            dataArr.push(...resArr);
 
           } else if (item.btnType == 'loop') {
             if (!item.isRightLoop) {
@@ -258,12 +216,13 @@ import {
               }
             }
 
-          } else if (item.btnType == 'reservation') {
+          } else if (item.btnType == 'reservation' && item.date) {
             startTimeStamp = (new Date(item.date)).getTime();
           }
         }
 
         dataSource.value = dataArr;
+        console.log("=== 组装好的折线图数据: ", dataArr);
       };
 
       const changePageName = inject('changePageName');

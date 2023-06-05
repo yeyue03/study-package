@@ -42,13 +42,15 @@
       ChartPanel,
     },
     setup() {
-      const pageName = ref('Simulation');
+      const pageName = ref('Protocol');
       const deviceObj = ref();
       const planDetailObj = ref({});
+      const needPanelRowList = ref(['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
 
       provide('changeDeviceObj', deviceObj);
       provide('changePageName', pageName);
       provide('changeDevicePlanDetail', planDetailObj);
+      provide('changePanelRowList', needPanelRowList);
 
       const changePageName = (name: string) => {
         pageName.value = name;
@@ -57,11 +59,27 @@
       const selectDevice = (obj) => {
         deviceObj.value = obj;
         getPlanDetail(obj?.id);
+        setPanelRowList(obj);
       };
+
+      const setPanelRowList = (obj) => {
+        let _arr = [];
+        if (obj?.isTemperature) {
+          _arr.push('temperature');
+        }
+        if (obj?.isHumidity) {
+          _arr.push('humidity');
+        }
+        if (obj?.isBeam) {
+          _arr.push('beam');
+        }
+        needPanelRowList.value = _arr;
+      }
 
       // 获取设备计划详情
       const getPlanDetail = (deviceId: number) => {
         planDetailObj.value = {};
+        needPanelRowList.value = [];
         if (!deviceId) {
           return;
         }

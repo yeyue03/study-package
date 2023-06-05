@@ -112,29 +112,13 @@ export default defineComponent({
     PanelLoop,
   },
   setup() {
-    const needPanelRowList = ref(['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
+    const needPanelRowList = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
     const defaultFormat = 'YYYY-MM-DD HH:mm';
     const panelObj = reactive({
       temperature: [],
       humidity: [],
     });
     const settingsArr = ref([]);
-
-    const injectDeviceObj = inject("changeDeviceObj", {});
-    watch(injectDeviceObj, (newVal) => {
-      console.log("设备变更信息：", newVal);
-      let _arr = [];
-      if (newVal.isTemperature) {
-        _arr.push('temperature');
-      }
-      if (newVal.isHumidity) {
-        _arr.push('humidity');
-      }
-      if (newVal.isBeam) {
-        _arr.push('beam');
-      }
-      needPanelRowList.value = _arr;
-    });
 
     const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
     watch(injectDevicePlanDetail, (newObj) => {
@@ -240,12 +224,14 @@ export default defineComponent({
       
       let _obj = {
         id: nanoid(),
-        btnType: 'value'
+        btnType: 'value',
+        duration: 1,
       };
       const iconObj = {
         temperature: 'icon-wendu',
         humidity: 'icon-shidu',
         beam: 'icon-guangzhao',
+        powerSize: optionItem.valueType == 'range' ? '1' : ''
       }
 
       // 获取前一个坐标轴元素
@@ -409,7 +395,10 @@ export default defineComponent({
       } else if (parentItem) {
         // 同一列中温度、湿度、光照时长、功率同一
         for (const panelType of needPanelRowList.value) {
+          parentItem.powerSize = childObj['powerSize'];
           parentItem[panelType]['powerSize'] = childObj['powerSize'];
+
+          parentItem.duration = childObj['duration'];
           parentItem[panelType]['duration'] = childObj['duration'];
         }
       }

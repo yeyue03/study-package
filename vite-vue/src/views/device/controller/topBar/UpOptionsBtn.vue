@@ -101,14 +101,14 @@
 
       const savePlanData = () => {
         submitLoading.value = true;
-        const savePlanData = planData.value;
+        const sPlanData = planData.value;
 
         const deviceObj = injectDeviceObj.value;
-        savePlanData.value.forEach((data) => {
+        sPlanData.forEach((data) => {
           data.deviceId = deviceObj.id;
         });
 
-        planDataAdd(savePlanData.value)
+        planDataAdd(sPlanData)
           .then((res) => {
             message.success('操作成功');
             submitLoading.value = false;
@@ -141,6 +141,8 @@
           startTime,
           isRun: false,
         };
+        console.log("==== 保存 settings：", params.settings);
+        
 
         planAdd(params)
           .then((res) => {
@@ -174,7 +176,7 @@
         } else {
           if (type == 'save') {
             savePlan();
-            savePlanData();
+            // savePlanData();
           } else if (type == 'saveTemplate') {
             popSaveSchemeRef.value.showModal(settingsArr.value, standardType.value);
           } else if (type == 'scheme') {

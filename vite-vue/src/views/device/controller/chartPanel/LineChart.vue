@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, defineComponent, onMounted, toRefs, watch, inject } from 'vue';
+  import { ref, reactive, defineComponent, onMounted, toRefs, watch, inject } from 'vue';
   import { Chart } from '@antv/g2';
 
   export default defineComponent({
@@ -24,54 +24,51 @@
     },
     setup(props) {
       const { chartData, pageName } = toRefs(props);
-      const needPanelRowList = ref(['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
+      const needPanelRowList = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
 
       const chartRef = ref();
-      const newChart = ref();
-      const view1 = ref();
-      const view2 = ref();
+      const newChart = ref(); // 图标
+      const viewObj = reactive({}); // 子表
 
       watch(chartData, (newVal) => {
-        console.log(" === 直线图数据: ", pageName.value, newVal);
+        console.log(" === 折线图数据: ", pageName.value, newVal);
         drawChart();
       });
 
-      const injectDeviceObj = inject("changeDeviceObj", {});
-      watch(injectDeviceObj, (newVal) => {
-        let _arr = [];
-        if (newVal.isTemperature) {
-          _arr.push('temperature');
+      const injectDeviceObj = inject('changeDeviceObj', {});
+      const oldDeviceId = ref();
+      // 设备变更后，销毁chart 实例，需要时重新创建，防止子表数量与温度、湿度、光照数量不匹配
+      watch(injectDeviceObj, () => {
+        if (newChart.value) {
+          newChart.value.clear();
+          newChart.value.destroy();
+          newChart.value = null;
+          console.log("=== 销毁后重新创建");
+          drawChart();
         }
-        if (newVal.isHumidity) {
-          _arr.push('humidity');
-        }
-        if (newVal.isBeam) {
-          _arr.push('beam');
-        }
-        needPanelRowList.value = _arr;
-      });
+      })
 
       const drawChart = () => {
+        console.log("===== newChart.value: ", newChart.value);
+        
         if (newChart.value) {
-          // const view1Data = chartData.value.filter((item) => item.type == 'temperature');
-          view1.value.data(chartData.value);
-          // const view2Data = chartData.value.filter((item) => item.type == 'humidity');
-          view2.value.data(chartData.value);
+          setViewChartData();
           newChart.value.render();
+
         } else {
+          console.log("=== 创建 chart");
+          
           // let chartHight = document.body.clientHeight - 200; // 暂时替换
-          let chartHight = document.body.clientHeight - 100;
+          let chartHight = document.body.clientHeight - 106;
           if (pageName.value == 'Protocol') {
             chartHight -= 35 // 减去搜索框高度
           }
-          newChart.value =
-            newChart.value ||
-            new Chart({
-              container: chartRef.value,
-              autoFit: true,
-              height: chartHight,
-              defaultInteractions: [],
-            });
+          newChart.value = new Chart({
+            container: chartRef.value,
+            autoFit: true,
+            height: chartHight,
+            defaultInteractions: [],
+          });
 
           const chart = newChart.value;
           // chart.tooltip({
@@ -88,155 +85,128 @@
             sync: true,
           });
 
-          view1.value = chart.createView({
-            region: {
-              start: {
-                x: 0,
-                y: 0,
-              },
-              end: {
-                x: 1,
-                y: 0.5,
-              },
-            },
-            padding: [10, 60, 30, 60],
-          });
-          
-          view1.value.tooltip({
-            shared: true,
-            showCrosshairs: true,
-            containerTpl: `<div class="g2-tooltip"><p class="g2-tooltip-title"></p><ul class="g2-tooltip-list"></ul></div>`,
-            itemTpl: `
-              <ul class="g2-tooltip-list">
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">温度</span>:<span class="g2-tooltip-value">{temperature}℃</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">温度上方差</span>:<span class="g2-tooltip-value">{temperatureMax}℃</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">温度下方差</span>:<span class="g2-tooltip-value">{temperatureMin}℃</span>
-                </li>
-              </ul>
-            `,
-          })
-          view1.value.animate(false);
-          view1.value.data(chartData.value);
-          view1.value.interaction('tooltip');
-          view1.value.interaction('sibling-tooltip');
-
-          if (pageName.value == 'Simulation') { // 预测
-            view1.value.line().position('date*temperature').color('#f00').tooltip('date*temperature*temperatureMax*temperatureMin',function(date, temperature, temperatureMax, temperatureMin){
-              return {
-                date,
-                temperature,
-                temperatureMax,
-                temperatureMin,
-              }
-            });
-            view1.value.line().position('date*temperatureMax').color('#f00').shape('dash').tooltip(false);
-            view1.value.line().position('date*temperatureMin').color('#f00').shape('dash').tooltip(false);
-
-          } else { // 实际
-            view1.value.line().position('date*value').color('dec');
-          }
-          
-          view1.value.axis('value', {
-            title: {
-              text: 'temperature (℃)',
-              style: {
-                fontSize: 15,
-              },
-            },
-            grid: {
-              line: {
-                type: 'line',
-                style: {
-                  stroke: '#aaa',
-                  lineDash: [4, 4],
-                },
-              },
-            },
-          });
-
-          view2.value = chart.createView({
-            region: {
-              start: {
-                x: 0,
-                y: 0.5,
-              },
-              end: {
-                x: 1,
-                y: 1,
-              },
-            },
-            padding: [10, 60, 30, 60],
-          });
-
-          view2.value.tooltip({
-            shared: true,
-            showCrosshairs: true,
-            containerTpl: `<div class="g2-tooltip"><p class="g2-tooltip-title"></p><ul class="g2-tooltip-list"></ul></div>`,
-            itemTpl: `
-              <ul class="g2-tooltip-list">
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">湿度</span>:<span class="g2-tooltip-value">{humidity}%rh</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">湿度上方差</span>:<span class="g2-tooltip-value">{humidityMax}%rh</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">湿度下方差</span>:<span class="g2-tooltip-value">{humidityMin}%rh</span>
-                </li>
-              </ul>
-            `,
-          })
-          view2.value.interaction('tooltip');
-          view2.value.interaction('sibling-tooltip');
-          view2.value.data(chartData.value);
-          if (pageName.value == 'Simulation') { // 预测
-            view2.value.line().position('date*humidity').color('#f00').tooltip('date*humidity*humidityMax*humidityMin',function(date, humidity, humidityMax, humidityMin){
-              return {
-                date,
-                humidity,
-                humidityMax,
-                humidityMin,
-              }
-            });
-            view2.value.line().position('date*humidityMax').color('#f00').shape('dash').tooltip(false);
-            view2.value.line().position('date*humidityMin').color('#f00').shape('dash').tooltip(false);
-
-          } else { // 实际
-            view2.value.line().position('date*value').color('dec');
-          }
-
-          view2.value.axis('value', {
-            title: {
-              text: '%rH',
-              style: {
-                fontSize: 15,
-              },
-            },
-            grid: {
-              line: {
-                type: 'line',
-                style: {
-                  stroke: '#aaa',
-                  lineDash: [4, 4],
-                },
-              },
-            },
-          });
-
+          setViewOption(chart);
           chart.render();
         }
       };
+
+      const addYObj = {
+        1: 1,
+        2: 0.5,
+        3: 0.33,
+      }
+      const panelTypeStrObj = {
+        temperature: '温度',
+        humidity: '湿度',
+        beam: '光照',
+      }
+      const panelTypeSymboObj = {
+        temperature: '℃',
+        humidity: '%rh',
+        beam: 'lx',
+      }
+
+      // 图标数据赋值
+      const setViewChartData = () => {
+        for (const panelType of needPanelRowList.value) {
+          const _arr = chartData.value.filter((item) => item.panelType == panelType);
+          viewObj[panelType].data(_arr);
+        }
+      }
+
+      // 图标配置
+      const setViewOption = (chart) => {
+        const viewLen = needPanelRowList.value.length;
+        let endY = addYObj[viewLen];
+
+        let _index = 1;
+        for (const panelType of needPanelRowList.value) {
+          viewObj[panelType] = chart.createView({
+            region: {
+              start: {
+                x: 0,
+                y: endY * (_index - 1),
+              },
+              end: {
+                x: 1,
+                y: _index == 3 ? 1 : (endY * _index),
+              },
+            },
+            padding: [10, 60, 30, 60]
+          });
+
+          _index++;
+
+          viewObj[panelType].tooltip({
+            shared: true,
+            showCrosshairs: true,
+            containerTpl: `<div class="g2-tooltip"><p class="g2-tooltip-title"></p><ul class="g2-tooltip-list"></ul></div>`,
+            itemTpl: `
+              <ul class="g2-tooltip-list">
+                <li class="g2-tooltip-list-item">
+                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
+                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{value} ${ panelTypeSymboObj[panelType] }</span>
+                </li>
+                <li class="g2-tooltip-list-item">
+                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
+                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{bandMax} ${ panelTypeSymboObj[panelType] }</span>
+                </li>
+                <li class="g2-tooltip-list-item">
+                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
+                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{bandMin} ${ panelTypeSymboObj[panelType] }</span>
+                </li>
+              </ul>
+            `,
+          })
+          viewObj[panelType].animate(false);
+          // viewObj[panelType].data(chartData.value);
+          viewObj[panelType].interaction('tooltip');
+          viewObj[panelType].interaction('sibling-tooltip');
+
+          if (pageName.value == 'Simulation') { // 预测
+            viewObj[panelType].line().position('date*value').shape('smooth').color('#f00').tooltip('date*value*bandMax*bandMin',function(date, value, bandMax, bandMin){
+              return {
+                date,
+                value,
+                bandMax,
+                bandMin,
+              }
+            });
+            viewObj[panelType].line().position('date*bandMax').shape('smooth').color('#f00').tooltip(false).style({
+              lineDash: [8, 8]
+            });
+            viewObj[panelType].line().position('date*bandMin').shape('smooth').color('#f00').tooltip(false).style({
+              lineDash: [8, 8]
+            });
+
+          } else { // 实际
+            viewObj[panelType].line().position('date*value').shape('smooth').color('#f00');
+          }
+          
+          viewObj[panelType].axis('value', {
+            title: {
+              text: `${panelTypeStrObj[panelType]} (${panelTypeSymboObj[panelType]})`,
+              style: {
+                fontSize: 15,
+              },
+            },
+            grid: {
+              line: {
+                type: 'line',
+                style: {
+                  stroke: '#aaa',
+                  lineDash: [4, 4],
+                },
+              },
+            },
+          });
+
+          viewObj[panelType].axis('bandMax', false);
+          viewObj[panelType].axis('bandMin', false);
+        }
+
+        setViewChartData();
+      }
 
       onMounted(() => {
         drawChart();
