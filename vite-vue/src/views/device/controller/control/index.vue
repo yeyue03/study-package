@@ -214,11 +214,9 @@ export default defineComponent({
 
     // 放置坐标版
     const setAxisBoard = (optionItem: OptionsItem) => {
-      // needPanelRowList = ref(['temperature', 'humidity', 'beam'])
-      // settingsArr.value
       let startValue = 10;
       let endValue = 20;
-      if (optionItem.valueType == "constant") {
+      if (optionItem.valueType == "constant") { // 恒定值
         endValue = 10;
       }
 
@@ -234,7 +232,13 @@ export default defineComponent({
         humidity: 'icon-shidu',
         beam: 'icon-guangzhao',
       }
+
+      const lastItem = settingsArr.value.filter(item => item.btnType == 'value').pop(); // 获取前一个坐标轴元素
       for (const panelType of needPanelRowList.value) {
+        if (lastItem) {
+          startValue = lastItem[panelType]['endValue']; // 后一个坐标轴开始值等于前一个坐标轴结束值
+        }
+
         _obj[panelType] = {
           id: nanoid(),
           icon: iconObj[panelType],
