@@ -340,12 +340,14 @@ export default defineComponent({
     };
 
     // 子组件值变更后同步变更父组件的值
-    const changePanel = (childObj: PanelChildObj, item: PanelChildObj, panelType: string | undefined) => {
+    const changePanel = (childObj: PanelChildObj, item: PanelChildObj) => {
       Object.assign(item, childObj);
+
+      // 前后loop保持一致
       if (childObj.btnType == "loop" && childObj.isRightLoop) {
-        // 前后loop保持一致
-        const findIndex = panelObj[panelType].findIndex((obj: PanelChildObj) => obj.timestamp == item.timestamp);
-        panelObj[panelType][findIndex].loop = item.loop;
+        const _setArr = settingsArr.value;
+        const findIndex = _setArr.findIndex((obj: PanelChildObj) => obj.timestamp == item.timestamp);
+        _setArr[findIndex].loop = item.loop;
       }
       setControlChange(settingsArr.value);
     };

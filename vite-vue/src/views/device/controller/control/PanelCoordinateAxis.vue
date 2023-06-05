@@ -160,6 +160,7 @@ export default defineComponent({
       setCanvas();
     });
 
+    // 绘制画布
     const setCanvas = () => {
       ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value);
       
