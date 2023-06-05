@@ -42,10 +42,8 @@ export interface LineChartDataObj {
 
 // 拖拽盒子参数
 export interface DraggingObj {
-  id?: number;
-  panelType?: string;
-  index?: number;
-  btnType?: string;
-  loopItemIndex?: number;
+  id: number | string;
+  index: number;
+  btnType: string;
   timestamp?: number;
 }

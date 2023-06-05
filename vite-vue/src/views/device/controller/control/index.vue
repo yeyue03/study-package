@@ -289,21 +289,36 @@ export default defineComponent({
         index,
         id: item.id,
         btnType: item.btnType,
-        timestamp: item.timestamp,
+        timestamp: item.timestamp
       };
 
       e.dataTransfer.setData("boardObj", JSON.stringify(draggingObj));
     };
 
-    // 拖拽排序 放下时运行
-    const boardDrop = (index: number, item: PanelChildObj) => {
+    // 拖拽排序 放下时运行（规律：往左移插入元素左侧，往右移插入元素右侧）
+    const boardDrop = (dropIndex: number, item: PanelChildObj) => {
       if (!draggingObj.id || draggingObj.id === item.id) {
         return;
       }
 
       const boardList = settingsArr.value;
+      // 判断循环box拖动是否合理
+      if (draggingObj.btnType == 'loop') {
+        const dragIndex = draggingObj.index;
+        let sliceArr = boardList.slice(dropIndex, dragIndex);
+        if (dragIndex < dropIndex) { // 右移
+          sliceArr = boardList.slice(dragIndex + 1, dropIndex + 1);
+        }
+
+        for (const item of sliceArr) {
+          if (item.btnType == 'loop') {
+            return message.warning('不可拖动')
+          }
+        }
+      }
+
       const dragSliceItem = boardList.splice(draggingObj.index, 1)[0];
-      boardList.splice(index, 0, dragSliceItem);
+      boardList.splice(dropIndex, 0, dragSliceItem);
     };
 
     const boardDragEnd = () => {
