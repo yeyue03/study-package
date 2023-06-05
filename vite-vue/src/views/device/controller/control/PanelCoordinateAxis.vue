@@ -29,10 +29,22 @@
       </div>
 
       <div class="tag-box">
-        <span v-if="formState.valueType == 'constant'" class="tag-span">{{ formState.startValue }}</span>
-        <a-input-number v-else class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-model:value="formState.startValue" @blur="changeValue" />
-        <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-model:value="formState.endValue" @blur="changeValue" />
+        <!-- startValue 输入框 -->
+        <template v-if="!formState.isShowStartValInput">
+          <span v-if="formState.valueType == 'range'" class="tag-span" @click="showValueInput('isShowStartValInput')">{{ formState.startValue }} {{ panelTypeSymboObj[formState.panelType] }}</span>
+          <span v-else class="tag-span"></span>
+        </template>
+        <template v-else>
+          <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-focus v-model:value="formState.startValue" @blur="showValueInput('isShowStartValInput')" />
+        </template>
+
+        <!-- endValue 输入框 -->
+        <span v-if="!formState.isShowEndValInput" class="tag-span" @click="showValueInput('isShowEndValInput')">{{ formState.endValue }} {{ panelTypeSymboObj[formState.panelType] }}</span>
+        <template v-else>
+          <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-focus v-model:value="formState.endValue" @blur="showValueInput('isShowEndValInput')" />
+        </template>
       </div>
+      
     </div>
 
     <!-- 方差 -->
@@ -46,12 +58,12 @@
       <div class="band-span">
         <div>
           <span class="max-span">max: </span>
-          <span v-if="!formState.isShowMaxBandInput" @click="showBandInput('isShowMaxBandInput')">{{ formState.bandMax }} %rh</span>
+          <span v-if="!formState.isShowMaxBandInput" @click="showBandInput('isShowMaxBandInput')">{{ formState.bandMax }}  {{ panelTypeSymboObj[formState.panelType] }}</span>
           <a-input-number v-else class="tag-input" :min="0" :max="100" :step="1" :precision="0" v-focus v-model:value="formState.bandMax" @blur="showBandInput('isShowMaxBandInput')" />
         </div>
         <div>
           <span class="max-span">min: </span>
-          <span v-if="!formState.isShowMinBandInput" @click="showBandInput('isShowMinBandInput')">{{ formState.bandMin }} %rh</span>
+          <span v-if="!formState.isShowMinBandInput" @click="showBandInput('isShowMinBandInput')">{{ formState.bandMin }}  {{ panelTypeSymboObj[formState.panelType] }}</span>
           <a-input-number v-else class="tag-input" :min="-100" :max="0" :step="1" :precision="0" v-focus v-model:value="formState.bandMin" @blur="showBandInput('isShowMinBandInput')" />
         </div>
       </div>
@@ -108,6 +120,12 @@ export default defineComponent({
       Object.assign(formState, newObj)
     }, {
       deep: true
+    })
+
+    const panelTypeSymboObj = reactive({
+      temperature: '℃',
+      humidity: '%rh',
+      beam: 'lx',
     })
 
     const durationConvertStr = computed(() => {
@@ -235,7 +253,17 @@ export default defineComponent({
     // 是否显示时间段输入框
     const showTimeInput = () => {
       formState.isShowTimeInput = !formState.isShowTimeInput;
-      changeAxis();
+      if (!formState.isShowTimeInput) {
+        changeAxis();
+      }
+    }
+
+    // 是否显示开始/结束 value 输入框
+    const showValueInput = (keyStr: string) => {
+      formState[keyStr] = !formState[keyStr];
+      if (!formState[keyStr]) {
+        changeValue();
+      }
     }
 
     // 是否显示方差box
@@ -246,6 +274,14 @@ export default defineComponent({
     // 是否显示方差输入框
     const showBandInput = (key: string) => {
       formState[key] = !formState[key];
+      if (!formState[key]) {
+        changeAxis();
+      }
+    }
+
+    // SPWT 是否on
+    const selectSpwt = (bool: boolean) => {
+      formState.isSpwt = bool;
       changeAxis();
     }
 
@@ -254,14 +290,10 @@ export default defineComponent({
       emit('changePanel', formState);
     }
 
-    // SPWT 是否on
-    const selectSpwt = (bool: boolean) => {
-      formState.isSpwt = bool;
-    }
-
     return {
       canvasRef,
       formState,
+      panelTypeSymboObj,
       durationConvertStr,
       canvasStyle: {
         width: canvasWidth.value + 'px',
@@ -272,6 +304,7 @@ export default defineComponent({
       valueMin,
       changeValue,
       showTimeInput,
+      showValueInput,
       showBand,
       showBandInput,
       selectSpwt
@@ -304,6 +337,7 @@ export default defineComponent({
   background: #333;
 }
 .canvas-box {
+  overflow: hidden;
   position: relative;
   width: 220px;
   height: 230px;

@@ -76,7 +76,8 @@ import {
           // setChangePlan(dataSource);
           arr = dataSource.value;
         } else if (pageName.value == 'Protocol') {
-          arr = [...realDataSource.value, ...dataSource.value];
+          // arr = [...realDataSource.value, ...dataSource.value];
+          arr = realDataSource.value;
         }
 
         return arr;
@@ -130,12 +131,7 @@ import {
         };
         realChartData(params).then((data) => {
           if (data && data.length) {
-            let arr = [];
-            // for (const item of data) {
-              
-            // }
-
-            realDataSource.value = arr;
+            realDataSource.value = data || [];
           }
         });
       };

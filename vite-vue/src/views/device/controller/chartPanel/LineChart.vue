@@ -36,28 +36,22 @@
       });
 
       const injectDeviceObj = inject('changeDeviceObj', {});
-      const oldDeviceId = ref();
       // 设备变更后，销毁chart 实例，需要时重新创建，防止子表数量与温度、湿度、光照数量不匹配
       watch(injectDeviceObj, () => {
         if (newChart.value) {
           newChart.value.clear();
           newChart.value.destroy();
           newChart.value = null;
-          console.log("=== 销毁后重新创建");
           drawChart();
         }
       })
 
       const drawChart = () => {
-        console.log("===== newChart.value: ", newChart.value);
-        
         if (newChart.value) {
           setViewChartData();
           newChart.value.render();
 
         } else {
-          console.log("=== 创建 chart");
-          
           // let chartHight = document.body.clientHeight - 200; // 暂时替换
           let chartHight = document.body.clientHeight - 106;
           if (pageName.value == 'Protocol') {
@@ -137,51 +131,60 @@
 
           _index++;
 
+          let realTpl = '';
+          if (pageName.value == 'Protocol') { // 实际
+            realTpl = `<li class="g2-tooltip-list-item">
+              <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
+              <span class="g2-tooltip-name">实际${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{realValue} ${ panelTypeSymboObj[panelType] }</span>
+            </li>`
+          }
+
           viewObj[panelType].tooltip({
             shared: true,
             showCrosshairs: true,
             containerTpl: `<div class="g2-tooltip"><p class="g2-tooltip-title"></p><ul class="g2-tooltip-list"></ul></div>`,
             itemTpl: `
               <ul class="g2-tooltip-list">
+                ${realTpl}
                 <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{value} ${ panelTypeSymboObj[panelType] }</span>
+                  <span class="g2-tooltip-marker" style="background-color: #0f0;"></span>
+                  <span class="g2-tooltip-name">预测${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{value} ${ panelTypeSymboObj[panelType] }</span>
                 </li>
                 <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{bandMax} ${ panelTypeSymboObj[panelType] }</span>
+                  <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
+                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }上方差</span>:<span class="g2-tooltip-value">{bandMax} ${ panelTypeSymboObj[panelType] }</span>
                 </li>
                 <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: {color};"></span>
-                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }</span>:<span class="g2-tooltip-value">{bandMin} ${ panelTypeSymboObj[panelType] }</span>
+                  <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
+                  <span class="g2-tooltip-name">${ panelTypeStrObj[panelType] }下方差</span>:<span class="g2-tooltip-value">{bandMin} ${ panelTypeSymboObj[panelType] }</span>
                 </li>
               </ul>
             `,
           })
           viewObj[panelType].animate(false);
-          // viewObj[panelType].data(chartData.value);
           viewObj[panelType].interaction('tooltip');
           viewObj[panelType].interaction('sibling-tooltip');
 
-          if (pageName.value == 'Simulation') { // 预测
-            viewObj[panelType].line().position('date*value').shape('smooth').color('#f00').tooltip('date*value*bandMax*bandMin',function(date, value, bandMax, bandMin){
-              return {
-                date,
-                value,
-                bandMax,
-                bandMin,
-              }
-            });
-            viewObj[panelType].line().position('date*bandMax').shape('smooth').color('#f00').tooltip(false).style({
-              lineDash: [8, 8]
-            });
-            viewObj[panelType].line().position('date*bandMin').shape('smooth').color('#f00').tooltip(false).style({
-              lineDash: [8, 8]
-            });
-
-          } else { // 实际
-            viewObj[panelType].line().position('date*value').shape('smooth').color('#f00');
+          if (pageName.value == 'Protocol') { // 实际
+            viewObj[panelType].line().position('date*realValue').shape('smooth').color('#f00').tooltip(false);
           }
+
+          viewObj[panelType].line().position('date*value').shape('smooth').color('#0f0').tooltip('date*value*bandMax*bandMin*realValue', function(date, value, bandMax, bandMin, realValue){
+            return {
+              date,
+              value,
+              bandMax,
+              bandMin,
+              realValue
+            }
+          });
+
+          viewObj[panelType].line().position('date*bandMax').shape('smooth').color('#f00').tooltip(false).style({
+            lineDash: [8, 8]
+          });
+          viewObj[panelType].line().position('date*bandMin').shape('smooth').color('#f00').tooltip(false).style({
+            lineDash: [8, 8]
+          });
           
           viewObj[panelType].axis('value', {
             title: {

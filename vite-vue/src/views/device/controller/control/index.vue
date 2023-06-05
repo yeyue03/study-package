@@ -126,9 +126,9 @@ export default defineComponent({
       settingsArr.value = [];
       if (newObj.settings) {
         settingsArr.value = JSON.parse(newObj.settings);
-        setControlChange(settingsArr.value);
-        setRowWidth();
       }
+      setControlChange(settingsArr.value);
+      setRowWidth();
     })
 
     const changePageName = inject('changePageName');
@@ -158,6 +158,7 @@ export default defineComponent({
       Object.assign(panelObj, settingsObj);
 
       setControlChange(panelObj);
+      setRowWidth();
     });
 
     // 放置通用按钮，dropIndex 存在则把新增的元素放在当前索引后面
@@ -374,6 +375,7 @@ export default defineComponent({
         settingsArr.value.splice(index, 1);
       }
 
+      setControlChange(settingsArr.value);
       setRowWidth();
     };
 

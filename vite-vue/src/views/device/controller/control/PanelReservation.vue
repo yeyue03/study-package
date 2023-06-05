@@ -4,13 +4,22 @@
       <div class="tag-box">
         <span class="tag-span">CLOCK TIMER</span>
       </div>
-      <a-date-picker
-        show-time
-        v-model:value="formState.date"
-        format="YYYY-MM-DD HH:mm"
-        valueFormat="YYYY-MM-DD HH:mm"
-        @change="changeDate"
-      />
+
+      <div v-if="!formState.isShowDateInput && formState.date" @click="showDateInput(true)">
+        <div class="date-str">{{ getDateStr('day') }}</div>
+        <div class="date-str">{{ getDateStr('hour') }}</div>
+      </div>
+      <template v-else>
+        <a-date-picker
+          show-time
+          v-model:value="formState.date"
+          v-focus
+          format="YYYY-MM-DD HH:mm"
+          valueFormat="YYYY-MM-DD HH:mm"
+          @blur="showDateInput(false)"
+        />
+      </template>
+
     </div>
   </div>
 </template>
@@ -36,15 +45,34 @@ export default defineComponent({
       ...panelObj.value,
     });
 
-    const changeDate = () => {
-      emit("changePanel", formState);
+    const showDateInput = (bool: boolean) => {
+      formState.isShowDateInput = bool;
+      if (!bool) {
+        emit("changePanel", formState);
+      }
     };
+
+    const getDateStr = (type: string) => {
+      let _str = '';
+      const _date = formState.date;
+      if (_date) {
+        _str = type == 'day' ? _date.slice(0, 10) : _date.slice(11);
+      }
+
+      return _str;
+    }
 
     return {
       formState,
-      changeDate,
+      showDateInput,
+      getDateStr
     };
   },
+  directives: {
+    focus: {
+      mounted: (el: any) => el.querySelector("input").focus()
+    }
+  }
 });
 </script>
 
@@ -59,6 +87,10 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   background: @boardBgColor;
+}
+.date-str {
+  padding: 2px 6px;
+  text-align: left;
 }
 
 .tag-box {
