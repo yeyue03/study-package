@@ -67,19 +67,8 @@
           <a-input-number v-else class="tag-input" :min="-100" :max="0" :step="1" :precision="0" v-focus v-model:value="formState.bandMin" @blur="showBandInput('isShowMinBandInput')" />
         </div>
       </div>
-      <div class="radio-wrap">
-        <span class="tag-span">SPWT</span>
-        <div class="radio-box">
-          <div class="radio-label" @click="selectSpwt(true)">
-            <span>On</span>
-            <span :class="{'circle': true, 'circle-active': formState.isSpwt}"></span>
-          </div>
-          <div class="radio-label" @click="selectSpwt(false)">
-            <span>Off</span>
-            <span :class="{'circle': true, 'circle-active': !formState.isSpwt}"></span>
-          </div>
-        </div>
-      </div>
+
+      <div class="tag-box"></div>
     </div>
   </div>
 </template>
@@ -122,7 +111,7 @@ export default defineComponent({
       deep: true
     })
 
-    const panelTypeSymboObj = reactive({
+    const panelTypeSymboObj: any = reactive({
       temperature: '℃',
       humidity: '%rh',
       beam: 'lx',
@@ -279,12 +268,6 @@ export default defineComponent({
       }
     }
 
-    // SPWT 是否on
-    const selectSpwt = (bool: boolean) => {
-      formState.isSpwt = bool;
-      changeAxis();
-    }
-
     // 变更数据
     const changeAxis = () => {
       emit('changePanel', formState);
@@ -307,7 +290,6 @@ export default defineComponent({
       showValueInput,
       showBand,
       showBandInput,
-      selectSpwt
     };
   },
   directives: {
@@ -409,40 +391,10 @@ export default defineComponent({
   .max-span {
     display: inline-block;
     width: 34px;
+    margin: 3px 0;
   }
   .tag-input {
     width: 60px;
-  }
-  .radio-wrap {
-    width: 100%;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-  .radio-box {
-    display: flex;
-  }
-  .radio-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 30px;
-    cursor: pointer;
-  }
-  .circle {
-    width: 10px;
-    height: 10px;
-    margin-top: 5px;
-    background: #000;
-    border: solid 2px #fff;
-    border-radius: 50%;
-  }
-  .circle-active {
-    background: #ffcc22;
-  }
-  .ant-radio-wrapper{
-    color: #fff;
   }
 }
 </style>
