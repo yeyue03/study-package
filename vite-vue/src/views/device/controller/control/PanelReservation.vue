@@ -20,6 +20,7 @@
         />
       </template>
 
+      <div class="tag-box"></div>
     </div>
   </div>
 </template>
@@ -84,6 +85,9 @@ export default defineComponent({
   width: 170px !important;
 }
 .clock-timer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 100%;
   height: 100%;
   background: @boardBgColor;
