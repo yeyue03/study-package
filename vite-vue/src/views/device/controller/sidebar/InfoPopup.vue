@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from 'vue'
+import { reactive, defineComponent } from 'vue'
 import { deviceEdit } from '../controller.api';
 import { message } from 'ant-design-vue';
 import { DeviceInfoObj } from '../types';
@@ -93,10 +93,10 @@ export default defineComponent({
   name: 'InfoPopup',
   emits: ['hideInfoPopup', 'refreshList'],
   setup(_, { emit }) {
-    const formState = ref<DeviceInfoObj>()
+    const formState: any = reactive({})
 
     const showInfoPopup = (obj: DeviceInfoObj) => {
-      formState.value = obj;
+      Object.assign(formState, obj);
     }
     
     const hideInfoPopup = () => {
@@ -105,9 +105,9 @@ export default defineComponent({
 
     const savePopup = () => {
       const params = {
-        id: formState.value?.id,
-        defineName: formState.value?.defineName,
-        alarmType: formState.value?.alarmType
+        id: formState.id,
+        defineName: formState.defineName,
+        alarmType: formState.alarmType
       }
       deviceEdit(params).then(() => {
         message.success('保存成功');

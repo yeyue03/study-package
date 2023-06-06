@@ -152,9 +152,10 @@ export default defineComponent({
       });
     };
 
-    // 实际曲线页面时，进入页面即查询实际值
-    if (pageName.value == "Protocol") {
-      watch(injectDeviceObj, () => {
+    // 设备变更
+    watch(injectDeviceObj, () => {
+      // 实际曲线页面时，进入页面即查询实际值
+      if (pageName.value == "Protocol") {
         const nowTimestamp = new Date().getTime();
         const prevNowTimestamp = nowTimestamp - 43200000;
         const startTime = dayjs(prevNowTimestamp).format(defaultFormat);
@@ -162,8 +163,14 @@ export default defineComponent({
         queryParam.dateType = "minute";
         queryParam.dateArr = [startTime, endTime];
         setIntervalFun();
-      });
-    }
+
+      } else { // 预览刷新 加计时器防止 settingsArr未变更
+        setTimeout(() => {
+          console.log("=== 设备变更刷新");
+          setDataSource();
+        }, 100);
+      }
+    });
 
     const settingsArr = ref<SettingsArr>([]); // 设置的数据
 
@@ -205,15 +212,16 @@ export default defineComponent({
         const item: SettingsArrItem = _setArr[i];
 
         if (item.btnType == "value") {
-          // 起始值为第一个 startValue
-          if (duration === 0) {
-            const resArr = returnArr(item, startTimeStamp, "startValue");
-            dataArr.push(...resArr);
-          }
+          // startValue
+          let durTimeStamp = startTimeStamp + duration * 60 * 1000;
+          let resArr = returnArr(item, durTimeStamp, "startValue");
+          dataArr.push(...resArr);
 
+          // endValue
           duration += item.duration!;
-          const durTimeStamp = startTimeStamp + duration * 60 * 1000;
-          const resArr = returnArr(item, durTimeStamp, "endValue");
+          durTimeStamp = startTimeStamp + duration * 60 * 1000;
+          
+          resArr = returnArr(item, durTimeStamp, "endValue");
           dataArr.push(...resArr);
           
         } else if (item.btnType == "loop") {

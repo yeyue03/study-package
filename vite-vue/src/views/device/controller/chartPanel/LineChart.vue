@@ -175,7 +175,7 @@ export default defineComponent({
           viewObj[panelType]
             .line()
             .position("date*realValue")
-            .shape("smooth")
+            .shape("line")
             .size(3)
             .color("#f00")
             .tooltip(false);
@@ -184,7 +184,7 @@ export default defineComponent({
         viewObj[panelType]
           .line()
           .position("date*value")
-          .shape("smooth")
+          .shape("line")
           .size(3)
           .color("#0f0")
           .tooltip(
@@ -203,17 +203,18 @@ export default defineComponent({
         viewObj[panelType]
           .line()
           .position("date*bandMax")
-          .shape("smooth")
+          .shape("line")
           .size(3)
           .color("#f00")
           .tooltip(false)
           .style({
             lineDash: [8, 8],
           });
+
         viewObj[panelType]
           .line()
           .position("date*bandMin")
-          .shape("smooth")
+          .shape("line")
           .size(3)
           .color("#f00")
           .tooltip(false)

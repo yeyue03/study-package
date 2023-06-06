@@ -4,6 +4,7 @@ export type DeviceList = DeviceInfoObj[];
 export interface DeviceInfoObj {
   id: number;
   ip: string;
+  type: '类型', // 类型
   serialNo: string; // 序列号
   defineName: string; // 自定义设备名称
   url: string; // 图片地址
