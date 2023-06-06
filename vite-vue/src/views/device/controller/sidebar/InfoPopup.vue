@@ -28,12 +28,17 @@
 
       <a-row type="flex" align="middle">
         <a-col :span="leftSpan">Temperature Range</a-col>
-        <a-col :span="rightSpan">{{ formState.temperatureStart }}-{{ formState.temperatureEnd }} C</a-col>
+        <a-col :span="rightSpan">{{ formState.temperatureStart }}-{{ formState.temperatureEnd }} ℃</a-col>
       </a-row>
 
       <a-row type="flex" align="middle">
         <a-col :span="leftSpan">Humidity Range</a-col>
         <a-col :span="rightSpan">{{ formState.humidityStart }}-{{ formState.humidityEnd }} %rH</a-col>
+      </a-row>
+
+      <a-row type="flex" align="middle">
+        <a-col :span="leftSpan">Beam Range</a-col>
+        <a-col :span="rightSpan">{{ formState.beamStart }}-{{ formState.beanEnd }} lx</a-col>
       </a-row>
 
       <hr />

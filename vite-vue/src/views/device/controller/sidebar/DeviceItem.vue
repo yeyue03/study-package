@@ -13,15 +13,15 @@
           <div class="panel-type">
             <div v-if="infoItem.isTemperature" class="panel-type-item">
               <i class="iconfont icon-wendu"></i>
-              <span>87</span>
+              <span>87 ℃</span>
             </div>
             <div v-if="infoItem.isHumidity" class="panel-type-item">
               <i class="iconfont icon-shidu"></i>
-              <span>87</span>
+              <span>87 %rh</span>
             </div>
             <div v-if="infoItem.isBeam" class="panel-type-item">
               <i class="iconfont icon-guangzhao"></i>
-              <span>87</span>
+              <span>87 lx</span>
             </div>
           </div>
         </a-row>
@@ -102,7 +102,7 @@ export default defineComponent({
   .panel-type {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: flex-end;
     font-size: 16px;
   }
