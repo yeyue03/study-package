@@ -85,8 +85,8 @@
       });
 
       const planData = ref();
-      listenerChangePlan((obj: any) => {
-        planData.value = obj;
+      listenerChangePlan((chartData: any) => {
+        planData.value = chartData;
       });
 
       const planId = ref(); // 计划id

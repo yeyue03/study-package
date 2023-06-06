@@ -52,6 +52,9 @@ export interface SettingsArrItem {
   isRightLoop?: boolean;
   isShowTimeInput?: boolean;
   isshowLoopInput?: boolean;
+  temperature?: SettingsArrItem;
+  humidity?: SettingsArrItem;
+  beam?: SettingsArrItem;
 }
 
 // 温度湿度光照所在对象参数类型

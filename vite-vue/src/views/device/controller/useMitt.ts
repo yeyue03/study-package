@@ -11,7 +11,7 @@ const emitter = mitt();
 export function setControlChange(arr: SettingsArr) {
   emitter.emit('changeControlObj', arr);
 }
-export function listenerControlChange(callback: (arr: SettingsArr) => void) {
+export function listenerControlChange(callback: (arr: any) => void) {
   emitter.on('changeControlObj', callback);
 }
 export function removeControlListener() {
@@ -20,10 +20,10 @@ export function removeControlListener() {
 // 监控温度、湿度面板值 end
 
 // test
-export function setChangePlan(obj: any) {
-  emitter.emit('changePlan', obj);
+export function setChangePlan(chartData: any) {
+  emitter.emit('changePlan', chartData);
 }
-export function listenerChangePlan(callback: (obj: any) => void) {
+export function listenerChangePlan(callback: (chartData: any) => void) {
   emitter.on('changePlan', callback);
 }
 //
@@ -32,7 +32,7 @@ export function listenerChangePlan(callback: (obj: any) => void) {
 export function setScaleOption(type: string) {
   emitter.emit('scaleOption', type);
 }
-export function listenerScaleOption(callback: (type: string) => void) {
+export function listenerScaleOption(callback: (type: any) => void) {
   emitter.on('scaleOption', callback);
 }
 export function removeScaleListener() {
@@ -44,7 +44,7 @@ export function removeScaleListener() {
 export function setStandardType(type: string) {
   emitter.emit('standardType', type);
 }
-export function listenerStandardType(callback: (type: string) => void) {
+export function listenerStandardType(callback: (type: any) => void) {
   emitter.on('standardType', callback);
 }
 export function removeStandardTypeListener() {
@@ -68,7 +68,7 @@ export function removePlanDetailRefreshListener() {
 export function setReplacePlan(settings: string) {
   emitter.emit('replacePlan', settings);
 }
-export function listenerReplacePlan(callback: (settings: string) => void) {
+export function listenerReplacePlan(callback: (settings: any) => void) {
   emitter.on('replacePlan', callback);
 }
 export function removeReplacePlanListener() {

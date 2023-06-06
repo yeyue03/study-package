@@ -28,17 +28,19 @@
                   <PanelLoop
                     :panelObj="item"
                     :rowLen="needPanelRowList.length"
-                    @changePanel="changePanel($event, item)"
+                    @changePanel="changePanel($event, item, null)"
                   />
                 </template>
                 
                 <!-- 坐标轴板块 -->
                 <template v-else>
                   <template v-for="panelType in needPanelRowList" :key="panelType">
-                    <PanelCoordinateAxis
-                      :axisObj="item[panelType]"
-                      @changePanel="changePanel($event, item[panelType], item)"
-                    />
+                    <template v-if="item[panelType]">
+                      <PanelCoordinateAxis
+                        :axisObj="item[panelType]"
+                        @changePanel="changePanel($event, item[panelType], item)"
+                      />
+                    </template>
                   </template>
                 </template>
               </div>
@@ -52,7 +54,7 @@
                 <PanelReservation
                   :panelObj="item"
                   :rowLen="needPanelRowList.length"
-                  @changePanel="changePanel($event, item)"
+                  @changePanel="changePanel($event, item, null)"
                 />
               </div>
             </template>
@@ -101,7 +103,7 @@ import {
   listenerReplacePlan,
   listenerStandardType
 } from "../useMitt";
-import { OptionsItem, SettingsArr, SettingsArrItem, DraggingObj } from "../types";
+import { OptionsItem, SettingsArrItem, DraggingObj } from "../types";
 import dayjs from 'dayjs';
 
 export default defineComponent({
@@ -114,7 +116,7 @@ export default defineComponent({
   setup() {
     const needPanelRowList: any = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
     const defaultFormat = 'YYYY-MM-DD HH:mm';
-    const settingsArr = ref<SettingsArr>([]);
+    const settingsArr: any = ref([]);
 
     const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
     watch(injectDevicePlanDetail, (newObj: any) => {
@@ -135,7 +137,7 @@ export default defineComponent({
 
     // 当前标准
     const standardType = ref('temperature');
-    const standardTypeObj = reactive({
+    const standardTypeObj: any = reactive({
       temperature: '温度',
       humidity: '湿度',
       both: '温湿度',
@@ -157,7 +159,7 @@ export default defineComponent({
     });
 
     // 放置通用按钮，dropIndex 存在则把新增的元素放在当前索引后面
-    const setGeneralBtn = (optionItem: OptionsItem, dropIndex: number) => {
+    const setGeneralBtn = (optionItem: OptionsItem, dropIndex: number | void) => {
       const _setArr = settingsArr.value;
       if (optionItem.btnType == "reservation") { // 插入预约框
         if (_setArr[0] && _setArr[0].btnType == 'reservation') {
@@ -193,7 +195,7 @@ export default defineComponent({
         }]
 
         if (dropIndex) {
-          const lastItem = _setArr.slice(0, dropIndex + 1).filter(item => item.btnType == 'loop').pop();
+          const lastItem = _setArr.slice(0, dropIndex + 1).filter((item: SettingsArrItem) => item.btnType == 'loop').pop();
           if (lastItem && !lastItem.isRightLoop) {
             return message.warning('此处不可插入循环框');
           } else {
@@ -210,15 +212,15 @@ export default defineComponent({
     };
 
     // 放置坐标版，dropIndex 存在则把新增的元素放在当前索引后面
-    const setAxisBoard = (optionItem: OptionsItem, dropIndex: number) => {
+    const setAxisBoard = (optionItem: OptionsItem, dropIndex: number | void) => {
       let startValue = 10;
       let endValue = 20;
       if (optionItem.valueType == "constant") { // 恒定值
         endValue = startValue;
       }
 
-      let serialNumber: number | string = settingsArr.value.length + 1;
-      serialNumber = serialNumber < 10 ? "0" + serialNumber : serialNumber;
+      let _len: number = settingsArr.value.length + 1;
+      const serialNumber = _len < 10 ? "0" + _len : _len;
       
       let _obj: any = {
         id: nanoid(),
@@ -236,9 +238,9 @@ export default defineComponent({
       // 获取前一个坐标轴元素
       let lastItem: any = null;
       if (dropIndex) {
-        lastItem = settingsArr.value.slice(0, dropIndex + 1).filter(item => item.btnType == 'value').pop();
+        lastItem = settingsArr.value.slice(0, dropIndex + 1).filter((item: SettingsArrItem) => item.btnType == 'value').pop();
       } else {
-        lastItem = settingsArr.value.filter(item => item.btnType == 'value').pop();
+        lastItem = settingsArr.value.filter((item: SettingsArrItem) => item.btnType == 'value').pop();
       }
 
       for (const panelType of needPanelRowList.value) {
@@ -276,7 +278,7 @@ export default defineComponent({
     };
 
     // 拖拽释放事件 panelType: 所在面板类型
-    const rowDropEvent = (e: any, dropIndex: number) => {
+    const rowDropEvent = (e: any, dropIndex: number | void) => {
       e.preventDefault();
       let optionItem = e.dataTransfer.getData("dragOptionItem"); // 按钮类型
       if (!optionItem) {
@@ -362,7 +364,7 @@ export default defineComponent({
       deleteBoard(boardObj.index, boardObj.btnType, boardObj.timestamp);
     };
 
-    const deleteBoard = (index: number, btnType: string, timestamp: number) => {
+    const deleteBoard = (index: number, btnType: string, timestamp: number | undefined) => {
       if (btnType == "loop") { // 循环
         settingsArr.value.splice(index, 1);
 

@@ -21,21 +21,25 @@
           icon: 'icon-wendu',
           panelType: 'temperature',
           valueType: 'range',
+          btnType: 'value'
         },
         {
           icon: 'icon-wendu',
           panelType: 'temperature',
           valueType: 'constant',
+          btnType: 'value'
         },
         {
           icon: 'icon-shidu',
           panelType: 'humidity',
           valueType: 'range',
+          btnType: 'value'
         },
         {
           icon: 'icon-shidu',
           panelType: 'humidity',
           valueType: 'constant',
+          btnType: 'value'
         },
       ]);
 
