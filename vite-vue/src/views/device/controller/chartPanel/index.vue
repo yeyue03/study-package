@@ -316,6 +316,8 @@ import {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding: 0 60px 10px;
+  box-sizing: border-box;
   .search-item {
     display: flex;
     align-items: center;

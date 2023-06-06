@@ -55,7 +55,7 @@
           // let chartHight = document.body.clientHeight - 200; // 暂时替换
           let chartHight = document.body.clientHeight - 106;
           if (pageName.value == 'Protocol') {
-            chartHight -= 35 // 减去搜索框高度
+            chartHight -= 40 // 减去搜索框高度
           }
           newChart.value = new Chart({
             container: chartRef.value,
@@ -166,10 +166,10 @@
           viewObj[panelType].interaction('sibling-tooltip');
 
           if (pageName.value == 'Protocol') { // 实际
-            viewObj[panelType].line().position('date*realValue').shape('smooth').color('#f00').tooltip(false);
+            viewObj[panelType].line().position('date*realValue').shape('smooth').size(3).color('#f00').tooltip(false);
           }
 
-          viewObj[panelType].line().position('date*value').shape('smooth').color('#0f0').tooltip('date*value*bandMax*bandMin*realValue', function(date, value, bandMax, bandMin, realValue){
+          viewObj[panelType].line().position('date*value').shape('smooth').size(3).color('#0f0').tooltip('date*value*bandMax*bandMin*realValue', function(date, value, bandMax, bandMin, realValue){
             return {
               date,
               value,
@@ -179,10 +179,10 @@
             }
           });
 
-          viewObj[panelType].line().position('date*bandMax').shape('smooth').color('#f00').tooltip(false).style({
+          viewObj[panelType].line().position('date*bandMax').shape('smooth').size(3).color('#f00').tooltip(false).style({
             lineDash: [8, 8]
           });
-          viewObj[panelType].line().position('date*bandMin').shape('smooth').color('#f00').tooltip(false).style({
+          viewObj[panelType].line().position('date*bandMin').shape('smooth').size(3).color('#f00').tooltip(false).style({
             lineDash: [8, 8]
           });
           
@@ -206,6 +206,7 @@
 
           viewObj[panelType].axis('bandMax', false);
           viewObj[panelType].axis('bandMin', false);
+          viewObj[panelType].axis('realValue', false);
         }
 
         setViewChartData();
