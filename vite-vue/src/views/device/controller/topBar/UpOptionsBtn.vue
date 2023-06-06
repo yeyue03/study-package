@@ -49,7 +49,7 @@
 <script lang="ts">
   import { ref, defineComponent, watch, inject } from 'vue';
   import { listenerControlChange, setStandardType, setPlanDetailRefresh, listenerChangePlan } from '../useMitt';
-  import type { PanelObj } from '../types';
+  import { SettingsArr, LineChartDataObj } from '../types';
   import PopSaveScheme from './PopSaveScheme.vue';
   import PopSchemeList from './PopSchemeList.vue';
   import {planAdd, planDataAdd, planEnable, planDisable} from '../controller.api';
@@ -75,13 +75,13 @@
       const isRun = ref(false);
       const submitLoading = ref(false);
 
-      const injectDeviceObj = inject('changeDeviceObj', {}); // 设备信息
+      const injectDeviceObj: any = inject('changeDeviceObj', {}); // 设备信息
 
       const settingsArr = ref();
       // 监听获取 settings 数据
-      listenerControlChange((obj: PanelObj) => {
-        console.log('== 设备 settingsArr 变更：', obj);
-        settingsArr.value = obj;
+      listenerControlChange((setArr: SettingsArr) => {
+        console.log('== 设备 settingsArr 变更：', setArr);
+        settingsArr.value = setArr;
       });
 
       const planData = ref();
@@ -90,7 +90,7 @@
       });
 
       const planId = ref(); // 计划id
-      const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
+      const injectDevicePlanDetail: any = inject('changeDevicePlanDetail', {});
       watch(injectDevicePlanDetail, (newObj) => {
         planId.value = newObj.id;
         isRun.value = newObj.isRun;
@@ -99,17 +99,18 @@
 
       const defaultFormat = 'YYYY-MM-DD HH:mm';
 
+      // 保存组装好的 chart数据
       const savePlanData = () => {
         submitLoading.value = true;
         const sPlanData = planData.value;
 
         const deviceObj = injectDeviceObj.value;
-        sPlanData.forEach((data) => {
+        sPlanData.forEach((data: LineChartDataObj) => {
           data.deviceId = deviceObj.id;
         });
 
         planDataAdd(sPlanData)
-          .then((res) => {
+          .then(() => {
             message.success('操作成功');
             submitLoading.value = false;
             setPlanDetailRefresh();
@@ -118,6 +119,8 @@
             submitLoading.value = false;
           });
       };
+
+      // 保存计划
       const savePlan = () => {
         submitLoading.value = true;
         const _setArr = settingsArr.value;
@@ -145,7 +148,7 @@
         
 
         planAdd(params)
-          .then((res) => {
+          .then(() => {
             message.success('操作成功');
             submitLoading.value = false;
             setPlanDetailRefresh();
@@ -165,7 +168,12 @@
           id: planId.value,
         };
         const fetch = bool ? planEnable : planDisable;
-        fetch(params).then((res) => {
+        fetch(params).then(() => {
+          if (bool) {
+            message.success('启动成功');
+          } else {
+            message.success('暂停成功');
+          }
           setPlanDetailRefresh();
         });
       };
@@ -176,7 +184,7 @@
         } else {
           if (type == 'save') {
             savePlan();
-            // savePlanData();
+            savePlanData();
           } else if (type == 'saveTemplate') {
             popSaveSchemeRef.value.showModal(settingsArr.value, standardType.value);
           } else if (type == 'scheme') {

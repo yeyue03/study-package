@@ -101,7 +101,7 @@ import {
   listenerReplacePlan,
   listenerStandardType
 } from "../useMitt";
-import type { OptionsItem, PanelChildObj, DraggingObj } from "../types";
+import { OptionsItem, SettingsArr, SettingsArrItem, DraggingObj } from "../types";
 import dayjs from 'dayjs';
 
 export default defineComponent({
@@ -112,16 +112,12 @@ export default defineComponent({
     PanelLoop,
   },
   setup() {
-    const needPanelRowList = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
+    const needPanelRowList: any = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
     const defaultFormat = 'YYYY-MM-DD HH:mm';
-    const panelObj = reactive({
-      temperature: [],
-      humidity: [],
-    });
-    const settingsArr = ref([]);
+    const settingsArr = ref<SettingsArr>([]);
 
     const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
-    watch(injectDevicePlanDetail, (newObj) => {
+    watch(injectDevicePlanDetail, (newObj: any) => {
       console.log("== 设备计划详情inject: ", newObj);
       settingsArr.value = [];
       if (newObj.settings) {
@@ -131,7 +127,7 @@ export default defineComponent({
       setRowWidth();
     })
 
-    const changePageName = inject('changePageName');
+    const changePageName: any = inject('changePageName');
 
     const boardHeight = computed(() => {
       return (needPanelRowList.value.length * 214 + 20 + (needPanelRowList.value.length - 1) * 20) + 'px';
@@ -154,10 +150,9 @@ export default defineComponent({
         return;
       }
 
-      const settingsObj = JSON.parse(settings);
-      Object.assign(panelObj, settingsObj);
-
-      setControlChange(panelObj);
+      settingsArr.value = JSON.parse(settings);
+      
+      setControlChange(settingsArr.value);
       setRowWidth();
     });
 
@@ -169,10 +164,12 @@ export default defineComponent({
           return message.warning('已有预约框')
 
         } else {
+          const _date: string = dayjs((new Date()).getTime() + 60000).format(defaultFormat);
+
           _setArr.unshift({
             id: nanoid(),
             icon: optionItem.icon,
-            date: dayjs((new Date()).getTime() + 60000).format(defaultFormat),
+            date: _date,
             btnType: optionItem.btnType,
           })
         }
@@ -220,15 +217,16 @@ export default defineComponent({
         endValue = startValue;
       }
 
-      let newIndex = settingsArr.value.length + 1;
-      newIndex = newIndex < 10 ? "0" + newIndex : newIndex;
+      let serialNumber: number | string = settingsArr.value.length + 1;
+      serialNumber = serialNumber < 10 ? "0" + serialNumber : serialNumber;
       
-      let _obj = {
+      let _obj: any = {
         id: nanoid(),
         btnType: 'value',
         duration: 1,
+        powerSize: optionItem.valueType == 'range' ? '1' : ''
       };
-      const iconObj = {
+      const iconObj: any = {
         temperature: 'icon-wendu',
         humidity: 'icon-shidu',
         beam: 'icon-guangzhao',
@@ -236,7 +234,7 @@ export default defineComponent({
       }
 
       // 获取前一个坐标轴元素
-      let lastItem = null;
+      let lastItem: any = null;
       if (dropIndex) {
         lastItem = settingsArr.value.slice(0, dropIndex + 1).filter(item => item.btnType == 'value').pop();
       } else {
@@ -259,7 +257,7 @@ export default defineComponent({
           endValue,
           powerSize: optionItem.valueType == 'range' ? '1' : '',
           valueType: optionItem.valueType,
-          index: newIndex,
+          serialNumber,
           bandMax: 0,
           bandMin: 0,
           panelType,
@@ -303,7 +301,7 @@ export default defineComponent({
      * @param {number} index 当前数组索引
      * @param {Object} item 当前数组的项
      */
-    const boardDragStart = (e: any, index: number, item: PanelChildObj) => {
+    const boardDragStart = (e: any, index: number, item: SettingsArrItem) => {
       draggingObj = {
         index,
         id: item.id,
@@ -320,7 +318,7 @@ export default defineComponent({
      * @param {number} dropIndex 放下时box所在索引
      * @param {Object} item 放下时box所在的项
      */
-    const boardDrop = (e: Event, dropIndex: number, item: PanelChildObj) => {
+    const boardDrop = (e: Event, dropIndex: number, item: SettingsArrItem) => {
       e.preventDefault();
       rowDropEvent(e, dropIndex);
       
@@ -333,7 +331,7 @@ export default defineComponent({
       if (draggingObj.btnType == 'loop') {
         const dragIndex = draggingObj.index;
         let sliceArr = boardList.slice(dropIndex, dragIndex);
-        if (dragIndex < dropIndex) { // 右移
+        if (dragIndex && dragIndex < dropIndex) { // 右移
           sliceArr = boardList.slice(dragIndex + 1, dropIndex + 1);
         }
 
@@ -344,7 +342,7 @@ export default defineComponent({
         }
       }
 
-      const dragSliceItem = boardList.splice(draggingObj.index, 1)[0];
+      const dragSliceItem = boardList.splice(draggingObj.index!, 1)[0];
       boardList.splice(dropIndex, 0, dragSliceItem);
     };
 
@@ -368,7 +366,7 @@ export default defineComponent({
       if (btnType == "loop") { // 循环
         settingsArr.value.splice(index, 1);
 
-        const findIndex = settingsArr.value.findIndex((item: PanelChildObj) => item.timestamp == timestamp);
+        const findIndex = settingsArr.value.findIndex((item: SettingsArrItem) => item.timestamp == timestamp);
         settingsArr.value.splice(findIndex, 1);
 
       } else {
@@ -385,13 +383,13 @@ export default defineComponent({
      * @param {Object} item 原先的对象
      * @param {Object} parentItem 父对象，只有温度、湿度、光照会有
      */
-    const changePanel = (childObj: PanelChildObj, item: PanelChildObj, parentItem: any) => {
+    const changePanel = (childObj: SettingsArrItem, item: SettingsArrItem, parentItem: any) => {
       Object.assign(item, childObj);
 
       // 前后loop保持一致
       if (childObj.btnType == "loop" && childObj.isRightLoop) {
         const _setArr = settingsArr.value;
-        const findIndex = _setArr.findIndex((obj: PanelChildObj) => obj.timestamp == item.timestamp);
+        const findIndex = _setArr.findIndex((obj: SettingsArrItem) => obj.timestamp == item.timestamp);
         _setArr[findIndex].loop = item.loop;
 
       } else if (parentItem) {
@@ -469,7 +467,6 @@ export default defineComponent({
       standardType,
       standardTypeObj,
       settingsArr,
-      panelObj,
       scaleStyle,
       rowDropEvent,
       boardDragStart,

@@ -19,7 +19,7 @@ enum Api {
  * 设备列表接口
  * @param params
  */
-export const getDeviceList = (params) => defHttp.get({ url: Api.deviceList, params });
+export const getDeviceList = () => defHttp.get({ url: Api.deviceList });
 /**
  * 设备编辑
  * @param params

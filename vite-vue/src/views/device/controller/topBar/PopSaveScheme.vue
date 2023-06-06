@@ -25,16 +25,16 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, inject } from 'vue';
 import { message, Form } from 'ant-design-vue';
-import type { PanelObj } from '../types';
+import { SettingsArr } from '../types';
 import { planTemplateAdd } from '../controller.api';
-
+// settingsArr
 const useForm = Form.useForm;
 export default defineComponent({
   name: 'PopSaveScheme',
   setup() {
     const visible = ref(false);
     const submitLoading = ref(false);
-    const saveDataObj = ref(); // 保存的计划数据
+    const settingsArr = ref<SettingsArr>([]); // 保存的计划数据
 
     const addType = ref('add');
     const formRef = ref();
@@ -50,10 +50,10 @@ export default defineComponent({
     const { resetFields, validate, validateInfos } = useForm(formState, rules);
 
     const standardType = ref('temperature');
-    const showModal = (obj: PanelObj, sType: string) => {
+    const showModal = (setArr: SettingsArr, sType: string) => {
       resetFields();
       visible.value = true;
-      saveDataObj.value = obj;
+      settingsArr.value = setArr;
       standardType.value = sType || 'temperature'
     }
 
@@ -61,7 +61,7 @@ export default defineComponent({
       visible.value = false
     }
 
-    const injectDeviceObj = inject('changeDeviceObj', {})
+    const injectDeviceObj: any = inject('changeDeviceObj', {})
     // 提交
     const onSubmit = () => {
       if (!injectDeviceObj.value?.id) {
@@ -76,11 +76,11 @@ export default defineComponent({
           const params = {
             deviceId: deviceObj.id,
             name: formState.name,
-            settings: JSON.stringify(saveDataObj.value),
+            settings: JSON.stringify(settingsArr.value),
             standardType: standardType.value
           }
           
-          planTemplateAdd(params).then(res => {
+          planTemplateAdd(params).then(() => {
             message.success('操作成功');
             submitLoading.value = false;
             handleCancel();

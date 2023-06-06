@@ -2,7 +2,7 @@
   <div :class="{'board': true, 'band-board': formState.isShowBand}">
     <div class="axis-wrap">
       <div class="tag-box">
-        <span class="tag-span">Ramp {{ formState.index }}</span>
+        <span class="tag-span">Ramp {{ formState.serialNumber }}</span>
         <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
         <template v-else>
           <template v-if="formState.valueType == 'range'">
@@ -140,7 +140,7 @@ export default defineComponent({
       }
     })
 
-    const injectDeviceObj = inject("changeDeviceObj", {});
+    const injectDeviceObj: any = inject("changeDeviceObj", {});
     const valueMin = computed(() => {
       let min = 1;
       if (formState.panelType == 'temperature') {

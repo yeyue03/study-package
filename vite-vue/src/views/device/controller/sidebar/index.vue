@@ -1,7 +1,7 @@
 <template>
   <div class="scheme-box">
     <template v-for="(item, index) in deviceList" :key="item.id">
-      <div @click="clickScheme(item)">
+      <div @click="clickDevice(item)">
         <DeviceItem :infoItem="item" :activeDeviceId="activeDeviceObj.id">
           <i class="iconfont icon-xinxiinfo21 icon-help" @click.stop="showInfoPopup(item, index)"></i>
         </DeviceItem>
@@ -23,6 +23,7 @@ import { getDeviceList } from '../controller.api';
 import { getFileAccessHttpUrl } from '@/utils/common/compUtils';
 import { useRoute } from 'vue-router';
 import { message } from "ant-design-vue";
+import { DeviceInfoObj } from '../types'
 
 export default defineComponent({
   name: "ChartSideBar",
@@ -42,7 +43,7 @@ export default defineComponent({
     const initDeviceList = () => {
       deviceList.value = [];
       
-      getDeviceList().then(data => {
+      getDeviceList().then((data: any) => {
         if (data && data.length) {
           const queryDeviceId = route.query?.id;
           let defaultDevice = null;
@@ -68,7 +69,7 @@ export default defineComponent({
     }
     initDeviceList();
 
-    const clickScheme = (item) => {
+    const clickDevice = (item: DeviceInfoObj) => {
       if (!item.isLink) {
         return message.warning('该设备不可连接，请联系管理员');
       }
@@ -77,7 +78,7 @@ export default defineComponent({
       emit('selectDevice', item);
     }
 
-    const showInfoPopup = (item, index: number) => {
+    const showInfoPopup = (item: DeviceInfoObj, index: number) => {
       console.log("== index: ", index);
       // infoPopTop.value = 130 * index;
       visibleInfo.value = true;
@@ -95,7 +96,7 @@ export default defineComponent({
       deviceList,
       activeDeviceObj,
       initDeviceList,
-      clickScheme,
+      clickDevice,
       showInfoPopup,
       hideInfoPopup,
     };

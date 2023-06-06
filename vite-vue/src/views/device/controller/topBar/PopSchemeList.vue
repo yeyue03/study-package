@@ -33,7 +33,7 @@ import { planTemplateList, planTemplateDelete } from '../controller.api';
 import { setReplacePlan } from '../useMitt';
 
 export default defineComponent({
-  name: "PopSaveScheme",
+  name: "PopSchemeList",
   setup() {
     const visible = ref(false);
     const submitLoading = ref(false);
@@ -56,7 +56,7 @@ export default defineComponent({
     })
 
     const nowDeviceId = ref(0);
-    const dataSource = ref([]);
+    const dataSource: any = ref([]);
 
     // deviceId
     const getTemplateList = () => {

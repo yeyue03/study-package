@@ -32,6 +32,7 @@
   import ChartPanel from './chartPanel/index.vue';
   import { planDetal } from "./controller.api";
   import { listenerPlanDetailRefresh } from './useMitt';
+  import type { DeviceInfoObj } from "./types";
 
   export default defineComponent({
     name: 'ProjectCharts',
@@ -56,13 +57,13 @@
         pageName.value = name;
       };
 
-      const selectDevice = (obj) => {
+      const selectDevice = (obj: DeviceInfoObj) => {
         deviceObj.value = obj;
         getPlanDetail(obj?.id);
         setPanelRowList(obj);
       };
 
-      const setPanelRowList = (obj) => {
+      const setPanelRowList = (obj: DeviceInfoObj) => {
         let _arr = [];
         if (obj?.isTemperature) {
           _arr.push('temperature');
