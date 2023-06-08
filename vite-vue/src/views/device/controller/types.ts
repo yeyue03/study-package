@@ -47,7 +47,7 @@ export interface SettingsArrItem {
   powerSize?: string; // 功率 1、2
   bandMax?: number; // 上方差
   bandMin?: number; // 下方差
-  serialNumber?: number | string; // box序号(显示在左上角)
+  serialNumber?: string; // box序号(显示在左上角)
   timestamp?: number; // 时间戳 统一循环的左box、右box想同
   isRightLoop?: boolean;
   isShowTimeInput?: boolean;

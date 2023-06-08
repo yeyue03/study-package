@@ -346,6 +346,8 @@ export default defineComponent({
 
       const dragSliceItem = boardList.splice(draggingObj.index!, 1)[0];
       boardList.splice(dropIndex, 0, dragSliceItem);
+
+      setSerialNumber();
     };
 
     const boardDragEnd = () => {
@@ -421,8 +423,26 @@ export default defineComponent({
       }
       _width += 300
       rowWidth.value = _width + "px";
+
+      setSerialNumber();
     };
 
+    // 设置box序号(显示在左上角)
+    const setSerialNumber = () => {
+      let _num: number = 1;
+      for (const item of settingsArr.value) {
+        if (item.btnType == 'value') {
+          const serialNumber: string = _num < 10 ? '0' + _num : _num + '';
+          for (const panelType of needPanelRowList.value) {
+            item[panelType]['serialNumber'] = serialNumber;
+          }
+
+          _num++;
+        }
+      }
+    }
+
+    // 缩放
     const scaleObj = reactive({
       width: 100,
       height: 100,
