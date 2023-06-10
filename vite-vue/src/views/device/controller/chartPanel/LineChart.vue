@@ -135,40 +135,27 @@ export default defineComponent({
 
         _index++;
 
-        let realTpl = "";
-        if (pageName.value == "Protocol") {
-          // 实际
-          realTpl = `<li class="g2-tooltip-list-item">
-              <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
-              <span class="g2-tooltip-name">实际${panelTypeStrObj[panelType]}</span>:<span class="g2-tooltip-value">{realValue} ${panelTypeSymboObj[panelType]}</span>
-            </li>`;
-        }
-
+        // 设置提示框
         viewObj[panelType].tooltip({
           shared: true,
           showCrosshairs: true,
-          containerTpl: `<div class="g2-tooltip"><p class="g2-tooltip-title"></p><ul class="g2-tooltip-list"></ul></div>`,
-          itemTpl: `
-              <ul class="g2-tooltip-list">
-                ${realTpl}
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: #0f0;"></span>
-                  <span class="g2-tooltip-name">预测${panelTypeStrObj[panelType]}</span>:<span class="g2-tooltip-value">{value} ${panelTypeSymboObj[panelType]}</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
-                  <span class="g2-tooltip-name">${panelTypeStrObj[panelType]}上方差</span>:<span class="g2-tooltip-value">{bandMax} ${panelTypeSymboObj[panelType]}</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
-                  <span class="g2-tooltip-name">${panelTypeStrObj[panelType]}下方差</span>:<span class="g2-tooltip-value">{bandMin} ${panelTypeSymboObj[panelType]}</span>
-                </li>
-              </ul>
-            `,
         });
         viewObj[panelType].animate(false);
         viewObj[panelType].interaction("tooltip");
         viewObj[panelType].interaction("sibling-tooltip");
+
+        viewObj[panelType]
+          .line()
+          .position("date*value")
+          .shape("line")
+          .size(3)
+          .color("#0f0")
+          .tooltip("date*value", (_: string, value: number) => {
+            return {
+              name: '预测' + panelTypeStrObj[panelType],
+              value: value + ' ' + panelTypeSymboObj[panelType],
+            };
+          });
 
         if (pageName.value == "Protocol") {
           // 实际
@@ -178,27 +165,13 @@ export default defineComponent({
             .shape("line")
             .size(3)
             .color("#f00")
-            .tooltip(false);
-        }
-
-        viewObj[panelType]
-          .line()
-          .position("date*value")
-          .shape("line")
-          .size(3)
-          .color("#0f0")
-          .tooltip(
-            "date*value*bandMax*bandMin*realValue",
-            function (date: string, value: number, bandMax: number, bandMin: number, realValue: number) {
+            .tooltip("date*realValue", (_: string, value: number) => {
               return {
-                date,
-                value,
-                bandMax,
-                bandMin,
-                realValue,
+                name: '实际' + panelTypeStrObj[panelType],
+                value: value + ' ' + panelTypeSymboObj[panelType],
               };
-            }
-          );
+            });
+        }
 
         viewObj[panelType]
           .line()
@@ -206,9 +179,14 @@ export default defineComponent({
           .shape("line")
           .size(3)
           .color("#f00")
-          .tooltip(false)
           .style({
             lineDash: [8, 8],
+          })
+          .tooltip("date*bandMax", (_: string, value: number) => {
+            return {
+              name: panelTypeStrObj[panelType] + '上方差',
+              value: value + ' ' + panelTypeSymboObj[panelType],
+            };
           });
 
         viewObj[panelType]
@@ -217,9 +195,14 @@ export default defineComponent({
           .shape("line")
           .size(3)
           .color("#f00")
-          .tooltip(false)
           .style({
             lineDash: [8, 8],
+          })
+          .tooltip("date*bandMin", (_: string, value: number) => {
+            return {
+              name: panelTypeStrObj[panelType] + '下方差',
+              value: value + ' ' + panelTypeSymboObj[panelType],
+            };
           });
 
         viewObj[panelType].axis("value", {
