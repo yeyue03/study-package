@@ -78,11 +78,22 @@ export default defineComponent({
       emit('selectDevice', item);
     }
 
+    let oldSelectDeviceId: number = -1;
     const showInfoPopup = (item: DeviceInfoObj, index: number) => {
+      if (oldSelectDeviceId == item.id) {
+        if (visibleInfo.value) {
+          visibleInfo.value = false;
+        } else {
+          infoPopRef.value.showInfoPopup(item);
+          visibleInfo.value = true;
+        }
+
+      } else {
+        oldSelectDeviceId = item.id;
+        visibleInfo.value = true;
+        infoPopRef.value.showInfoPopup(item);
+      }
       console.log("== index: ", index);
-      // infoPopTop.value = 130 * index;
-      visibleInfo.value = true;
-      infoPopRef.value.showInfoPopup(item);
     }
 
     const hideInfoPopup = () => {
