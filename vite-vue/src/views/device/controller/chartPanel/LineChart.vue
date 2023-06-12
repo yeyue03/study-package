@@ -60,10 +60,9 @@ export default defineComponent({
         setViewChartData();
         newChart.value.render();
       } else {
-        // let chartHight = document.body.clientHeight - 200; // 暂时替换
-        let chartHight = document.body.clientHeight - 106;
+        let chartHight = document.body.clientHeight - 200; // 计算chart图高度
         if (pageName.value == "Protocol") {
-          chartHight -= 40; // 减去搜索框高度
+          chartHight -= 60; // 减去搜索框高度
         }
         newChart.value = new Chart({
           container: chartRef.value,
@@ -85,6 +84,23 @@ export default defineComponent({
         });
         chart.scale("value", {
           sync: true,
+          min: 0,
+          max: 100
+        });
+        chart.scale("setVal", {
+          sync: true,
+          min: 0,
+          max: 100
+        });
+        chart.scale("bandMax", {
+          sync: true,
+          min: 0,
+          max: 100
+        });
+        chart.scale("bandMin", {
+          sync: true,
+          min: 0,
+          max: 100
         });
 
         setViewOption(chart);
@@ -108,6 +124,8 @@ export default defineComponent({
     const setViewChartData = () => {
       for (const panelType of needPanelRowList.value) {
         const _arr = chartData.value.filter((item: LineChartDataObj) => item.panelType == panelType);
+        console.log("====== panelType: ", panelType, _arr);
+        
         viewObj[panelType].data(_arr);
       }
     };
@@ -135,51 +153,14 @@ export default defineComponent({
 
         _index++;
 
-        let realTpl = "";
-        if (pageName.value == "Protocol") {
-          // 实际
-          realTpl = `<li class="g2-tooltip-list-item">
-              <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
-              <span class="g2-tooltip-name">实际${panelTypeStrObj[panelType]}</span>:<span class="g2-tooltip-value">{realValue} ${panelTypeSymboObj[panelType]}</span>
-            </li>`;
-        }
-
+        // 设置提示框
         viewObj[panelType].tooltip({
           shared: true,
           showCrosshairs: true,
-          containerTpl: `<div class="g2-tooltip"><p class="g2-tooltip-title"></p><ul class="g2-tooltip-list"></ul></div>`,
-          itemTpl: `
-              <ul class="g2-tooltip-list">
-                ${realTpl}
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: #0f0;"></span>
-                  <span class="g2-tooltip-name">预测${panelTypeStrObj[panelType]}</span>:<span class="g2-tooltip-value">{value} ${panelTypeSymboObj[panelType]}</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
-                  <span class="g2-tooltip-name">${panelTypeStrObj[panelType]}上方差</span>:<span class="g2-tooltip-value">{bandMax} ${panelTypeSymboObj[panelType]}</span>
-                </li>
-                <li class="g2-tooltip-list-item">
-                  <span class="g2-tooltip-marker" style="background-color: #f00;"></span>
-                  <span class="g2-tooltip-name">${panelTypeStrObj[panelType]}下方差</span>:<span class="g2-tooltip-value">{bandMin} ${panelTypeSymboObj[panelType]}</span>
-                </li>
-              </ul>
-            `,
         });
         viewObj[panelType].animate(false);
         viewObj[panelType].interaction("tooltip");
         viewObj[panelType].interaction("sibling-tooltip");
-
-        if (pageName.value == "Protocol") {
-          // 实际
-          viewObj[panelType]
-            .line()
-            .position("date*realValue")
-            .shape("line")
-            .size(3)
-            .color("#f00")
-            .tooltip(false);
-        }
 
         viewObj[panelType]
           .line()
@@ -187,18 +168,28 @@ export default defineComponent({
           .shape("line")
           .size(3)
           .color("#0f0")
-          .tooltip(
-            "date*value*bandMax*bandMin*realValue",
-            function (date: string, value: number, bandMax: number, bandMin: number, realValue: number) {
+          .tooltip("date*value", (_: string, value: number) => {
+            const nameStr: string = pageName.value == "Protocol" ? '实际' : '预测';
+            return {
+              name: nameStr + panelTypeStrObj[panelType],
+              value: value + ' ' + panelTypeSymboObj[panelType],
+            };
+          });
+
+        if (pageName.value == "Protocol") { // 实际
+          viewObj[panelType]
+            .line()
+            .position("date*setVal")
+            .shape("line")
+            .size(3)
+            .color("#f00")
+            .tooltip("date*setVal", (_: string, setVal: number) => {
               return {
-                date,
-                value,
-                bandMax,
-                bandMin,
-                realValue,
+                name: '设定' + panelTypeStrObj[panelType],
+                value: setVal + ' ' + panelTypeSymboObj[panelType],
               };
-            }
-          );
+            });
+        }
 
         viewObj[panelType]
           .line()
@@ -206,9 +197,14 @@ export default defineComponent({
           .shape("line")
           .size(3)
           .color("#f00")
-          .tooltip(false)
           .style({
             lineDash: [8, 8],
+          })
+          .tooltip("date*bandMax", (_: string, bandMax: number) => {
+            return {
+              name: panelTypeStrObj[panelType] + '上方差',
+              value: bandMax + ' ' + panelTypeSymboObj[panelType],
+            };
           });
 
         viewObj[panelType]
@@ -217,9 +213,14 @@ export default defineComponent({
           .shape("line")
           .size(3)
           .color("#f00")
-          .tooltip(false)
           .style({
             lineDash: [8, 8],
+          })
+          .tooltip("date*bandMin", (_: string, bandMin: number) => {
+            return {
+              name: panelTypeStrObj[panelType] + '下方差',
+              value: bandMin + ' ' + panelTypeSymboObj[panelType],
+            };
           });
 
         viewObj[panelType].axis("value", {
@@ -240,9 +241,9 @@ export default defineComponent({
           },
         });
 
+        viewObj[panelType].axis("setVal", false);
         viewObj[panelType].axis("bandMax", false);
         viewObj[panelType].axis("bandMin", false);
-        viewObj[panelType].axis("realValue", false);
       }
 
       setViewChartData();

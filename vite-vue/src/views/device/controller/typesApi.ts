@@ -4,6 +4,10 @@ export interface DeviceEditParams {
   alarmType: string;
 }
 
+export interface DeviceRealValueParams {
+  deviceId: number;
+}
+
 export interface PlanDetalParams {
   deviceId: number;
 }

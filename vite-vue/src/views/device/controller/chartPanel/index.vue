@@ -53,10 +53,11 @@ import {
   listenerStandardType,
   listenerScaleOption,
 } from "../useMitt";
-import { QueryChartObj, LineChartData, SettingsArr, SettingsArrItem } from "../types";
+import { QueryChartObj, LineChartData, SettingsArr } from "../types";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import { realChartData } from "../controller.api";
+import { getChartDataSource } from '../device';
 
 export default defineComponent({
   name: "ChartPanel",
@@ -81,7 +82,6 @@ export default defineComponent({
     const chartData = computed(() => {
       let arr: LineChartData = [];
       if (pageName.value == "Simulation") {
-        // setChangePlan(dataSource);
         arr = dataSource.value;
       } else if (pageName.value == "Protocol") {
         // arr = [...realDataSource.value, ...dataSource.value];
@@ -137,6 +137,7 @@ export default defineComponent({
       }, 60000);
     };
 
+    // 获取实际值数组
     const getRealValueList = () => {
       realDataSource.value = [];
       const params = {
@@ -147,7 +148,41 @@ export default defineComponent({
       };
       realChartData(params).then((data: any) => {
         if (data && data.length) {
-          realDataSource.value = data || [];
+          let resArr: any = [];
+          for (const item of data) {
+            for (const panelType of needPanelRowList.value) {
+              let _val = item.temperature;
+              let setVal = item.setTemperature;
+              let bandMax = item.temperatureMax;
+              let bandMin = item.temperatureMin;
+
+              if (panelType == 'humidity') {
+                _val = item.humidity;
+                setVal = item.setHumidity;
+                bandMax = item.humidityMax;
+                bandMin = item.humidityMin;
+
+              } else if (panelType == 'beam') {
+                _val = item.beam;
+                setVal = item.setBeam;
+                bandMax = item.beamMax;
+                bandMin = item.beamMin;
+              }
+
+              resArr.push({
+                panelType,
+                date: item.date,
+                value: _val,
+                setVal,
+                bandMax,
+                bandMin,
+              });
+            }
+          }
+
+          console.log("==$$$$$$$$$$$$$$$$$$ === resArr: ", resArr);
+          
+          realDataSource.value = resArr;
         }
       });
     };
@@ -166,89 +201,22 @@ export default defineComponent({
 
       } else { // 预览刷新 加计时器防止 settingsArr未变更
         setTimeout(() => {
-          console.log("=== 设备变更刷新");
-          setDataSource();
+          const _arr: any = getChartDataSource(settingsArr, needPanelRowList);
+          dataSource.value = _arr;
         }, 100);
       }
     });
 
     const settingsArr = ref<SettingsArr>([]); // 设置的数据
 
-    // 组装折线图需要的数据
-    const setDataSource = () => {
-      dataSource.value = [];
-      const _setArr = settingsArr.value;
-
-      if (!_setArr || !_setArr.length) {
-        return;
-      }
-
-      let dataArr = [];
-      let startTimeStamp = new Date().getTime() + 60000;
-      let duration = 0;
-
-      let loopIndex: number = 0; // 循环box左侧 index
-      let loopNum: number = 0; // 循环次数
-
-      const returnArr = (parentObj: any, timestamp: number, valKey: string) => {
-        const _date = dayjs(timestamp).format(defaultFormat);
-        let resArr = [];
-
-        for (const panelType of needPanelRowList.value) {
-          const _val = parentObj[panelType][valKey];
-          resArr.push({
-            panelType,
-            date: _date,
-            value: _val,
-            bandMax: _val + parentObj[panelType]["bandMax"],
-            bandMin: _val + parentObj[panelType]["bandMin"],
-          });
-        }
-
-        return resArr;
-      };
-
-      for (let i = 0; i < _setArr.length; i++) {
-        const item: SettingsArrItem = _setArr[i];
-
-        if (item.btnType == "value") {
-          // startValue
-          let durTimeStamp = startTimeStamp + duration * 60 * 1000;
-          let resArr = returnArr(item, durTimeStamp, "startValue");
-          dataArr.push(...resArr);
-
-          // endValue
-          duration += item.duration!;
-          durTimeStamp = startTimeStamp + duration * 60 * 1000;
-          
-          resArr = returnArr(item, durTimeStamp, "endValue");
-          dataArr.push(...resArr);
-          
-        } else if (item.btnType == "loop") {
-          if (!item.isRightLoop) {
-            loopIndex = i;
-            loopNum = item.loop!;
-          } else {
-            loopNum--;
-            if (loopNum > 0) {
-              i = loopIndex;
-            }
-          }
-
-        } else if (item.btnType == "reservation" && item.date) {
-          startTimeStamp = new Date(item.date).getTime();
-        }
-      }
-
-      dataSource.value = dataArr;
-      console.log("=== 组装好的折线图数据: ", dataArr);
-    };
+    
 
     const changePageName: any = inject("changePageName");
     watch(changePageName, (showPage: string) => {
       // 切换到预览页面则重新组装数据
       if (showPage == "Simulation") {
-        setDataSource();
+        const _arr: any = getChartDataSource(settingsArr, needPanelRowList);
+        dataSource.value = _arr;
       }
     });
 
@@ -322,7 +290,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .panel-wrap {
   width: 100%;
-  padding: 50px 20px;
+  padding: 50px 20px 40px;
   box-sizing: border-box;
 }
 .scale-box {

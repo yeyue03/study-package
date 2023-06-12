@@ -6,7 +6,7 @@
         <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
         <template v-else>
           <template v-if="formState.valueType == 'range'">
-            <a-select v-model:value="formState.powerSize" defaultOpen autofocus @change="showTimeInput" @blur="showTimeInput">
+            <a-select v-model:value="formState.powerSize" v-focus @change="showTimeInput" @blur="showTimeInput">
               <a-select-option value="1">功率1</a-select-option>
               <a-select-option value="2">功率2</a-select-option>
             </a-select>

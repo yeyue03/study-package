@@ -13,15 +13,15 @@
           <div class="panel-type">
             <div v-if="infoItem.isTemperature" class="panel-type-item">
               <i class="iconfont icon-wendu"></i>
-              <span>87 ℃</span>
+              <span>{{ infoItem.temperature }} ℃</span>
             </div>
             <div v-if="infoItem.isHumidity" class="panel-type-item">
               <i class="iconfont icon-shidu"></i>
-              <span>87 %rh</span>
+              <span>{{ infoItem.humidity }} %rh</span>
             </div>
             <div v-if="infoItem.isBeam" class="panel-type-item">
               <i class="iconfont icon-guangzhao"></i>
-              <span>87 lx</span>
+              <span>{{ infoItem.beam }} lx</span>
             </div>
           </div>
         </a-row>

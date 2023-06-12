@@ -48,13 +48,14 @@
 
 <script lang="ts">
   import { ref, defineComponent, watch, inject } from 'vue';
-  import { listenerControlChange, setStandardType, setPlanDetailRefresh, listenerChangePlan } from '../useMitt';
+  import { listenerControlChange, setStandardType, setPlanDetailRefresh } from '../useMitt';
   import { SettingsArr, LineChartDataObj } from '../types';
   import PopSaveScheme from './PopSaveScheme.vue';
   import PopSchemeList from './PopSchemeList.vue';
-  import {planAdd, planDataAdd, planEnable, planDisable} from '../controller.api';
+  import { planAdd, planDataAdd, planEnable, planDisable } from '../controller.api';
   import { message } from 'ant-design-vue';
   import dayjs from 'dayjs';
+import { getChartDataSource } from '../device';
 
   export default defineComponent({
     name: 'UpOptionsBtn',
@@ -76,17 +77,13 @@
       const submitLoading = ref(false);
 
       const injectDeviceObj: any = inject('changeDeviceObj', {}); // 设备信息
+      const needPanelRowList: any = inject("changePanelRowList", ["temperature", "humidity", "beam"]); // 该设备含有的面板类似 温度、湿度、光照
 
       const settingsArr = ref();
       // 监听获取 settings 数据
       listenerControlChange((setArr: SettingsArr) => {
         console.log('== 设备 settingsArr 变更：', setArr);
         settingsArr.value = setArr;
-      });
-
-      const planData = ref();
-      listenerChangePlan((chartData: any) => {
-        planData.value = chartData;
       });
 
       const planId = ref(); // 计划id
@@ -101,19 +98,20 @@
 
       // 保存组装好的 chart数据
       const savePlanData = () => {
-        submitLoading.value = true;
-        const sPlanData = planData.value;
+        // submitLoading.value = true;
+        const _arr: any = getChartDataSource(settingsArr, needPanelRowList);
 
         const deviceObj = injectDeviceObj.value;
-        sPlanData.forEach((data: LineChartDataObj) => {
+        _arr.forEach((data: LineChartDataObj) => {
           data.deviceId = deviceObj.id;
         });
 
-        planDataAdd(sPlanData)
+        planDataAdd(_arr)
           .then(() => {
-            message.success('操作成功');
-            submitLoading.value = false;
-            setPlanDetailRefresh();
+            console.log("=== 成功");
+            // message.success('操作成功');
+            // submitLoading.value = false;
+            // setPlanDetailRefresh();
           })
           .catch(() => {
             submitLoading.value = false;
@@ -145,7 +143,6 @@
           isRun: false,
         };
         console.log("==== 保存 settings：", params.settings);
-        
 
         planAdd(params)
           .then(() => {

@@ -54,24 +54,24 @@
         </a-col>
       </a-row>
 
-      <a-row type="flex" align="middle">
+      <a-row v-if="formState.isTemperature" type="flex" align="middle">
         <a-col :span="leftSpan">温度设定值</a-col>
         <a-col :span="rightSpan">
-          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.temperature" />
+          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.setTemperature" />
         </a-col>
       </a-row>
 
-      <a-row type="flex" align="middle">
+      <a-row v-if="formState.isHumidity" type="flex" align="middle">
         <a-col :span="leftSpan">湿度设定值</a-col>
         <a-col :span="rightSpan">
-          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.humidity" />
+          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.setHumidity" />
         </a-col>
       </a-row>
 
-      <a-row type="flex" align="middle">
+      <a-row v-if="formState.isBeam" type="flex" align="middle">
         <a-col :span="leftSpan">光照设定值</a-col>
         <a-col :span="rightSpan">
-          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.beam" />
+          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.setBeam" />
         </a-col>
       </a-row>
 
@@ -107,7 +107,10 @@ export default defineComponent({
       const params = {
         id: formState.id,
         defineName: formState.defineName,
-        alarmType: formState.alarmType
+        alarmType: formState.alarmType,
+        setTemperature: formState.setTemperature,
+        setHumidity: formState.setHumidity,
+        setBeam: formState.setBeam,
       }
       deviceEdit(params).then(() => {
         message.success('保存成功');

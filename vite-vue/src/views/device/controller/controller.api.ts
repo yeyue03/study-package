@@ -1,10 +1,11 @@
-// import { defHttp } from '/@/utils/http/axios';
+// import { defHttp } from '/@/utils/http/axios'; // fda原版
 import defHttp from '@/request/http';
-import { DeviceEditParams, PlanDetalParams, PlanAddParams, PlanDataAddParams, PlanDisableParams, PlanEnableParams, PlanTemplateAddParams, PlanTemplateEditParams, PlanTemplateListParams, RealChartDataParams } from './typesApi';
+import { DeviceEditParams, DeviceRealValueParams, PlanDetalParams, PlanAddParams, PlanDataAddParams, PlanDisableParams, PlanEnableParams, PlanTemplateAddParams, PlanTemplateEditParams, PlanTemplateListParams, RealChartDataParams } from './typesApi';
 
 enum Api {
   deviceList = '/device/myList',
   deviceEdit = '/device/edit',
+  deviceRealValue = '/deviceData/getNew',
   planDetal = '/plan/getByDeviceId',
   planAdd = '/plan/add',
   planDataAdd = '/planData/add',
@@ -26,6 +27,11 @@ export const getDeviceList = () => defHttp.get({ url: Api.deviceList });
  * @param params
  */
 export const deviceEdit = (params: DeviceEditParams) => defHttp.post({ url: Api.deviceEdit, params });
+/**
+ * 获取设备实际值
+ * @param params
+ */
+export const getDeviceRealValue = (params: DeviceRealValueParams) => defHttp.get({ url: Api.deviceRealValue, params });
 
 /**
  * 计划 详情

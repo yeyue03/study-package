@@ -118,6 +118,8 @@ export default defineComponent({
     const defaultFormat = 'YYYY-MM-DD HH:mm';
     const settingsArr: any = ref([]);
 
+    const injectDeviceObj: any = inject("changeDeviceObj", {});
+
     const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
     watch(injectDevicePlanDetail, (newObj: any) => {
       console.log("== 设备计划详情inject: ", newObj);
@@ -246,9 +248,13 @@ export default defineComponent({
       for (const panelType of needPanelRowList.value) {
         if (lastItem) {
           startValue = lastItem[panelType]['endValue']; // 后一个坐标轴开始值等于前一个坐标轴结束值
-          if (optionItem.valueType == "constant") { // 恒定值
-            endValue = startValue;
-          }
+
+        } else { // 第一个axis box开始值取设备实际值
+          startValue = injectDeviceObj.value[panelType]
+        }
+
+        if (optionItem.valueType == "constant") { // 恒定值
+          endValue = startValue;
         }
 
         _obj[panelType] = {
@@ -412,6 +418,7 @@ export default defineComponent({
     const rowWidth = ref("500px");
     const setRowWidth = () => {
       let _width = 80;
+      
       for (const item of settingsArr.value) {
         if (item.btnType == 'value') {
           _width += 370;

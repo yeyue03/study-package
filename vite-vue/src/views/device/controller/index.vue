@@ -64,7 +64,7 @@
       };
 
       const setPanelRowList = (obj: DeviceInfoObj) => {
-        let _arr = [];
+        let _arr: any = [];
         if (obj?.isTemperature) {
           _arr.push('temperature');
         }
@@ -80,7 +80,6 @@
       // 获取设备计划详情
       const getPlanDetail = (deviceId: number) => {
         planDetailObj.value = {};
-        needPanelRowList.value = [];
         if (!deviceId) {
           return;
         }

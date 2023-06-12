@@ -1,4 +1,4 @@
-// import mitt from '/@/utils/mitt';
+// import mitt from '/@/utils/mitt'; // fda原版
 import mitt from '@/utils/mitt';
 import { SettingsArr } from './types';
 export interface ControlInterfacce {
@@ -18,15 +18,6 @@ export function removeControlListener() {
   emitter.clear();
 }
 // 监控温度、湿度面板值 end
-
-// test
-export function setChangePlan(chartData: any) {
-  emitter.emit('changePlan', chartData);
-}
-export function listenerChangePlan(callback: (chartData: any) => void) {
-  emitter.on('changePlan', callback);
-}
-//
 
 // 监控放大、缩小、还原按钮点击 star
 export function setScaleOption(type: string) {

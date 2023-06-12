@@ -19,6 +19,12 @@ export interface DeviceInfoObj {
   beamStart: number;
   beanEnd: number;
   isLink: boolean; // 是否链接
+  temperature: number; // 温度实际值
+  humidity: number;
+  beam: number;
+  setTemperature: number; // 温度设定值
+  setHumidity: number;
+  setBeam: number;
 }
 
 // 操作按钮数组内参数类型

@@ -18,8 +18,8 @@
 import { ref, reactive, defineComponent } from "vue";
 import DeviceItem from './DeviceItem.vue';
 import InfoPopup from './InfoPopup.vue';
-import { getDeviceList } from '../controller.api';
-// import { getFileAccessHttpUrl } from '/@/utils/common/compUtils';
+import { getDeviceList, getDeviceRealValue } from '../controller.api';
+// import { getFileAccessHttpUrl } from '/@/utils/common/compUtils'; // fda原版
 import { getFileAccessHttpUrl } from '@/utils/common/compUtils';
 import { useRoute } from 'vue-router';
 import { message } from "ant-design-vue";
@@ -40,6 +40,7 @@ export default defineComponent({
     const infoPopTop = ref(0);
     const infoPopRef = ref();
 
+    // 获取设备列表
     const initDeviceList = () => {
       deviceList.value = [];
       
@@ -64,10 +65,37 @@ export default defineComponent({
           }
         }
         deviceList.value = data || [];
+
+        loopDeviceListRealValue();
         console.log("=== 设备列表: ", data);
       })
     }
     initDeviceList();
+
+    // 获取设备当前值、设定值
+    const getDeviceNewValue = (item: DeviceInfoObj) => {
+      const params = {
+        deviceId: item.id
+      }
+      getDeviceRealValue(params).then((res: any) => {
+        item.temperature = res?.temperature || 25;
+        item.humidity = res?.humidity || 25;
+        item.beam = res?.beam || 25;
+        item.setTemperature = res?.temperature || 25;
+        item.setHumidity = res?.humidity || 25;
+        item.setBeam = res?.beam || 25;
+      })
+    }
+
+    // 循环设备列表 赋值当前值、设定值
+    const loopDeviceListRealValue = () => {
+      const decList = deviceList.value;
+      if (decList && decList.length) {
+        for (const item of decList) {
+          getDeviceNewValue(item);
+        }
+      }
+    }
 
     const clickDevice = (item: DeviceInfoObj) => {
       if (!item.isLink) {
@@ -78,11 +106,22 @@ export default defineComponent({
       emit('selectDevice', item);
     }
 
+    let oldSelectDeviceId: number = -1;
     const showInfoPopup = (item: DeviceInfoObj, index: number) => {
+      if (oldSelectDeviceId == item.id) {
+        if (visibleInfo.value) {
+          visibleInfo.value = false;
+        } else {
+          infoPopRef.value.showInfoPopup(item);
+          visibleInfo.value = true;
+        }
+
+      } else {
+        oldSelectDeviceId = item.id;
+        visibleInfo.value = true;
+        infoPopRef.value.showInfoPopup(item);
+      }
       console.log("== index: ", index);
-      // infoPopTop.value = 130 * index;
-      visibleInfo.value = true;
-      infoPopRef.value.showInfoPopup(item);
     }
 
     const hideInfoPopup = () => {
