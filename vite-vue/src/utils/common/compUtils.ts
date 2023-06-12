@@ -21,7 +21,10 @@ const baseApiUrl = '/aaa';
     }
   } catch (err) {}
 
-  console.log("=== result: ", result); // 先log下 不然ts报错
-  
-  return 'https://img2.baidu.com/it/u=2067773741,1621881016&fm=253&fmt=auto&app=138&f=JPEG?w=551&h=500';
+  let _str = '';
+  if (result) {
+    _str = 'https://img2.baidu.com/it/u=2067773741,1621881016&fm=253&fmt=auto&app=138&f=JPEG?w=551&h=500'
+  }
+
+  return _str;
 };

@@ -3,7 +3,7 @@
     <template v-for="(item, index) in deviceList" :key="item.id">
       <div @click="clickDevice(item)">
         <DeviceItem :infoItem="item" :activeDeviceId="activeDeviceObj.id">
-          <i class="iconfont icon-xinxiinfo21 icon-help" @click.stop="showInfoPopup(item, index)"></i>
+          <i class="iconfont icon-xinxiinfo21 icon-help" @click.stop="showInfoPopup(item)"></i>
         </DeviceItem>
       </div>
     </template>
@@ -107,7 +107,7 @@ export default defineComponent({
     }
 
     let oldSelectDeviceId: number = -1;
-    const showInfoPopup = (item: DeviceInfoObj, index: number) => {
+    const showInfoPopup = (item: DeviceInfoObj) => {
       if (oldSelectDeviceId == item.id) {
         if (visibleInfo.value) {
           visibleInfo.value = false;
@@ -121,7 +121,6 @@ export default defineComponent({
         visibleInfo.value = true;
         infoPopRef.value.showInfoPopup(item);
       }
-      console.log("== index: ", index);
     }
 
     const hideInfoPopup = () => {

@@ -122,7 +122,6 @@ export default defineComponent({
 
     const injectDevicePlanDetail = inject('changeDevicePlanDetail', {});
     watch(injectDevicePlanDetail, (newObj: any) => {
-      console.log("== 设备计划详情inject: ", newObj);
       settingsArr.value = [];
       if (newObj.settings) {
         settingsArr.value = JSON.parse(newObj.settings);

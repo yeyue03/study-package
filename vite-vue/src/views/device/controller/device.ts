@@ -67,6 +67,5 @@ export const getChartDataSource = (settingsArr: any, needPanelRowList: any) => {
     }
   }
 
-  console.log("=== 组装好的折线图数据: ", dataArr);
   return dataArr;
 };

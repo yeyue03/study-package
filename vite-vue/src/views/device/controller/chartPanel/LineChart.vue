@@ -124,8 +124,6 @@ export default defineComponent({
     const setViewChartData = () => {
       for (const panelType of needPanelRowList.value) {
         const _arr = chartData.value.filter((item: LineChartDataObj) => item.panelType == panelType);
-        console.log("====== panelType: ", panelType, _arr);
-        
         viewObj[panelType].data(_arr);
       }
     };

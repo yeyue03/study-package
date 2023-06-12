@@ -49,9 +49,8 @@ class AxiosUtils {
     );
   }
   // 封装一个request方法
-  private request(config: any, options?: any) {
+  private request(config: any) {
     let conf: any = JSON.parse(JSON.stringify(config))
-    console.log("=== 配置其他控制：", options); // 先log下，不然ts报错
     
     return this.http({
       url: conf.url,
@@ -62,28 +61,20 @@ class AxiosUtils {
   }
  
   // public公开的,意思就是让别人用  private自己封装的 需要隐藏起来 不让别人用
-  public get(config: any, options?: any) {
-    console.log("=== 配置其他控制：", options); // 先log下，不然ts报错
-
-    return this.request({ ...config, method: "GET" }, options);
+  public get(config: any) {
+    return this.request({ ...config, method: "GET" });
   }
 
-  public post(config: any, options?: any) {
-    console.log("=== 配置其他控制：", options); // 先log下，不然ts报错
-    
-    return this.request({ ...config, method: "POST" }, options);
+  public post(config: any) {
+    return this.request({ ...config, method: "POST" });
   }
 
-  public put(config: any, options?: any) {
-    console.log("=== 配置其他控制：", options); // 先log下，不然ts报错
-    
-    return this.request({ ...config, method: "PUT" }, options);
+  public put(config: any) {
+    return this.request({ ...config, method: "PUT" });
   }
   
-  public delete(config: any, options?: any) {
-    console.log("=== 配置其他控制：", options); // 先log下，不然ts报错
-    
-    return this.request({ ...config, method: "DELETE" }, options);
+  public delete(config: any) {
+    return this.request({ ...config, method: "DELETE" });
   }
 }
  

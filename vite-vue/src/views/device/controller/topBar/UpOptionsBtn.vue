@@ -82,7 +82,6 @@ import { getChartDataSource } from '../device';
       const settingsArr = ref();
       // 监听获取 settings 数据
       listenerControlChange((setArr: SettingsArr) => {
-        console.log('== 设备 settingsArr 变更：', setArr);
         settingsArr.value = setArr;
       });
 
