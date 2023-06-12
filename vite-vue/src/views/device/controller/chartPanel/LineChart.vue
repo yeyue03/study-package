@@ -247,12 +247,21 @@ export default defineComponent({
       setViewChartData();
     };
 
+    // 放大、缩小改变chart的操作
+    const changeChartSize = (obj: any) => {
+      const chart = newChart.value;
+      console.log("==== obj: ", obj);
+      
+      chart.changeSize(obj.width, obj.height);
+    }
+
     onMounted(() => {
       drawChart();
     });
 
     return {
       chartRef,
+      changeChartSize
     };
   },
 });

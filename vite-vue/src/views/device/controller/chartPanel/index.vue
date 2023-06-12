@@ -25,11 +25,8 @@
       <a-button type="primary" @click="setIntervalFun">查询</a-button>
     </div>
 
-    <div
-      :class="{ 'scale-box': true, 'scale-center': scaleObj.scale < 1 }"
-      :style="scaleStyle"
-    >
-      <LineChart :pageName="pageName" :chartData="chartData" />
+    <div ref="chartWrapBoxRef" class="scale-box">
+      <LineChart ref="chartComponentRef" :pageName="pageName" :chartData="chartData" />
     </div>
   </div>
 </template>
@@ -44,6 +41,7 @@ import {
   watch,
   computed,
   inject,
+  nextTick
 } from "vue";
 
 import LineChart from "./LineChart.vue";
@@ -77,6 +75,8 @@ export default defineComponent({
     const defaultFormat = "YYYY-MM-DD HH:mm";
     const dataSource = ref<LineChartData>([]);
     const realDataSource = ref<LineChartData>([]);
+    const chartWrapBoxRef = ref();
+    const chartComponentRef = ref();
 
     // 折线图源数据
     const chartData = computed(() => {
@@ -84,7 +84,6 @@ export default defineComponent({
       if (pageName.value == "Simulation") {
         arr = dataSource.value;
       } else if (pageName.value == "Protocol") {
-        // arr = [...realDataSource.value, ...dataSource.value];
         arr = realDataSource.value;
       }
 
@@ -180,8 +179,6 @@ export default defineComponent({
             }
           }
 
-          console.log("==$$$$$$$$$$$$$$$$$$ === resArr: ", resArr);
-          
           realDataSource.value = resArr;
         }
       });
@@ -209,8 +206,6 @@ export default defineComponent({
 
     const settingsArr = ref<SettingsArr>([]); // 设置的数据
 
-    
-
     const changePageName: any = inject("changePageName");
     watch(changePageName, (showPage: string) => {
       // 切换到预览页面则重新组装数据
@@ -233,38 +228,30 @@ export default defineComponent({
     const scaleObj = reactive({
       width: 100,
       height: 100,
-      scale: 1,
+      scale: 0,
     });
-    const scaleStyle = computed(() => {
-      const _width = scaleObj.width >= 100 ? 100 : scaleObj.width;
-      const _height = scaleObj.width >= 100 ? 100 : scaleObj.width;
-      return {
-        width: `${_width}%`,
-        height: `${_height}%`,
-        transform: `scale(${scaleObj.scale})`,
-      };
-    });
+    let initHeight = 500;
+    nextTick(() => {
+      initHeight = chartWrapBoxRef.value.clientHeight;
+    })
 
     // 监听放大缩小按钮点击
     listenerScaleOption((type: string) => {
       if (changePageName.value == pageName.value) {
-        if (type == "amplify") {
-          // 放大
-          scaleObj.width *= 0.8;
-          scaleObj.height *= 0.8;
-          scaleObj.scale *= 1.25;
-        } else if (type == "reduce") {
-          // 缩小
-          scaleObj.width = scaleObj.width * 1.25;
-          scaleObj.height = scaleObj.height * 1.25;
-          scaleObj.scale *= 0.8;
-        } else if (type == "restore") {
-          // 还原
-          scaleObj.width = 100;
-          scaleObj.height = 100;
-          scaleObj.scale = 1;
+        scaleObj.width = chartWrapBoxRef.value.clientWidth;
+
+        if (type == "amplify") { // 放大
+          scaleObj.scale++;
+        } else if (type == "reduce") { // 缩小
+          scaleObj.scale--;
+        } else if (type == "restore") { // 还原
+          scaleObj.scale = 0;
         }
+
+        scaleObj.height = initHeight + scaleObj.scale * 50;
+        chartComponentRef.value.changeChartSize(scaleObj);
       }
+
     });
 
     onBeforeUnmount(() => {
@@ -277,8 +264,9 @@ export default defineComponent({
       queryParam,
       dataSource,
       realDataSource,
+      chartWrapBoxRef,
+      chartComponentRef,
       scaleObj,
-      scaleStyle,
       chartData,
       getRealValueList,
       setIntervalFun,
@@ -294,10 +282,7 @@ export default defineComponent({
   box-sizing: border-box;
 }
 .scale-box {
-  transform-origin: left top;
-}
-.scale-center {
-  transform-origin: center;
+  width: 100%;
 }
 :deep(.ant-spin-container::after) {
   background: none;
