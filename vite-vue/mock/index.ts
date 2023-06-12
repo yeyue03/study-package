@@ -1,6 +1,7 @@
 // test.ts
 
 import { MockMethod } from 'vite-plugin-mock';
+import dayjs from 'dayjs';
 const getRandom = () => {
   return Math.floor(Math.random() * 100)
 }
@@ -90,112 +91,33 @@ export default [
     url: '/deviceData/lineChart', // 实际曲线数据,
     method: 'GET',
     response: () => {
-      return [{
-        "panelType": "temperature",
-        "date": "2023-06-04 20:12",
-        "value": 8,
-        "realValue": 10,
-        "bandMax": 11,
-        "bandMin": 5
-      }, {
-        "panelType": "humidity",
-        "date": "2023-06-04 20:12",
-        "value": 17,
-        "realValue": 15,
-        "bandMax": 21,
-        "bandMin": 12
-      }, {
-        "panelType": "beam",
-        "date": "2023-06-04 20:12",
-        "value": 28,
-        "realValue": 25,
-        "bandMax": 30,
-        "bandMin": 23
-      }, {
-        "panelType": "temperature",
-        "date": "2023-06-04 20:13",
-        "value": 21,
-        "realValue": 23,
-        "bandMax": 24,
-        "bandMin": 18
-      }, {
-        "panelType": "humidity",
-        "date": "2023-06-04 20:13",
-        "value": 32,
-        "realValue": 30,
-        "bandMax": 36,
-        "bandMin": 27
-      }, {
-        "panelType": "beam",
-        "date": "2023-06-04 20:13",
-        "value": 15,
-        "realValue": 25,
-        "bandMax": 17,
-        "bandMin": 10
-      }, {
-        "panelType": "temperature",
-        "date": "2023-06-04 20:28",
-        "value": 21,
-        "realValue": 28,
-        "bandMax": 26,
-        "bandMin": 17
-      }, {
-        "panelType": "humidity",
-        "date": "2023-06-04 20:28",
-        "value": 32,
-        "realValue": 25,
-        "bandMax": 34,
-        "bandMin": 27
-      }, {
-        "panelType": "beam",
-        "date": "2023-06-04 20:28",
-        "value": 15,
-        "realValue": 20,
-        "bandMax": 19,
-        "bandMin": 13
-      }, {
-        "panelType": "temperature",
-        "date": "2023-06-04 20:43",
-        "value": 21,
-        "realValue": 24,
-        "bandMax": 26,
-        "bandMin": 17
-      }, {
-        "panelType": "humidity",
-        "date": "2023-06-04 20:43",
-        "value": 32,
-        "realValue": 20,
-        "bandMax": 34,
-        "bandMin": 27
-      }, {
-        "panelType": "beam",
-        "date": "2023-06-04 20:43",
-        "value": 15,
-        "realValue": 15,
-        "bandMax": 19,
-        "bandMin": 13
-      }, {
-        "panelType": "temperature",
-        "date": "2023-06-04 20:58",
-        "value": 21,
-        "realValue": 18,
-        "bandMax": 26,
-        "bandMin": 17
-      }, {
-        "panelType": "humidity",
-        "date": "2023-06-04 20:58",
-        "value": 32,
-        "realValue": 25,
-        "bandMax": 34,
-        "bandMin": 27
-      }, {
-        "panelType": "beam",
-        "date": "2023-06-04 20:58",
-        "value": 15,
-        "realValue": 20,
-        "bandMax": 19,
-        "bandMin": 13
-      }]
+      let _arr = [];
+      let timestamp = new Date().getTime();
+      for (let i=0; i<10; i++) {
+        timestamp += 10 * 60 * 1000;
+        const _date = dayjs(timestamp).format('YY-MM-DD hh:mm');
+        let Tval = getRandom();
+        let Hval = getRandom();
+        let Bval = getRandom();
+
+        _arr.push({
+          "date": _date,
+          "temperature": Tval,
+          "setTemperature": Tval + 2,
+          "temperatureMax": Tval + 5,
+          "temperatureMin": Tval - 5,
+          "humidity": Hval,
+          "setHumidity": Hval + 1,
+          "humidityMax": Hval + 3,
+          "humidityMin": Hval - 4,
+          "beam": Bval,
+          "setBeam": Bval + 3,
+          "beamMax": Bval + 5,
+          "beamMin": Bval - 5,
+        })
+      }
+
+      return _arr;
     }
   },
   {
