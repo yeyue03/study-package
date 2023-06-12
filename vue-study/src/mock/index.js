@@ -79,6 +79,36 @@ Mock.mock("/api/mock/user/getMenu", "post", {
             },
           ],
         },
+        {
+          key: "01-03",
+          name: "饿了么",
+          path: "/demo",
+          childrens: [
+            {
+              key: "01-03-01",
+              name: "表格滚轮放底部",
+              path: "/demo/elTableScroll",
+              componentName: "ElTableScroll",
+              headKey: "01",
+              parentKey: "01-03",
+            },
+          ]
+        },
+        {
+          key: "01-04",
+          name: "Antd",
+          path: "/demo",
+          childrens: [
+            {
+              key: "01-04-01",
+              name: "表格滚轮放底部",
+              path: "/demo/antdTableScroll",
+              componentName: "AntdTableScroll",
+              headKey: "01",
+              parentKey: "01-04",
+            },
+          ]
+        }
       ],
     },
     {

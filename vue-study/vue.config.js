@@ -3,6 +3,9 @@
 const path = require("path");
 const resolve = (dir) => path.join(__dirname, dir);
 // const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const AutoImport = require('unplugin-auto-import/webpack')
+const Components = require('unplugin-vue-components/webpack')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 
 module.exports = {
   // 项目部署的基本路径,默认假设你的应用将会部署在域名的根部,比如，https://www.vue-cli.com/
@@ -106,4 +109,16 @@ module.exports = {
   // 第三方插件选项
   // 这是一个不进行任何 schema 验证的对象，因此它可以用来传递任何第三方插件选项。
   pluginOptions: {},
+  // 和webpapck属性完全一致，最后会进行合并
+  configureWebpack: {
+    //配置webpack自动按需引入element-plus，
+    plugins: [
+      AutoImport({
+        resolvers: [ElementPlusResolver()]
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()]
+      })
+    ]
+  }
 };
