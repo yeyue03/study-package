@@ -25,7 +25,7 @@
       <a-button type="primary" @click="setIntervalFun">查询</a-button>
     </div>
 
-    <div ref="chartWrapBoxRef" class="scale-box">
+    <div ref="chartWrapBoxRef" class="scale-box" @wheel.prevent="handleWheel">
       <LineChart ref="chartComponentRef" :pageName="pageName" :chartData="chartData" />
     </div>
   </div>
@@ -55,7 +55,7 @@ import { QueryChartObj, LineChartData, SettingsArr } from "../types";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import { realChartData } from "../controller.api";
-import { getChartDataSource } from '../device';
+import { getChartDataSource, debounce } from '../device';
 
 export default defineComponent({
   name: "ChartPanel",
@@ -271,19 +271,31 @@ export default defineComponent({
       scaleObj.initEndTimestamp = initEndTimestamp;
     }
 
+    // 缩放事件前判断 加防抖机制
+    const judgeScale = debounce((type: string) => {
+      scaleObj.width = chartWrapBoxRef.value.clientWidth;
+
+      if (pageName.value == 'Protocol') {
+        scaleProtocol(type);
+      } else if (pageName.value == 'Simulation') {
+        scaleSimulation(type);
+      }
+    }, 1000)
+
     // 监听放大缩小按钮点击
     listenerScaleOption((type: string) => {
       if (changePageName.value == pageName.value) {
-        scaleObj.width = chartWrapBoxRef.value.clientWidth;
-
-        if (pageName.value == 'Protocol') {
-          scaleProtocol(type);
-        } else if (pageName.value == 'Simulation') {
-          scaleSimulation(type);
-        }
+        judgeScale(type);
       }
-
     });
+
+    // 监听 鼠标滚轮
+    const handleWheel = (e: any) => {
+      // e.wheelDelta < 0 下滑 放大
+      // e.wheelDelta > 0 上滑 缩小
+      const type = e.wheelDelta < 0 ? 'amplify' : 'reduce';
+      judgeScale(type);
+    }
 
     // 实际 页面放大缩小
     const scaleProtocol = (type: string) => {
@@ -330,7 +342,7 @@ export default defineComponent({
         } else {
           dType = 'minute';
         }
-        
+
         const startTime = dayjs(scaleObj.minTimestamp).format(defaultFormat);
         const endTime = dayjs(scaleObj.maxTimestamp).format(defaultFormat);
   
@@ -390,6 +402,7 @@ export default defineComponent({
       chartData,
       getRealValueList,
       setIntervalFun,
+      handleWheel
     };
   },
 });

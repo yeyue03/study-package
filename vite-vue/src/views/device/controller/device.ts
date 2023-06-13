@@ -70,3 +70,16 @@ export const getChartDataSource = (settingsArr: any, needPanelRowList: any) => {
 
   return dataArr;
 };
+
+// 防抖
+export const debounce = (fn: any, delay = 500) => {
+  let timer: any = null;
+  return function (this: any, ...args: any) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
