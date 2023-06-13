@@ -29,6 +29,7 @@ export const getChartDataSource = (settingsArr: any, needPanelRowList: any) => {
         value: _val,
         bandMax: _val + parentObj[panelType]["bandMax"],
         bandMin: _val + parentObj[panelType]["bandMin"],
+        timestamp
       });
     }
 

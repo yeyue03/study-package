@@ -85,6 +85,12 @@ export interface LineChartDataObj {
   realValue?: number;
   bandMax: number;
   bandMin: number;
+  timestamp: number;
+  minTimestamp?: number;
+  maxTimestamp?: number;
+  initStartTimestamp?: number;
+  initEndTimestamp?: number;
+  dateType?: string; // 实际折线图用
 }
 
 // 拖拽盒子参数

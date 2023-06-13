@@ -78,6 +78,19 @@ export default defineComponent({
     const chartWrapBoxRef = ref();
     const chartComponentRef = ref();
 
+    // 放大缩小相关变量
+    const scaleObj = reactive({
+      width: 100,
+      height: 100,
+      scale: 0,
+      tickCount: 5,
+      minTimestamp: 0,
+      maxTimestamp: 0,
+      initStartTimestamp: 0,
+      initEndTimestamp: 0,
+      dateType: "minute"
+    });
+
     // 折线图源数据
     const chartData = computed(() => {
       let arr: LineChartData = [];
@@ -89,7 +102,6 @@ export default defineComponent({
 
       return arr;
     });
-
 
     const queryParam = reactive<QueryChartObj>({
       dateArr: [],
@@ -126,6 +138,10 @@ export default defineComponent({
       ) {
         return message.warning("日期范围超过90天，类别不可选分钟或小时");
       }
+
+      scaleObj.minTimestamp = startTimeStamp;
+      scaleObj.maxTimestamp = endTimeStamp;
+      scaleObj.dateType = queryParam.dateType;
 
       clearInterval(_interval.value);
       _interval.value = null;
@@ -168,6 +184,7 @@ export default defineComponent({
                 bandMin = item.beamMin;
               }
 
+              const timestamp = (new Date(item.date)).getTime();
               resArr.push({
                 panelType,
                 date: item.date,
@@ -175,6 +192,7 @@ export default defineComponent({
                 setVal,
                 bandMax,
                 bandMin,
+                timestamp
               });
             }
           }
@@ -184,7 +202,7 @@ export default defineComponent({
       });
     };
 
-    // 设备变更
+    // 监听 设备变更
     watch(injectDeviceObj, () => {
       // 实际曲线页面时，进入页面即查询实际值
       if (pageName.value == "Protocol") {
@@ -200,6 +218,8 @@ export default defineComponent({
         setTimeout(() => {
           const _arr: any = getChartDataSource(settingsArr, needPanelRowList);
           dataSource.value = _arr;
+
+          setInitScaleObj(_arr);
         }, 100);
       }
     });
@@ -212,6 +232,8 @@ export default defineComponent({
       if (showPage == "Simulation") {
         const _arr: any = getChartDataSource(settingsArr, needPanelRowList);
         dataSource.value = _arr;
+
+        setInitScaleObj(_arr);
       }
     });
 
@@ -224,35 +246,133 @@ export default defineComponent({
       settingsArr.value = arr;
     });
 
-    // 放大缩小相关变量
-    const scaleObj = reactive({
-      width: 100,
-      height: 100,
-      scale: 0,
-    });
-    let initHeight = 500;
+    // const scaleObj = reactive({
+    //   width: 100,
+    //   height: 100,
+    //   scale: 0,
+    //   tickCount: 4,
+    //   minTimestamp: 0,
+    //   maxTimestamp: 0,
+    // });
+
+    let initHeight: number = 500; // chart初始高度
     nextTick(() => {
       initHeight = chartWrapBoxRef.value.clientHeight;
     })
+
+    // 设置初始缩放配置 预览页面用，Protocol页面走不同方法
+    const setInitScaleObj = (_arr: LineChartData = []) => {
+      const initStartTimestamp = _arr[0].timestamp || 0;
+      const initEndTimestamp = _arr[_arr.length - 1].timestamp || 0;
+
+      scaleObj.minTimestamp = initStartTimestamp;
+      scaleObj.maxTimestamp = initEndTimestamp;
+      scaleObj.initStartTimestamp = initStartTimestamp;
+      scaleObj.initEndTimestamp = initEndTimestamp;
+    }
 
     // 监听放大缩小按钮点击
     listenerScaleOption((type: string) => {
       if (changePageName.value == pageName.value) {
         scaleObj.width = chartWrapBoxRef.value.clientWidth;
 
-        if (type == "amplify") { // 放大
-          scaleObj.scale++;
-        } else if (type == "reduce") { // 缩小
-          scaleObj.scale--;
-        } else if (type == "restore") { // 还原
-          scaleObj.scale = 0;
+        if (pageName.value == 'Protocol') {
+          scaleProtocol(type);
+        } else if (pageName.value == 'Simulation') {
+          scaleSimulation(type);
         }
-
-        scaleObj.height = initHeight + scaleObj.scale * 50;
-        chartComponentRef.value.changeChartSize(scaleObj);
       }
 
     });
+
+    // 实际 页面放大缩小
+    const scaleProtocol = (type: string) => {
+      let dType = scaleObj.dateType;
+
+      let scaleTimeRang: number = 30 * 60 * 1000; // 放大缩小x轴缩放值
+      if (dType == "hour") {
+        scaleTimeRang = 60 * 60 * 1000;
+      } else if (dType == "day") {
+        scaleTimeRang = 24 * 60 * 60 * 1000;
+      }
+
+      if (type == "amplify") { // 放大
+        scaleObj.scale++;
+        scaleObj.tickCount++;
+        scaleObj.minTimestamp -= scaleTimeRang;
+        scaleObj.maxTimestamp += scaleTimeRang;
+
+      } else if (type == "reduce" && scaleObj.scale > -5) { // 缩小
+        const redMin = scaleObj.minTimestamp + scaleTimeRang;
+        const redMax = scaleObj.maxTimestamp - scaleTimeRang;
+        if (redMin < redMax) {
+          scaleObj.scale--;
+          scaleObj.tickCount > 2 && scaleObj.tickCount--;
+          scaleObj.minTimestamp = redMin;
+          scaleObj.maxTimestamp = redMax;
+
+        } else {
+          return message.warning('不可继续缩小');
+        }
+
+      } else if (type == "restore") { // 还原
+        scaleObj.scale = 0;
+        scaleObj.tickCount = 4;
+      }
+
+      // 实际时 还原只还原图表高度，不调接口
+      if (type != "restore") {
+        const diffV = scaleObj.maxTimestamp - scaleObj.minTimestamp;
+        if (diffV >= 7776000000) { // 日期范围超过90天
+          dType = 'day';
+        } else if (diffV >= 172800000) { // 日期范围超过两天
+          dType = dType == 'hour' || dType == 'day' ? dType : 'hour';
+        } else {
+          dType = 'minute';
+        }
+        
+        const startTime = dayjs(scaleObj.minTimestamp).format(defaultFormat);
+        const endTime = dayjs(scaleObj.maxTimestamp).format(defaultFormat);
+  
+        queryParam.dateType = dType;
+        queryParam.dateArr = [startTime, endTime];
+        setIntervalFun();
+      }
+
+      if (scaleObj.scale >= -5) {
+        scaleObj.height = initHeight + scaleObj.scale * 50;
+        chartComponentRef.value.changeChartSize(scaleObj, type);
+      }
+    }
+
+    // 预设 页面放大缩小
+    const scaleSimulation = (type: string) => {
+      const scaleTimeRang: number = 10 * 60 * 1000; // 放大缩小x轴缩放值
+      if (type == "amplify") { // 放大
+        scaleObj.scale++;
+        scaleObj.tickCount++;
+        scaleObj.minTimestamp -= scaleTimeRang;
+        scaleObj.maxTimestamp += scaleTimeRang;
+
+      } else if (type == "reduce" && scaleObj.scale > -5) { // 缩小
+        scaleObj.scale--;
+        scaleObj.tickCount > 2 && scaleObj.tickCount--;
+        scaleObj.minTimestamp += scaleTimeRang;
+        scaleObj.maxTimestamp -= scaleTimeRang;
+
+      } else if (type == "restore") { // 还原
+        scaleObj.scale = 0;
+        scaleObj.tickCount = 4;
+
+        scaleObj.minTimestamp = scaleObj.initStartTimestamp;
+        scaleObj.maxTimestamp = scaleObj.initEndTimestamp;
+      }
+
+      if (scaleObj.scale >= -5) {
+        scaleObj.height = initHeight + scaleObj.scale * 50;
+        chartComponentRef.value.changeChartSize(scaleObj, type);
+      }
+    }
 
     onBeforeUnmount(() => {
       clearInterval(_interval.value);

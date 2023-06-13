@@ -14,6 +14,7 @@ import {
 } from "vue";
 import { Chart } from "@antv/g2";
 import { LineChartDataObj } from "../types";
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: "LineChart",
@@ -33,6 +34,7 @@ export default defineComponent({
   },
   setup(props) {
     const { chartData, pageName } = toRefs(props);
+    const defaultFormat: string = 'YYYY-MM-DD hh:mm';
     const needPanelRowList: any = inject("changePanelRowList", ["temperature", "humidity", "beam"]); // 该设备含有的面板类似 温度、湿度、光照
 
     const chartRef = ref();
@@ -78,7 +80,15 @@ export default defineComponent({
         // });
         chart.removeInteraction("tooltip");
 
-        chart.scale("date", {
+        chart.axis("timestamp", {
+          label: {
+            formatter: (val: string) => {
+              return dayjs(Number(val)).format(defaultFormat);
+            },
+          },
+        });
+
+        chart.scale("timestamp", {
           sync: true,
           range: [0, 1],
         });
@@ -155,6 +165,9 @@ export default defineComponent({
         viewObj[panelType].tooltip({
           shared: true,
           showCrosshairs: true,
+          title: (val: string) => {
+            return dayjs(Number(val)).format(defaultFormat);
+          },
         });
         viewObj[panelType].animate(false);
         viewObj[panelType].interaction("tooltip");
@@ -162,11 +175,11 @@ export default defineComponent({
 
         viewObj[panelType]
           .line()
-          .position("date*value")
+          .position("timestamp*value")
           .shape("line")
-          .size(3)
+          .size(2)
           .color("#0f0")
-          .tooltip("date*value", (_: string, value: number) => {
+          .tooltip("timestamp*value", (_: string, value: number) => {
             const nameStr: string = pageName.value == "Protocol" ? '实际' : '预测';
             return {
               name: nameStr + panelTypeStrObj[panelType],
@@ -177,11 +190,11 @@ export default defineComponent({
         if (pageName.value == "Protocol") { // 实际
           viewObj[panelType]
             .line()
-            .position("date*setVal")
+            .position("timestamp*setVal")
             .shape("line")
-            .size(3)
+            .size(2)
             .color("#f00")
-            .tooltip("date*setVal", (_: string, setVal: number) => {
+            .tooltip("timestamp*setVal", (_: string, setVal: number) => {
               return {
                 name: '设定' + panelTypeStrObj[panelType],
                 value: setVal + ' ' + panelTypeSymboObj[panelType],
@@ -191,14 +204,14 @@ export default defineComponent({
 
         viewObj[panelType]
           .line()
-          .position("date*bandMax")
+          .position("timestamp*bandMax")
           .shape("line")
-          .size(3)
+          .size(2)
           .color("#f00")
           .style({
             lineDash: [8, 8],
           })
-          .tooltip("date*bandMax", (_: string, bandMax: number) => {
+          .tooltip("timestamp*bandMax", (_: string, bandMax: number) => {
             return {
               name: panelTypeStrObj[panelType] + '上方差',
               value: bandMax + ' ' + panelTypeSymboObj[panelType],
@@ -207,14 +220,14 @@ export default defineComponent({
 
         viewObj[panelType]
           .line()
-          .position("date*bandMin")
+          .position("timestamp*bandMin")
           .shape("line")
-          .size(3)
+          .size(2)
           .color("#f00")
           .style({
             lineDash: [8, 8],
           })
-          .tooltip("date*bandMin", (_: string, bandMin: number) => {
+          .tooltip("timestamp*bandMin", (_: string, bandMin: number) => {
             return {
               name: panelTypeStrObj[panelType] + '下方差',
               value: bandMin + ' ' + panelTypeSymboObj[panelType],
@@ -248,11 +261,34 @@ export default defineComponent({
     };
 
     // 放大、缩小改变chart的操作
-    const changeChartSize = (obj: any) => {
+    const changeChartSize = (_obj: any, type: string) => {
       const chart = newChart.value;
-      console.log("==== obj: ", obj);
+      console.log("==== obj: ", _obj);
+
+      if (_obj.minTimestamp < _obj.maxTimestamp) {
+        chart.scale("timestamp", {
+          sync: true,
+          range: [0, 1],
+          min: _obj.minTimestamp,
+          max: _obj.maxTimestamp,
+        });
+      }
       
-      chart.changeSize(obj.width, obj.height);
+      chart.scale("value", {
+        sync: true,
+        min: 0,
+        max: 100,
+        tickCount: _obj.tickCount, // 坐标轴上刻度点的个数
+      });
+      
+      chart.changeSize(_obj.width, _obj.height);
+      if (type == 'reduce' && _obj.scale <= 0 && _obj.minTimestamp < _obj.maxTimestamp) { // 缩小
+        const needData = chartData.value.filter((item: LineChartDataObj) => {
+          return item.timestamp >= _obj.minTimestamp && item.timestamp <= _obj.maxTimestamp
+        });
+        
+        chart.changeData(needData);
+      }
     }
 
     onMounted(() => {

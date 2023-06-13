@@ -91,11 +91,11 @@ export default [
     url: '/deviceData/lineChart', // 实际曲线数据,
     method: 'GET',
     response: () => {
-      let _arr = [];
-      let timestamp = new Date().getTime();
+      let _arr: any = [];
+      let timestamp = new Date().getTime() - 2 * 60 * 60 * 1000;
       for (let i=0; i<10; i++) {
         timestamp += 10 * 60 * 1000;
-        const _date = dayjs(timestamp).format('YY-MM-DD hh:mm');
+        const _date = dayjs(timestamp).format('YYYY-MM-DD HH:mm');
         let Tval = getRandom();
         let Hval = getRandom();
         let Bval = getRandom();
