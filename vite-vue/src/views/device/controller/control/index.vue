@@ -10,11 +10,15 @@
         >
           <transition-group tag="div" class="board-row">
             <template v-for="(item, index) in settingsArr" :key="item.id">
+              <!-- 拖拽提示线条 -->
+              <div v-if="willDropIndex === index" class="drop-line" :style="{height: boardHeight}"></div>
+
               <div
                 v-if="item.btnType != 'reservation'"
                 class="board-wrap"
                 :draggable="true"
                 @dragstart="boardDragStart($event, index, item)"
+                @dragover.stop="dragoverBoardEvent($event, index)"
                 @drop.stop="boardDrop($event, index, item)"
                 @dragend="boardDragEnd()"
                 :style="{height: boardHeight}"
@@ -57,6 +61,10 @@
                   @changePanel="changePanel($event, item, null)"
                 />
               </div>
+
+              <!-- 不加此判断的话，移动到最后一个box时，移动提示蓝线无法出现 -->
+              <div v-if="index == settingsArr.length-1 && willDropIndex === settingsArr.length" class="drop-line" :style="{height: boardHeight}"></div>
+
             </template>
           </transition-group>
 
@@ -302,7 +310,28 @@ export default defineComponent({
       e.preventDefault();
     };
 
+    const willDropIndex = ref(-1); // 将拖拽到的位置索引
     let draggingObj: DraggingObj = {};
+    /**
+     * 拖拽排序 滑过 board时触发（规律：往左移插入元素左侧，往右移插入元素右侧）
+     * @param {Object} e 当前事件
+     * @param {number} dropIndex 放下时box所在索引
+     * @param {Object} item 放下时box所在的项
+     */
+    const dragoverBoardEvent = (e: Event, dropIndex: number) => {
+      e.preventDefault();
+
+      if (!draggingObj.id) {
+        return;
+      }
+
+      willDropIndex.value = dropIndex;
+      const dragIndex = draggingObj.index;
+      if (dragIndex && dragIndex < dropIndex) { // 右移
+        willDropIndex.value = dropIndex + 1;
+      }
+    }
+
     /**
      * @param {Object} e 当前事件
      * @param {number} index 当前数组索引
@@ -357,6 +386,7 @@ export default defineComponent({
 
     const boardDragEnd = () => {
       draggingObj = {};
+      willDropIndex.value = -1;
     };
 
     // board 拖拽到删除icon 处时触发删除事件
@@ -496,12 +526,14 @@ export default defineComponent({
       standardTypeObj,
       settingsArr,
       scaleStyle,
+      willDropIndex,
       rowDropEvent,
       boardDragStart,
       boardDrop,
       boardDragEnd,
       deleteDropEvent,
       dragoverEvent,
+      dragoverBoardEvent,
       deleteBoard,
       changePanel,
     };
@@ -551,6 +583,10 @@ export default defineComponent({
     display: flex;
     align-items: center;
     margin-left: 70px;
+  }
+  .drop-line {
+    width: 0;
+    border-right: solid 2px skyblue;
   }
 }
 .board-wrap {
