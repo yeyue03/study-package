@@ -46,7 +46,7 @@
       <a-row type="flex" align="middle">
         <a-col :span="leftSpan">报警方式</a-col>
         <a-col :span="rightSpan">
-          <a-select v-model:value="formState.alarmType">
+          <a-select v-model:value="formState.alarmType" mode="multiple">
             <a-select-option value="邮件">邮件</a-select-option>
             <a-select-option value="电话">电话</a-select-option>
             <a-select-option value="短信">短信</a-select-option>
@@ -72,6 +72,27 @@
         <a-col :span="leftSpan">光照设定值</a-col>
         <a-col :span="rightSpan">
           <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.setBeam" />
+        </a-col>
+      </a-row>
+
+      <a-row v-if="formState.isTemperature" type="flex" align="middle">
+        <a-col :span="leftSpan">是否开启温度</a-col>
+        <a-col :span="rightSpan">
+          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
+        </a-col>
+      </a-row>
+
+      <a-row v-if="formState.isHumidity" type="flex" align="middle">
+        <a-col :span="leftSpan">是否开启湿度</a-col>
+        <a-col :span="rightSpan">
+          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
+        </a-col>
+      </a-row>
+
+      <a-row v-if="formState.isBeam" type="flex" align="middle">
+        <a-col :span="leftSpan">是否开启光照</a-col>
+        <a-col :span="rightSpan">
+          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
         </a-col>
       </a-row>
 
