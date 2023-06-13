@@ -159,6 +159,14 @@ Mock.mock("/api/mock/user/getMenu", "post", {
               headKey: "02",
               parentKey: "02-02",
             },
+            {
+              key: "02-02-04",
+              name: "缩放折线图",
+              path: "/chart/g2/scaleLine",
+              componentName: "G2ScaleLine",
+              headKey: "02",
+              parentKey: "02-02",
+            },
           ],
         },
         {
