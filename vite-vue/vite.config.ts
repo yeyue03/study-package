@@ -27,6 +27,15 @@ export default defineConfig({
     },
   },
   // 配置反向代理
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://10.14.21.71:2022",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
   // server: {
   //   host: 'localhost',  // 启动后浏览器窗口输入地址就可以进行访问
   //   port: 4500, // 端口号

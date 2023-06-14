@@ -6,7 +6,7 @@ class AxiosUtils {
   constructor() {
     this.http = axios.create({
       // 根路径
-      baseURL: "/",
+      baseURL: "/api",
       // 请求延迟时间 如果超过这个时间就会断开拦截
       timeout: 3000,
       // headers: { "X-Custom-Header": "foobar" },
@@ -22,7 +22,8 @@ class AxiosUtils {
         // 一般的作用是 拦截token或者请求头
     // 添加请求拦截器
     this.http.interceptors.request.use(
-      function (config) {
+      function (config: any) {
+        config.headers['Authorization'] = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJoZXpoZW4iLCJzY29wZSI6WyJhbGwiXSwiYWNjb3VudFR5cGUiOjAsImlkIjoxOTksImV4cCI6MTY4NjczNjE5NCwiYXV0aG9yaXRpZXMiOlsi6ZSA5ZSu5Luj6KGoIiwi6ZSA5ZSu5Li7566hIiwi5a6h5qC4566h55CGIiwi5a6i5pyN5Luj6KGoIiwi5oC757uP55CGIiwi566h55CG5ZGYIiwi6LSi5Yqh5aSN5qC4IiwiUk1BIFN1cGV2aXNvciIsIui0ouWKoeaAu-ebkeWkjeaguCJdLCJqdGkiOiI0NjAyZmJlZS05MmU1LTRhN2UtYjdmZS0yYTIxMDg3YTIzNDIiLCJjbGllbnRfaWQiOiJnYXRld2F5In0.mYZrlyoPtiCDRhC9SN5jgYqqvyiHGRkCfmITAVYR2yyYkuDy6HVVKH9K32gAp1reW5ksZ_pMW3MoRaHQ8VHfdVtcNzjn22D6N6SaLCypEJl3NzxGqN_13AItyYh-ffbXi2DyITM3Cwi_TVf7CnBdyKEx_fIN4yZLx8oc_ErdjufS8ll4zoQfZ1dlLpYVbLrR6NCcZGLMc_6hROz6edQ3EUCBhRFJjReZHtUXq8XGbDrSZnf6LWAk_pDCY7Cu1B5Z0WvIytWXNSr6aijzYBhX6FMvFN7lpdyTAcpVodjoZA8zPW4aoyi5FyQlHkQbo6NH0xDkqf3fSbyZQ3nJAhKy_Q'
         // 在发送请求之前做些什么
         return config;
       },
