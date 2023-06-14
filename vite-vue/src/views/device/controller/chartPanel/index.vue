@@ -302,7 +302,7 @@ export default defineComponent({
     const scaleProtocol = (type: string) => {
       let dType = scaleObj.dateType;
 
-      let scaleTimeRang: number = 30 * 60 * 1000; // 放大缩小x轴缩放值
+      let scaleTimeRang: number = 5 * 60 * 1000; // 放大缩小x轴缩放值
       if (dType == "hour") {
         scaleTimeRang = 60 * 60 * 1000;
       } else if (dType == "day") {
@@ -354,13 +354,13 @@ export default defineComponent({
 
       if (scaleObj.scale >= -5) {
         scaleObj.height = initHeight + scaleObj.scale * 50;
-        chartComponentRef.value.changeChartSize(scaleObj, type);
+        chartComponentRef.value.changeChartSize(scaleObj);
       }
     }
 
     // 预设 页面放大缩小
     const scaleSimulation = (type: string) => {
-      const scaleTimeRang: number = 10 * 60 * 1000; // 放大缩小x轴缩放值
+      const scaleTimeRang: number = 1 * 60 * 1000; // 放大缩小x轴缩放值
       if (type == "amplify") { // 放大
         scaleObj.scale++;
         scaleObj.tickCount++;
@@ -383,7 +383,7 @@ export default defineComponent({
 
       if (scaleObj.scale >= -5) {
         scaleObj.height = initHeight + scaleObj.scale * 50;
-        chartComponentRef.value.changeChartSize(scaleObj, type);
+        chartComponentRef.value.changeChartSize(scaleObj);
       }
     }
 
