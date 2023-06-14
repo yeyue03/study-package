@@ -28,6 +28,10 @@
     <div ref="chartWrapBoxRef" class="scale-box" @wheel.prevent="handleWheel">
       <LineChart ref="chartComponentRef" :pageName="pageName" :chartData="chartData" />
     </div>
+
+    <div v-if="maskLoading" class="load-mask">
+      <a-spin tip="Loading..." size="large"></a-spin>
+    </div>
   </div>
 </template>
 
@@ -77,6 +81,7 @@ export default defineComponent({
     const realDataSource = ref<LineChartData>([]);
     const chartWrapBoxRef = ref();
     const chartComponentRef = ref();
+    const maskLoading = ref(false);
 
     // 放大缩小相关变量
     const scaleObj = reactive({
@@ -160,13 +165,17 @@ export default defineComponent({
     // 获取实际值数组
     const getRealValueList = () => {
       realDataSource.value = [];
+      maskLoading.value = true;
+
       const params = {
         deviceId: injectDeviceObj.value?.id,
         startTime: queryParam.dateArr[0],
         endTime: queryParam.dateArr[1],
         type: queryParam.dateType,
       };
+
       realChartData(params).then((data: any) => {
+        maskLoading.value = false;
         if (data && data.length) {
           let resArr: any = [];
           for (const item of data) {
@@ -209,6 +218,9 @@ export default defineComponent({
           
           scaleProtocol("restore");
         }
+
+      }).catch(() => {
+        maskLoading.value = false;
       });
     };
 
@@ -281,11 +293,13 @@ export default defineComponent({
       } else if (pageName.value == 'Simulation') {
         scaleSimulation(type);
       }
+      maskLoading.value = false;
     }, 1000)
 
     // 监听放大缩小按钮点击
     listenerScaleOption((type: string) => {
       if (changePageName.value == pageName.value) {
+        maskLoading.value = true;
         judgeScale(type);
       }
     });
@@ -295,6 +309,7 @@ export default defineComponent({
       // e.wheelDelta < 0 下滑 放大
       // e.wheelDelta > 0 上滑 缩小
       const type = e.wheelDelta < 0 ? 'amplify' : 'reduce';
+      maskLoading.value = true;
       judgeScale(type);
     }
 
@@ -396,6 +411,7 @@ export default defineComponent({
     return {
       queryParam,
       dataSource,
+      maskLoading,
       realDataSource,
       chartWrapBoxRef,
       chartComponentRef,
@@ -411,6 +427,7 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .panel-wrap {
+  position: relative;
   width: 100%;
   padding: 50px 20px 40px;
   box-sizing: border-box;
@@ -439,5 +456,18 @@ export default defineComponent({
   .ant-select {
     width: 120px;
   }
+}
+
+.load-mask {
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, .2);
 }
 </style>
