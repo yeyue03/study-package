@@ -74,6 +74,7 @@ export default defineComponent({
           // width: 800,
           autoFit: true,
           height: 500,
+          limitInPlot: true, // 是否对超出坐标系范围的 Geometry 进行剪切
         });
       }
 
@@ -219,11 +220,11 @@ export default defineComponent({
       chart.changeSize(scaleObj.width, scaleObj.height);
 
       console.log("=== minTime, maxTime: ", minTime, maxTime);
-      const orgData = JSON.parse(JSON.stringify(charData));
-      const needData = orgData.filter(item => {
-        return item.date >= minTime && item.date <= maxTime
-      });
-      chart.changeData(needData);
+      // const orgData = JSON.parse(JSON.stringify(charData));
+      // const needData = orgData.filter(item => {
+      //   return item.date >= minTime && item.date <= maxTime
+      // });
+      // chart.changeData(needData);
     }
 
     onMounted(() => {
