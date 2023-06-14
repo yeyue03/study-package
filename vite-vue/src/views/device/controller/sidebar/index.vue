@@ -1,6 +1,6 @@
 <template>
   <div class="scheme-box">
-    <template v-for="(item, index) in deviceList" :key="item.id">
+    <template v-for="item in deviceList" :key="item.id">
       <div @click="clickDevice(item)">
         <DeviceItem :infoItem="item" :activeDeviceId="activeDeviceObj.id">
           <i class="iconfont icon-xinxiinfo21 icon-help" @click.stop="showInfoPopup(item)"></i>

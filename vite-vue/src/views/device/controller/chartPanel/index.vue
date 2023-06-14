@@ -91,6 +91,11 @@ export default defineComponent({
       dateType: "minute"
     });
 
+    let initHeight: number = 500; // chart初始高度
+    nextTick(() => {
+      initHeight = chartWrapBoxRef.value.clientHeight;
+    })
+
     // 折线图源数据
     const chartData = computed(() => {
       let arr: LineChartData = [];
@@ -198,6 +203,11 @@ export default defineComponent({
           }
 
           realDataSource.value = resArr;
+
+          scaleObj.width = chartWrapBoxRef.value.clientWidth;
+          scaleObj.height = initHeight;
+          
+          scaleProtocol("restore");
         }
       });
     };
@@ -246,20 +256,6 @@ export default defineComponent({
       settingsArr.value = arr;
     });
 
-    // const scaleObj = reactive({
-    //   width: 100,
-    //   height: 100,
-    //   scale: 0,
-    //   tickCount: 4,
-    //   minTimestamp: 0,
-    //   maxTimestamp: 0,
-    // });
-
-    let initHeight: number = 500; // chart初始高度
-    nextTick(() => {
-      initHeight = chartWrapBoxRef.value.clientHeight;
-    })
-
     // 设置初始缩放配置 预览页面用，Protocol页面走不同方法
     const setInitScaleObj = (_arr: LineChartData = []) => {
       const initStartTimestamp = _arr[0].timestamp || 0;
@@ -269,6 +265,11 @@ export default defineComponent({
       scaleObj.maxTimestamp = initEndTimestamp;
       scaleObj.initStartTimestamp = initStartTimestamp;
       scaleObj.initEndTimestamp = initEndTimestamp;
+
+      scaleObj.width = chartWrapBoxRef.value.clientWidth;
+      scaleObj.height = initHeight;
+
+      scaleSimulation("restore")
     }
 
     // 缩放事件前判断 加防抖机制

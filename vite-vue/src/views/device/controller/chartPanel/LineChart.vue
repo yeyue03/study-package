@@ -41,8 +41,7 @@ export default defineComponent({
     const newChart = ref(); // 图标
     const viewObj: any = reactive({}); // 子表对象集
 
-    watch(chartData, (newVal) => {
-      console.log(" === 折线图数据: ", pageName.value, newVal);
+    watch(chartData, () => {
       drawChart();
     });
 
@@ -134,7 +133,7 @@ export default defineComponent({
     const setViewChartData = () => {
       for (const panelType of needPanelRowList.value) {
         const _arr = chartData.value.filter((item: LineChartDataObj) => item.panelType == panelType);
-        viewObj[panelType].data(_arr);
+        viewObj[panelType].changeData(_arr);
       }
     };
 
@@ -263,7 +262,9 @@ export default defineComponent({
     // 放大、缩小改变chart的操作
     const changeChartSize = (_obj: any, type: string) => {
       const chart = newChart.value;
-      console.log("==== obj: ", _obj);
+      console.log("==== obj: ", pageName.value, _obj);
+      console.log("==== 开始时间：", dayjs(_obj.minTimestamp).format(defaultFormat));
+      console.log("==== 结束时间：", dayjs(_obj.maxTimestamp).format(defaultFormat));
 
       if (_obj.minTimestamp < _obj.maxTimestamp) {
         chart.scale("timestamp", {
@@ -271,6 +272,8 @@ export default defineComponent({
           range: [0, 1],
           min: _obj.minTimestamp,
           max: _obj.maxTimestamp,
+          minLimit: _obj.minTimestamp,
+          maxLimit: _obj.maxTimestamp,
         });
       }
       
@@ -282,12 +285,16 @@ export default defineComponent({
       });
       
       chart.changeSize(_obj.width, _obj.height);
-      if (type == 'reduce' && _obj.scale <= 0 && _obj.minTimestamp < _obj.maxTimestamp) { // 缩小
+      
+      if (pageName.value == 'Simulation' && type == 'reduce' && _obj.scale <= 0 && _obj.minTimestamp < _obj.maxTimestamp) { // 缩小
         const needData = chartData.value.filter((item: LineChartDataObj) => {
           return item.timestamp >= _obj.minTimestamp && item.timestamp <= _obj.maxTimestamp
         });
-        
-        chart.changeData(needData);
+
+        for (const panelType of needPanelRowList.value) {
+          const _arr = needData.filter((item: LineChartDataObj) => item.panelType == panelType);
+          viewObj[panelType].changeData(_arr);
+        }
       }
     }
 
