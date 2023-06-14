@@ -293,6 +293,7 @@ export default defineComponent({
     // 拖拽释放事件 panelType: 所在面板类型
     const rowDropEvent = (e: any, dropIndex: number | void) => {
       e.preventDefault();
+      willDropIndex.value = -1;
       let optionItem = e.dataTransfer.getData("dragOptionItem"); // 按钮类型
       if (!optionItem) {
         return;
@@ -321,13 +322,14 @@ export default defineComponent({
     const dragoverBoardEvent = (e: Event, dropIndex: number) => {
       e.preventDefault();
 
-      if (!draggingObj.id) {
-        return;
-      }
+      if (draggingObj.id) { // 已存在的box 拖拽
+        willDropIndex.value = dropIndex;
+        const dragIndex = draggingObj.index;
+        if (dragIndex && dragIndex < dropIndex) { // 右移
+          willDropIndex.value = dropIndex + 1;
+        }
 
-      willDropIndex.value = dropIndex;
-      const dragIndex = draggingObj.index;
-      if (dragIndex && dragIndex < dropIndex) { // 右移
+      } else { // 新增box时
         willDropIndex.value = dropIndex + 1;
       }
     }
