@@ -105,7 +105,7 @@ export default defineComponent({
           type: 'linear',
           sync: true,
           min: 0,
-          max: 100
+          max: 100,
         });
         chart.scale("bandMax", {
           sync: true,
@@ -174,6 +174,10 @@ export default defineComponent({
           title: (val: string) => {
             return dayjs(Number(val)).format(defaultFormat);
           },
+          itemTpl: `<li class="g2-tooltip-list-item">
+            <span class="g2-tooltip-marker" style="background-color: {color};"></span>
+            <span class="g2-tooltip-name">{name}</span>:<span class="g2-tooltip-value">{value} ${panelTypeSymboObj[panelType]}</span>
+          </li>`
         });
         viewObj[panelType].animate(false);
         viewObj[panelType].interaction("tooltip");
@@ -186,13 +190,6 @@ export default defineComponent({
           .shape("line")
           .size(1)
           .color(valueColor)
-          .tooltip("timestamp*value", (_: string, value: number) => {
-            const nameStr: string = pageName.value == "Protocol" ? '实际' : '预测';
-            return {
-              name: nameStr + panelTypeStrObj[panelType],
-              value: value + ' ' + panelTypeSymboObj[panelType],
-            };
-          });
 
         if (pageName.value == "Protocol") { // 实际
           viewObj[panelType]
@@ -200,12 +197,6 @@ export default defineComponent({
             .position("timestamp*setVal")
             .shape("line")
             .size(1)
-            .tooltip("timestamp*setVal", (_: string, setVal: number) => {
-              return {
-                name: '设定' + panelTypeStrObj[panelType],
-                value: setVal + ' ' + panelTypeSymboObj[panelType],
-              };
-            });
 
           viewObj[panelType]
             .line()
@@ -213,13 +204,6 @@ export default defineComponent({
             .shape("line")
             .size(1)
             .color("#0f0")
-            .tooltip("timestamp*preValue", (_: string, preValue: number | string) => {
-              preValue = preValue || '';
-              return {
-                name: '预测' + panelTypeStrObj[panelType],
-                value: preValue + ' ' + panelTypeSymboObj[panelType],
-              };
-            });
         }
 
         viewObj[panelType]
@@ -231,12 +215,6 @@ export default defineComponent({
           .style({
             lineDash: [8, 8],
           })
-          .tooltip("timestamp*bandMax", (_: string, bandMax: number) => {
-            return {
-              name: panelTypeStrObj[panelType] + '上方差',
-              value: bandMax + ' ' + panelTypeSymboObj[panelType],
-            };
-          });
 
         viewObj[panelType]
           .line()
@@ -247,12 +225,6 @@ export default defineComponent({
           .style({
             lineDash: [8, 8],
           })
-          .tooltip("timestamp*bandMin", (_: string, bandMin: number) => {
-            return {
-              name: panelTypeStrObj[panelType] + '下方差',
-              value: bandMin + ' ' + panelTypeSymboObj[panelType],
-            };
-          });
 
         viewObj[panelType].axis("value", {
           title: {
@@ -270,6 +242,22 @@ export default defineComponent({
               },
             },
           },
+        });
+
+        viewObj[panelType].scale("value", {
+          alias: '实际' + panelTypeStrObj[panelType]
+        });
+        viewObj[panelType].scale("setVal", {
+          alias: '设定' + panelTypeStrObj[panelType]
+        });
+        viewObj[panelType].scale("preValue", {
+          alias: '预测' + panelTypeStrObj[panelType]
+        });
+        viewObj[panelType].scale("bandMax", {
+          alias: panelTypeStrObj[panelType] + '上方差'
+        });
+        viewObj[panelType].scale("bandMin", {
+          alias: panelTypeStrObj[panelType] + '下方差'
         });
 
         viewObj[panelType].axis("setVal", false);

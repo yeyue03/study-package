@@ -256,8 +256,10 @@ export default defineComponent({
 
     const changePageName: any = inject("changePageName");
     watch(changePageName, (showPage: string) => {
+      // changePageName: 代表当前切换到的页面
+      // pageName: 代表当前组件所属父级页面
       // 切换到预览页面则重新组装数据
-      if (showPage == "Simulation") {
+      if (showPage == "Simulation" && pageName.value == "Simulation") {
         const _arr: any = getChartDataSource(settingsArr, needPanelRowList);
         dataSource.value = _arr;
 
@@ -305,8 +307,12 @@ export default defineComponent({
     // 监听放大缩小按钮点击
     listenerScaleOption((type: string) => {
       if (changePageName.value == pageName.value) {
-        maskLoading.value = true;
-        judgeScale(type);
+        if (type == 'reduce' && scaleObj.scale <= -4) {
+          return message.warning('已缩放到最小');
+        } else {
+          maskLoading.value = true;
+          judgeScale(type);
+        }
       }
     });
 
@@ -315,8 +321,12 @@ export default defineComponent({
       // e.wheelDelta < 0 下滑 放大
       // e.wheelDelta > 0 上滑 缩小
       const type = e.wheelDelta < 0 ? 'amplify' : 'reduce';
-      maskLoading.value = true;
-      judgeScale(type);
+      if (type == 'reduce' && scaleObj.scale <= -4) {
+        return message.warning('已缩放到最小');
+      } else {
+        maskLoading.value = true;
+        judgeScale(type);
+      }
     }
 
     // 实际 页面放大缩小
@@ -373,10 +383,8 @@ export default defineComponent({
         setIntervalFun();
       }
 
-      if (scaleObj.scale >= -5) {
+      if (scaleObj.scale > -5) {
         scaleObj.height = initHeight + scaleObj.scale * 50;
-        console.log("==== scaleObj: ", scaleObj);
-        
         chartComponentRef.value.changeChartSize(scaleObj);
       }
     }
@@ -404,7 +412,7 @@ export default defineComponent({
         scaleObj.maxTimestamp = scaleObj.initEndTimestamp;
       }
 
-      if (scaleObj.scale >= -5) {
+      if (scaleObj.scale > -5) {
         scaleObj.height = initHeight + scaleObj.scale * 50;
         chartComponentRef.value.changeChartSize(scaleObj);
       }

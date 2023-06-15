@@ -89,7 +89,7 @@
         const params = {
           deviceId
         };
-        planDetal(params).then((res) => {
+        planDetal(params).then((res: any) => {
           if (res) {
             planDetailObj.value = res
             setStandardType(res.standardType);
