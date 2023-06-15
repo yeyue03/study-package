@@ -99,6 +99,10 @@ export default [
         let Tval = getRandom();
         let Hval = getRandom();
         let Bval = getRandom();
+        let preVal: number | void = getRandom();
+        if ((i > 5 && i < 10) || (i > 15 && i < 20)) {
+          preVal = undefined;
+        }
 
         _arr.push({
           "date": _date,
@@ -106,14 +110,17 @@ export default [
           "setTemperature": Tval + 2,
           "temperatureMax": Tval + 5,
           "temperatureMin": Tval - 5,
+          "preTemperature": preVal,
           "humidity": Hval,
           "setHumidity": Hval + 1,
           "humidityMax": Hval + 3,
           "humidityMin": Hval - 4,
+          "preHumidity": preVal,
           "beam": Bval,
           "setBeam": Bval + 3,
           "beamMax": Bval + 5,
           "beamMin": Bval - 5,
+          "preBeam": preVal,
         })
       }
 
