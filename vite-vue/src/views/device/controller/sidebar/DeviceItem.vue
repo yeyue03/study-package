@@ -41,6 +41,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
+/** *******
+ * 该组件同步在首页、设备控制页面使用，改动时需谨慎检查俩页面
+ */
 export default defineComponent({
   name: 'DeviceItem',
   props: {

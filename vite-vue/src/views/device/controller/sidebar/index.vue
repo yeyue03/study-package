@@ -19,7 +19,7 @@ import { ref, reactive, defineComponent } from "vue";
 import DeviceItem from './DeviceItem.vue';
 import InfoPopup from './InfoPopup.vue';
 import { getDeviceList, getDeviceRealValue } from '../controller.api';
-// import { getFileAccessHttpUrl } from '/@/utils/common/compUtils'; // fda原版
+// import { getFileAccessHttpUrl } from '/@/utils/common/compUtils'; // fda原路径
 import { getFileAccessHttpUrl } from '@/utils/common/compUtils';
 import { useRoute } from 'vue-router';
 import { message } from "ant-design-vue";

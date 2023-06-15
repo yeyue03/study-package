@@ -92,9 +92,9 @@ export default [
     method: 'GET',
     response: () => {
       let _arr: any = [];
-      let timestamp = new Date().getTime() - 2 * 60 * 60 * 1000;
-      for (let i=0; i<10; i++) {
-        timestamp += 10 * 60 * 1000;
+      let timestamp = new Date().getTime() - 10 * 60 * 60 * 1000;
+      for (let i=0; i<30; i++) {
+        timestamp += 20 * 60 * 1000;
         const _date = dayjs(timestamp).format('YYYY-MM-DD HH:mm');
         let Tval = getRandom();
         let Hval = getRandom();

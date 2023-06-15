@@ -34,7 +34,7 @@ export default defineComponent({
   },
   setup(props) {
     const { chartData, pageName } = toRefs(props);
-    const defaultFormat: string = 'YYYY-MM-DD hh:mm';
+    const defaultFormat: string = 'YYYY-MM-DD HH:mm';
     const needPanelRowList: any = inject("changePanelRowList", ["temperature", "humidity", "beam"]); // 该设备含有的面板类似 温度、湿度、光照
 
     const chartRef = ref();
@@ -97,6 +97,12 @@ export default defineComponent({
           max: 100
         });
         chart.scale("setVal", {
+          sync: true,
+          min: 0,
+          max: 100
+        });
+        chart.scale("preValue", {
+          type: 'linear',
           sync: true,
           min: 0,
           max: 100
@@ -173,12 +179,13 @@ export default defineComponent({
         viewObj[panelType].interaction("tooltip");
         viewObj[panelType].interaction("sibling-tooltip");
 
+        const valueColor: string = pageName.value == "Protocol" ? '#f00' : '#0f0';
         viewObj[panelType]
           .line()
           .position("timestamp*value")
           .shape("line")
-          .size(2)
-          .color("#0f0")
+          .size(1)
+          .color(valueColor)
           .tooltip("timestamp*value", (_: string, value: number) => {
             const nameStr: string = pageName.value == "Protocol" ? '实际' : '预测';
             return {
@@ -192,12 +199,25 @@ export default defineComponent({
             .line()
             .position("timestamp*setVal")
             .shape("line")
-            .size(2)
-            .color("#f00")
+            .size(1)
             .tooltip("timestamp*setVal", (_: string, setVal: number) => {
               return {
                 name: '设定' + panelTypeStrObj[panelType],
                 value: setVal + ' ' + panelTypeSymboObj[panelType],
+              };
+            });
+
+          viewObj[panelType]
+            .line()
+            .position("timestamp*preValue")
+            .shape("line")
+            .size(1)
+            .color("#0f0")
+            .tooltip("timestamp*preValue", (_: string, preValue: number | string) => {
+              preValue = preValue || '';
+              return {
+                name: '预测' + panelTypeStrObj[panelType],
+                value: preValue + ' ' + panelTypeSymboObj[panelType],
               };
             });
         }
@@ -206,7 +226,7 @@ export default defineComponent({
           .line()
           .position("timestamp*bandMax")
           .shape("line")
-          .size(2)
+          .size(1)
           .color("#f00")
           .style({
             lineDash: [8, 8],
@@ -222,7 +242,7 @@ export default defineComponent({
           .line()
           .position("timestamp*bandMin")
           .shape("line")
-          .size(2)
+          .size(1)
           .color("#f00")
           .style({
             lineDash: [8, 8],
@@ -253,6 +273,7 @@ export default defineComponent({
         });
 
         viewObj[panelType].axis("setVal", false);
+        viewObj[panelType].axis("preValue", false);
         viewObj[panelType].axis("bandMax", false);
         viewObj[panelType].axis("bandMin", false);
       }

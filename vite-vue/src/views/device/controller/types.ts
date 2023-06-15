@@ -80,14 +80,15 @@ export type LineChartData = LineChartDataObj[];
 export interface LineChartDataObj {
   deviceId?: number; // 把组装好的数据返给后台时用
   panelType: string;
-  date: string;
-  value: number;
-  realValue?: number;
-  bandMax: number;
-  bandMin: number;
-  timestamp: number;
-  minTimestamp?: number;
-  maxTimestamp?: number;
+  date: string; // 日期
+  value: number; // 实际曲线-实际值 预测曲线-预测值
+  preValue?: number; // 实际曲线-预测值
+  setVal?: number; // 实际曲线-设定值
+  bandMax: number; // 上方差值
+  bandMin: number; // 下方差值
+  timestamp: number; // 时间戳
+  minTimestamp?: number; // x轴起始显示时间
+  maxTimestamp?: number; // x轴结束显示时间
   initStartTimestamp?: number;
   initEndTimestamp?: number;
   dateType?: string; // 实际折线图用

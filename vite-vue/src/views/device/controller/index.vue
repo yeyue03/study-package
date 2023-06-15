@@ -1,5 +1,5 @@
 <template>
-  <div class="context-box">
+  <div class="context-box" :style="`height: ${boxHeight}px;`">
     <div class="sidebar-wrap">
       <Sidebar @selectDevice="selectDevice" />
     </div>
@@ -31,7 +31,7 @@
   import ControlRoom from './control/index.vue';
   import ChartPanel from './chartPanel/index.vue';
   import { planDetal } from "./controller.api";
-  import { listenerPlanDetailRefresh } from './useMitt';
+  import { listenerPlanDetailRefresh, setStandardType } from './useMitt';
   import type { DeviceInfoObj } from "./types";
 
   export default defineComponent({
@@ -46,6 +46,7 @@
       const pageName = ref('Protocol');
       const deviceObj = ref();
       const planDetailObj = ref({});
+      const boxHeight = document.body.clientHeight - 98;
       const needPanelRowList = ref(['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
 
       provide('changeDeviceObj', deviceObj);
@@ -91,6 +92,7 @@
         planDetal(params).then((res) => {
           if (res) {
             planDetailObj.value = res
+            setStandardType(res.standardType);
           }
         })
       };
@@ -104,6 +106,7 @@
 
       return {
         pageName,
+        boxHeight,
         selectDevice,
         changePageName,
         deviceObj,

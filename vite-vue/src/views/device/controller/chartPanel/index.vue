@@ -55,7 +55,7 @@ import {
   listenerStandardType,
   listenerScaleOption,
 } from "../useMitt";
-import { QueryChartObj, LineChartData, SettingsArr } from "../types";
+import { QueryChartObj, LineChartData, LineChartDataObj, SettingsArr } from "../types";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import { realChartData } from "../controller.api";
@@ -88,7 +88,7 @@ export default defineComponent({
       width: 100,
       height: 100,
       scale: 0,
-      tickCount: 5,
+      tickCount: 4,
       minTimestamp: 0,
       maxTimestamp: 0,
       initStartTimestamp: 0,
@@ -180,34 +180,40 @@ export default defineComponent({
           let resArr: any = [];
           for (const item of data) {
             for (const panelType of needPanelRowList.value) {
-              let _val = item.temperature;
-              let setVal = item.setTemperature;
-              let bandMax = item.temperatureMax;
-              let bandMin = item.temperatureMin;
+              let _val = item.temperature; // 实际值
+              let setVal = item.setTemperature; // 设定值
+              let bandMax = item.temperatureMax; // 上方差值
+              let bandMin = item.temperatureMin; // 下方差值
+              let preValue = item.preTemperature; // 预测值
 
               if (panelType == 'humidity') {
                 _val = item.humidity;
                 setVal = item.setHumidity;
                 bandMax = item.humidityMax;
                 bandMin = item.humidityMin;
+                preValue = item.preHumidity;
 
               } else if (panelType == 'beam') {
                 _val = item.beam;
                 setVal = item.setBeam;
                 bandMax = item.beamMax;
                 bandMin = item.beamMin;
+                preValue = item.preBeam;
               }
 
               const timestamp = (new Date(item.date)).getTime();
-              resArr.push({
+              let _obj: LineChartDataObj = {
                 panelType,
                 date: item.date,
                 value: _val,
                 setVal,
+                preValue,
                 bandMax,
                 bandMin,
                 timestamp
-              });
+              }
+
+              resArr.push(_obj);
             }
           }
 
@@ -216,7 +222,7 @@ export default defineComponent({
           scaleObj.width = chartWrapBoxRef.value.clientWidth;
           scaleObj.height = initHeight;
           
-          scaleProtocol("restore");
+          scaleProtocol("refresh");
         }
 
       }).catch(() => {
@@ -317,7 +323,7 @@ export default defineComponent({
     const scaleProtocol = (type: string) => {
       let dType = scaleObj.dateType;
 
-      let scaleTimeRang: number = 5 * 60 * 1000; // 放大缩小x轴缩放值
+      let scaleTimeRang: number = 10 * 60 * 1000; // 放大缩小x轴缩放值
       if (dType == "hour") {
         scaleTimeRang = 60 * 60 * 1000;
       } else if (dType == "day") {
@@ -340,7 +346,7 @@ export default defineComponent({
           scaleObj.maxTimestamp = redMax;
 
         } else {
-          return message.warning('不可继续缩小');
+          return message.warning('日期范围已接近，不可继续缩小');
         }
 
       } else if (type == "restore") { // 还原
@@ -349,7 +355,7 @@ export default defineComponent({
       }
 
       // 实际时 还原只还原图表高度，不调接口
-      if (type != "restore") {
+      if (type != "restore" && type != "refresh") {
         const diffV = scaleObj.maxTimestamp - scaleObj.minTimestamp;
         if (diffV >= 7776000000) { // 日期范围超过90天
           dType = 'day';
@@ -369,6 +375,8 @@ export default defineComponent({
 
       if (scaleObj.scale >= -5) {
         scaleObj.height = initHeight + scaleObj.scale * 50;
+        console.log("==== scaleObj: ", scaleObj);
+        
         chartComponentRef.value.changeChartSize(scaleObj);
       }
     }

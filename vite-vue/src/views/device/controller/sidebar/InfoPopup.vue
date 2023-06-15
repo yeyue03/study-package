@@ -46,7 +46,8 @@
       <a-row type="flex" align="middle">
         <a-col :span="leftSpan">报警方式</a-col>
         <a-col :span="rightSpan">
-          <a-select v-model:value="formState.alarmType" mode="multiple">
+           <!-- mode="multiple" -->
+          <a-select v-model:value="formState.alarmType">
             <a-select-option value="邮件">邮件</a-select-option>
             <a-select-option value="电话">电话</a-select-option>
             <a-select-option value="短信">短信</a-select-option>
@@ -75,24 +76,24 @@
         </a-col>
       </a-row>
 
-      <a-row v-if="formState.isTemperature" type="flex" align="middle">
+      <a-row type="flex" align="middle">
         <a-col :span="leftSpan">是否开启温度</a-col>
         <a-col :span="rightSpan">
-          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
+          <a-checkbox v-model:checked="formState.isTemperature"></a-checkbox>
         </a-col>
       </a-row>
 
-      <a-row v-if="formState.isHumidity" type="flex" align="middle">
+      <a-row type="flex" align="middle">
         <a-col :span="leftSpan">是否开启湿度</a-col>
         <a-col :span="rightSpan">
-          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
+          <a-checkbox v-model:checked="formState.isHumidity"></a-checkbox>
         </a-col>
       </a-row>
 
-      <a-row v-if="formState.isBeam" type="flex" align="middle">
+      <a-row type="flex" align="middle">
         <a-col :span="leftSpan">是否开启光照</a-col>
         <a-col :span="rightSpan">
-          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
+          <a-checkbox v-model:checked="formState.isBeam"></a-checkbox>
         </a-col>
       </a-row>
 
@@ -132,10 +133,15 @@ export default defineComponent({
         setTemperature: formState.setTemperature,
         setHumidity: formState.setHumidity,
         setBeam: formState.setBeam,
+        isTemperature: formState.isTemperature,
+        isHumidity: formState.isHumidity,
+        isBeam: formState.isBeam,
       }
+      
       deviceEdit(params).then(() => {
         message.success('保存成功');
         emit('refreshList');
+        hideInfoPopup();
       })
     }
 
