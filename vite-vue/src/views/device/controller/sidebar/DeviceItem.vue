@@ -1,39 +1,42 @@
 <template>
   <div class="item-border">
     <div :class="{'item-box': true, 'active-box': infoItem.id == activeDeviceId}">
-      <div>
-        <span class="serial-no" :title="infoItem.serialNo">{{ infoItem.serialNo }}</span>
-        <span class="serial-no" :title="infoItem.defineName">{{ infoItem.defineName }}</span>
+      <div class="left-box">
+        <div>
+          <span class="serial-no" :title="infoItem.serialNo">{{ infoItem.serialNo }}</span>
+          <span class="serial-no" :title="infoItem.defineName">{{ infoItem.defineName }}</span>
+        </div>
+
+        <a-row class="img-box" type="flex" align="bottom" justify="space-between">
+          <a-row>
+            <img class="img-left" :src="infoItem.url" />
+
+            <div class="panel-type">
+              <div v-if="infoItem.isTemperature" class="panel-type-item">
+                <i class="iconfont icon-wendu"></i>
+                <span>{{ infoItem.temperature }} ℃</span>
+              </div>
+              <div v-if="infoItem.isHumidity" class="panel-type-item">
+                <i class="iconfont icon-shidu"></i>
+                <span>{{ infoItem.humidity }} %rh</span>
+              </div>
+              <div v-if="infoItem.isBeam" class="panel-type-item">
+                <i class="iconfont icon-guangzhao"></i>
+                <span>{{ infoItem.beam }} lx</span>
+              </div>
+            </div>
+          </a-row>
+          
+        </a-row>
       </div>
 
-      <a-row class="img-box" type="flex" align="bottom" justify="space-between">
-        <a-row>
-          <img class="img-left" :src="infoItem.url" />
-
-          <div class="panel-type">
-            <div v-if="infoItem.isTemperature" class="panel-type-item">
-              <i class="iconfont icon-wendu"></i>
-              <span>{{ infoItem.temperature }} ℃</span>
-            </div>
-            <div v-if="infoItem.isHumidity" class="panel-type-item">
-              <i class="iconfont icon-shidu"></i>
-              <span>{{ infoItem.humidity }} %rh</span>
-            </div>
-            <div v-if="infoItem.isBeam" class="panel-type-item">
-              <i class="iconfont icon-guangzhao"></i>
-              <span>{{ infoItem.beam }} lx</span>
-            </div>
-          </div>
-        </a-row>
-
-        <div class="right-box">
-          <i v-if="!infoItem.isLink" class="iconfont icon-cha"></i>
-          <i v-if="infoItem.alarmType == '邮件'" class="iconfont icon-youxiang icon-yujin"></i>
-          <i v-else-if="infoItem.alarmType == '电话'" class="iconfont icon-shouji icon-yujin"></i>
-          <i v-else-if="infoItem.alarmType == '短信'" class="iconfont icon-duanxin_o icon-yujin"></i>
-          <slot />
-        </div>
-      </a-row>
+      <div class="right-box">
+        <i v-if="!infoItem.isLink" class="iconfont icon-cha"></i>
+        <i v-if="infoItem.alarmType == '邮件'" class="iconfont icon-youxiang icon-yujin"></i>
+        <i v-else-if="infoItem.alarmType == '电话'" class="iconfont icon-shouji icon-yujin"></i>
+        <i v-else-if="infoItem.alarmType == '短信'" class="iconfont icon-duanxin_o icon-yujin"></i>
+        <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -80,7 +83,6 @@ export default defineComponent({
 .item-box {
   position: relative;
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
   width: 100%;
   height: 100%;
@@ -117,6 +119,11 @@ export default defineComponent({
       margin-right: 6px;
     }
   }
+}
+.left-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .right-box {
   display: flex;
