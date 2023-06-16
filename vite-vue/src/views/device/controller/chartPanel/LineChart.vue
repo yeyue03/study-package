@@ -65,6 +65,8 @@ export default defineComponent({
         if (pageName.value == "Protocol") {
           chartHight -= 60; // 减去搜索框高度
         }
+        chartHight = chartHight < 300 ? 300 : chartHight;
+        
         newChart.value = new Chart({
           container: chartRef.value,
           autoFit: true,

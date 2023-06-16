@@ -1,4 +1,4 @@
-// import { defHttp } from '/@/utils/http/axios'; // fda原路径
+// import { defHttp } from '/@/utils/http/axios'; // 原路径
 import defHttp from '@/request/http';
 import { DeviceEditParams, DeviceRealValueParams, PlanDetalParams, PlanAddParams, PlanDataAddParams, PlanDisableParams, PlanEnableParams, PlanTemplateAddParams, PlanTemplateEditParams, PlanTemplateListParams, RealChartDataParams } from './typesApi';
 

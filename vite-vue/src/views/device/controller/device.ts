@@ -22,15 +22,17 @@ export const getChartDataSource = (settingsArr: any, needPanelRowList: any) => {
     let resArr: any = [];
 
     for (const panelType of needPanelRowList.value) {
-      const _val = parentObj[panelType][valKey];
-      resArr.push({
-        panelType,
-        date: _date,
-        value: _val,
-        bandMax: _val + parentObj[panelType]["bandMax"],
-        bandMin: _val + parentObj[panelType]["bandMin"],
-        timestamp
-      });
+      if (parentObj[panelType]) {
+        const _val = parentObj[panelType][valKey];
+        resArr.push({
+          panelType,
+          date: _date,
+          value: _val,
+          bandMax: _val + parentObj[panelType]["bandMax"],
+          bandMin: _val + parentObj[panelType]["bandMin"],
+          timestamp
+        });
+      }
     }
 
     return resArr;

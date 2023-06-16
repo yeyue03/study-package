@@ -46,8 +46,7 @@
       <a-row type="flex" align="middle">
         <a-col :span="leftSpan">报警方式</a-col>
         <a-col :span="rightSpan">
-           <!-- mode="multiple" -->
-          <a-select v-model:value="formState.alarmType">
+          <a-select v-model:value="formState.alarmTypeArr" mode="multiple">
             <a-select-option value="邮件">邮件</a-select-option>
             <a-select-option value="电话">电话</a-select-option>
             <a-select-option value="短信">短信</a-select-option>
@@ -118,6 +117,7 @@ export default defineComponent({
     const formState: any = reactive({})
 
     const showInfoPopup = (obj: DeviceInfoObj) => {
+      obj.alarmTypeArr = obj.alarmType ? obj.alarmType.split(',') : [];
       Object.assign(formState, obj);
     }
     
@@ -129,7 +129,7 @@ export default defineComponent({
       const params = {
         id: formState.id,
         defineName: formState.defineName,
-        alarmType: formState.alarmType,
+        alarmType: formState.alarmTypeArr.join(','),
         setTemperature: formState.setTemperature,
         setHumidity: formState.setHumidity,
         setBeam: formState.setBeam,

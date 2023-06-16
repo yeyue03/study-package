@@ -32,9 +32,9 @@
 
       <div class="right-box">
         <i v-if="!infoItem.isLink" class="iconfont icon-cha"></i>
-        <i v-if="infoItem.alarmType == '邮件'" class="iconfont icon-youxiang icon-yujin"></i>
-        <i v-else-if="infoItem.alarmType == '电话'" class="iconfont icon-shouji icon-yujin"></i>
-        <i v-else-if="infoItem.alarmType == '短信'" class="iconfont icon-duanxin_o icon-yujin"></i>
+        <i v-if="infoItem.alarmType.indexOf('邮件') != -1" class="iconfont icon-youxiang icon-yujin"></i>
+        <i v-if="infoItem.alarmType.indexOf('电话') != -1" class="iconfont icon-shouji icon-yujin"></i>
+        <i v-if="infoItem.alarmType.indexOf('短信') != -1" class="iconfont icon-duanxin_o icon-yujin"></i>
         <slot />
       </div>
     </div>
@@ -96,6 +96,7 @@ export default defineComponent({
     overflow: hidden;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
+    word-break: break-all;
   }
 
   .img-left {

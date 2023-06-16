@@ -122,7 +122,8 @@ export default defineComponent({
     PanelLoop,
   },
   setup() {
-    const needPanelRowList: any = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
+    const needPanelRowList: any = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照（页面显示用）
+    const defaultPanelRowList: string[] = ['temperature', 'humidity', 'beam']; // 数据赋值用，不管是否有温度、湿度、光照，都加三行数据，防止设备详情切换后setting有行空着
     const defaultFormat = 'YYYY-MM-DD HH:mm';
     const settingsArr: any = ref([]);
 
@@ -252,7 +253,7 @@ export default defineComponent({
         lastItem = settingsArr.value.filter((item: SettingsArrItem) => item.btnType == 'value').pop();
       }
 
-      for (const panelType of needPanelRowList.value) {
+      for (const panelType of defaultPanelRowList) {
         if (lastItem) {
           startValue = lastItem[panelType]['endValue']; // 后一个坐标轴开始值等于前一个坐标轴结束值
 
@@ -435,7 +436,7 @@ export default defineComponent({
 
       } else if (parentItem) {
         // 同一列中温度、湿度、光照时长、功率同一
-        for (const panelType of needPanelRowList.value) {
+        for (const panelType of defaultPanelRowList) {
           parentItem.powerSize = childObj['powerSize'];
           parentItem[panelType]['powerSize'] = childObj['powerSize'];
 
@@ -471,8 +472,8 @@ export default defineComponent({
       for (const item of settingsArr.value) {
         if (item.btnType == 'value') {
           const serialNumber: string = _num < 10 ? '0' + _num : _num + '';
-          for (const panelType of needPanelRowList.value) {
-            item[panelType]['serialNumber'] = serialNumber;
+          for (const panelType of defaultPanelRowList) {
+            item[panelType] && (item[panelType]['serialNumber'] = serialNumber)
           }
 
           _num++;

@@ -9,6 +9,7 @@ export interface DeviceInfoObj {
   defineName: string; // 自定义设备名称
   url: string; // 图片地址
   alarmType: string; // 报警类型
+  alarmTypeArr: string[]; // 报警类型数组
   isTemperature: boolean; // 是否有温度
   temperatureStart: number;
   temperatureEnd: number;

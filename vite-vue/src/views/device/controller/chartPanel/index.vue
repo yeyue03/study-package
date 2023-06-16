@@ -278,8 +278,8 @@ export default defineComponent({
 
     // 设置初始缩放配置 预览页面用，Protocol页面走不同方法
     const setInitScaleObj = (_arr: LineChartData = []) => {
-      const initStartTimestamp = _arr[0].timestamp || 0;
-      const initEndTimestamp = _arr[_arr.length - 1].timestamp || 0;
+      const initStartTimestamp = _arr[0]?.timestamp || 0;
+      const initEndTimestamp = _arr[_arr.length - 1]?.timestamp || 0;
 
       scaleObj.minTimestamp = initStartTimestamp;
       scaleObj.maxTimestamp = initEndTimestamp;
@@ -293,6 +293,7 @@ export default defineComponent({
     }
 
     // 缩放事件前判断 加防抖机制
+    const timeslot: number = pageName.value == 'Simulation' ? 50 : 1000;
     const judgeScale = debounce((type: string) => {
       scaleObj.width = chartWrapBoxRef.value.clientWidth;
 
@@ -302,7 +303,7 @@ export default defineComponent({
         scaleSimulation(type);
       }
       maskLoading.value = false;
-    }, 1000)
+    }, timeslot)
 
     // 监听放大缩小按钮点击
     listenerScaleOption((type: string) => {
