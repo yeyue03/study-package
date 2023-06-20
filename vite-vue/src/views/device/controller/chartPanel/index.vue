@@ -321,7 +321,7 @@ export default defineComponent({
     const handleWheel = (e: any) => {
       // e.wheelDelta < 0 下滑 放大
       // e.wheelDelta > 0 上滑 缩小
-      const type = e.wheelDelta < 0 ? 'amplify' : 'reduce';
+      const type = e.wheelDelta < 0 ? 'reduce' : 'amplify';
       if (type == 'reduce' && scaleObj.scale <= -4) {
         return message.warning('已缩放到最小');
       } else {
@@ -342,23 +342,24 @@ export default defineComponent({
       }
 
       if (type == "amplify") { // 放大
-        scaleObj.scale++;
-        scaleObj.tickCount++;
-        scaleObj.minTimestamp -= scaleTimeRang;
-        scaleObj.maxTimestamp += scaleTimeRang;
-
-      } else if (type == "reduce" && scaleObj.scale > -5) { // 缩小
         const redMin = scaleObj.minTimestamp + scaleTimeRang;
         const redMax = scaleObj.maxTimestamp - scaleTimeRang;
         if (redMin < redMax) {
-          scaleObj.scale--;
-          scaleObj.tickCount > 2 && scaleObj.tickCount--;
+          scaleObj.scale++;
+          scaleObj.tickCount++;
           scaleObj.minTimestamp = redMin;
           scaleObj.maxTimestamp = redMax;
 
         } else {
-          return message.warning('日期范围已接近，不可继续缩小');
+          return message.warning('日期范围已接近，不可继续放大');
         }
+
+      } else if (type == "reduce" && scaleObj.scale > -5) { // 缩小
+        scaleObj.scale--;
+        scaleObj.tickCount > 2 && scaleObj.tickCount--;
+        scaleObj.minTimestamp -= scaleTimeRang;
+        scaleObj.maxTimestamp += scaleTimeRang;
+        
 
       } else if (type == "restore") { // 还原
         scaleObj.scale = 0;
@@ -396,14 +397,14 @@ export default defineComponent({
       if (type == "amplify") { // 放大
         scaleObj.scale++;
         scaleObj.tickCount++;
-        scaleObj.minTimestamp -= scaleTimeRang;
-        scaleObj.maxTimestamp += scaleTimeRang;
+        scaleObj.minTimestamp += scaleTimeRang;
+        scaleObj.maxTimestamp -= scaleTimeRang;
 
       } else if (type == "reduce" && scaleObj.scale > -5) { // 缩小
         scaleObj.scale--;
         scaleObj.tickCount > 2 && scaleObj.tickCount--;
-        scaleObj.minTimestamp += scaleTimeRang;
-        scaleObj.maxTimestamp -= scaleTimeRang;
+        scaleObj.minTimestamp -= scaleTimeRang;
+        scaleObj.maxTimestamp += scaleTimeRang;
 
       } else if (type == "restore") { // 还原
         scaleObj.scale = 0;
