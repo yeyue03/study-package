@@ -33,7 +33,7 @@
   import { setScaleOption } from '../useMitt';
 
   export default defineComponent({
-    name: 'DownOptionsBtn',
+    name: 'OptionsBtnDown',
     props: {
       pageName: {
         type: String,

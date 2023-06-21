@@ -1,8 +1,8 @@
 <template>
   <div class="top-bar">
     <div class="bar-left">
-      <UpOptionsBtn v-show="pageName == 'Editor'" />
-      <DownOptionsBtn :pageName="pageName" />
+      <OptionsBtnUp v-show="pageName == 'Editor'" />
+      <OptionsBtnDown :pageName="pageName" />
     </div>
 
     <div class="nav-box">
@@ -15,14 +15,14 @@
 
 <script lang="ts">
   import { ref, defineComponent } from 'vue';
-  import UpOptionsBtn from './UpOptionsBtn.vue';
-  import DownOptionsBtn from './DownOptionsBtn.vue';
+  import OptionsBtnUp from './OptionsBtnUp.vue';
+  import OptionsBtnDown from './OptionsBtnDown.vue';
 
   export default defineComponent({
     name: 'TopBar',
     components: {
-      UpOptionsBtn,
-      DownOptionsBtn,
+      OptionsBtnUp,
+      OptionsBtnDown,
     },
     props: {
       pageName: {

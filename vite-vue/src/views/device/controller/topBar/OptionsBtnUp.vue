@@ -58,7 +58,7 @@
 import { getChartDataSource } from '../device';
 
   export default defineComponent({
-    name: 'UpOptionsBtn',
+    name: 'OptionsBtnUp',
     components: {
       PopSaveScheme,
       PopSchemeList,
