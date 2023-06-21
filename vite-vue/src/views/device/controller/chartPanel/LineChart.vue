@@ -268,6 +268,7 @@ export default defineComponent({
           max: _obj.maxTimestamp,
           minLimit: _obj.minTimestamp,
           maxLimit: _obj.maxTimestamp,
+          tickCount: 15
         });
       }
       
