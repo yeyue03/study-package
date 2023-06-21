@@ -103,12 +103,6 @@ export default defineComponent({
           min: 0,
           max: 100
         });
-        chart.scale("preValue", {
-          type: 'linear',
-          sync: true,
-          min: 0,
-          max: 100,
-        });
         chart.scale("bandMax", {
           sync: true,
           min: 0,
@@ -199,12 +193,6 @@ export default defineComponent({
             .position("timestamp*setVal")
             .shape("line")
             .size(1)
-
-          viewObj[panelType]
-            .line()
-            .position("timestamp*preValue")
-            .shape("line")
-            .size(1)
             .color("#0f0")
         }
 
@@ -246,14 +234,12 @@ export default defineComponent({
           },
         });
 
+        const valueAlias: string = pageName.value == "Protocol" ? '实际' : '预测';
         viewObj[panelType].scale("value", {
-          alias: '实际' + panelTypeStrObj[panelType]
+          alias: valueAlias + panelTypeStrObj[panelType]
         });
         viewObj[panelType].scale("setVal", {
           alias: '设定' + panelTypeStrObj[panelType]
-        });
-        viewObj[panelType].scale("preValue", {
-          alias: '预测' + panelTypeStrObj[panelType]
         });
         viewObj[panelType].scale("bandMax", {
           alias: panelTypeStrObj[panelType] + '上方差'
@@ -263,7 +249,6 @@ export default defineComponent({
         });
 
         viewObj[panelType].axis("setVal", false);
-        viewObj[panelType].axis("preValue", false);
         viewObj[panelType].axis("bandMax", false);
         viewObj[panelType].axis("bandMin", false);
       }

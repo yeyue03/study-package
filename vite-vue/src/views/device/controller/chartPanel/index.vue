@@ -184,21 +184,18 @@ export default defineComponent({
               let setVal = item.setTemperature; // 设定值
               let bandMax = item.temperatureMax; // 上方差值
               let bandMin = item.temperatureMin; // 下方差值
-              let preValue = item.preTemperature; // 预测值
 
               if (panelType == 'humidity') {
                 _val = item.humidity;
                 setVal = item.setHumidity;
                 bandMax = item.humidityMax;
                 bandMin = item.humidityMin;
-                preValue = item.preHumidity;
 
               } else if (panelType == 'beam') {
                 _val = item.beam;
                 setVal = item.setBeam;
                 bandMax = item.beamMax;
                 bandMin = item.beamMin;
-                preValue = item.preBeam;
               }
 
               const timestamp = (new Date(item.date)).getTime();
@@ -207,7 +204,6 @@ export default defineComponent({
                 date: item.date,
                 value: _val,
                 setVal,
-                preValue,
                 bandMax,
                 bandMin,
                 timestamp

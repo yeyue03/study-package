@@ -83,7 +83,6 @@ export interface LineChartDataObj {
   panelType: string;
   date: string; // 日期
   value: number; // 实际曲线-实际值 预测曲线-预测值
-  preValue?: number; // 实际曲线-预测值
   setVal?: number; // 实际曲线-设定值
   bandMax: number; // 上方差值
   bandMin: number; // 下方差值
