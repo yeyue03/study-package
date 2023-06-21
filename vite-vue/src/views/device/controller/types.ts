@@ -51,7 +51,7 @@ export interface SettingsArrItem {
   startValue?: number; // 开始值
   endValue?: number; // 结束值
   valueType?: string; // 数值类型 constant-恒定值（横线） range-变值（斜线）
-  powerSize?: string; // 功率 1、2
+  powerSize?: string; // 等待点 1、2
   bandMax?: number; // 上方差
   bandMin?: number; // 下方差
   serialNumber?: string; // box序号(显示在左上角)

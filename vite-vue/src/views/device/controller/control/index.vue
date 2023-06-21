@@ -435,7 +435,7 @@ export default defineComponent({
         _setArr[findIndex].loop = item.loop;
 
       } else if (parentItem) {
-        // 同一列中温度、湿度、光照时长、功率同一
+        // 同一列中温度、湿度、光照时长、等待点统一
         for (const panelType of defaultPanelRowList) {
           parentItem.powerSize = childObj['powerSize'];
           parentItem[panelType]['powerSize'] = childObj['powerSize'];

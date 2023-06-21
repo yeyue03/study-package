@@ -7,8 +7,8 @@
         <template v-else>
           <template v-if="formState.valueType == 'range'">
             <a-select v-model:value="formState.powerSize" v-focus @change="showTimeInput" @blur="showTimeInput">
-              <a-select-option value="1">功率1</a-select-option>
-              <a-select-option value="2">功率2</a-select-option>
+              <a-select-option value="1">等待点1</a-select-option>
+              <a-select-option value="2">等待点2</a-select-option>
             </a-select>
           </template>
           <template v-else>
@@ -124,8 +124,8 @@ export default defineComponent({
         minute = minute < 10 ? '0' + minute : minute;
         return hour + 'h:' + minute + 'm';
 
-      } else { // 显示功率
-        return '功率' + formState.powerSize
+      } else { // 显示等待点
+        return '等待点' + formState.powerSize
       }
     })
 
