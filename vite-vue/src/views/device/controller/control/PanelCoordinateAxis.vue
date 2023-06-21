@@ -2,7 +2,7 @@
   <div :class="{'board': true, 'band-board': formState.isShowBand}">
     <div class="axis-wrap">
       <div class="tag-box">
-        <span class="tag-span">Ramp {{ formState.serialNumber }}</span>
+        <span class="tag-span">Section {{ formState.serialNumber }}</span>
         <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
         <template v-else>
           <template v-if="formState.valueType == 'range'">
