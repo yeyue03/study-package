@@ -35,6 +35,15 @@
                     @changePanel="changePanel($event, item, null)"
                   />
                 </template>
+
+                <!-- 标准 -->
+                <template v-else-if="item.btnType == 'standard'">
+                  <PanelStandard
+                    :panelObj="item"
+                    :rowLen="needPanelRowList.length"
+                    @changePanel="changePanel($event, item, null)"
+                  />
+                </template>
                 
                 <!-- 坐标轴板块 -->
                 <template v-else>
@@ -104,6 +113,7 @@ import { nanoid } from "nanoid";
 import PanelCoordinateAxis from "./PanelCoordinateAxis.vue";
 import PanelReservation from "./PanelReservation.vue";
 import PanelLoop from "./PanelLoop.vue";
+import PanelStandard from './PanelStandard.vue';
 import { setControlChange } from "../useMitt";
 import {
   listenerScaleOption,
@@ -120,6 +130,7 @@ export default defineComponent({
     PanelCoordinateAxis,
     PanelReservation,
     PanelLoop,
+    PanelStandard
   },
   setup() {
     const needPanelRowList: any = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照（页面显示用）
@@ -215,6 +226,19 @@ export default defineComponent({
         } else {
           _setArr.push(...newArr);
         }
+
+      } else if (optionItem.btnType == "standard") { // 插入标准框
+        let _obj: any = {
+          id: nanoid(),
+          btnType: 'standard',
+          standardType: 'temperature'
+        };
+
+        if (dropIndex) {
+          settingsArr.value.splice(dropIndex + 1, 0, _obj);
+        } else {
+          settingsArr.value.push(_obj);
+        } 
       }
 
       setControlChange(settingsArr.value);
@@ -278,6 +302,7 @@ export default defineComponent({
           bandMin: 0,
           panelType,
           btnType: "value",
+          standardType: 'temperature'
         }
       }
 

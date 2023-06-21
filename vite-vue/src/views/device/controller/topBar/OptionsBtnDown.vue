@@ -69,6 +69,11 @@
           icon: 'icon-xunhuan',
           btnType: 'loop',
         },
+        {
+          name: '标准',
+          icon: 'icon-biaozhun',
+          btnType: 'standard',
+        },
       ]);
 
       const scaleBtnList = ref([

@@ -68,7 +68,10 @@
         </div>
       </div>
 
-      <div class="tag-box"></div>
+      <div class="tag-box">
+        <span>开光</span>
+        <a-switch v-model:checked="formState.checked" />
+      </div>
     </div>
   </div>
 </template>
