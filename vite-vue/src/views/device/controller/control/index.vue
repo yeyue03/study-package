@@ -484,7 +484,7 @@ export default defineComponent({
           _width += 370;
         } else if (item.btnType == 'reservation') {
           _width += 210;
-        } else if (item.btnType == 'loop') {
+        } else if (item.btnType == 'loop' || item.btnType == 'standard') {
           _width += 160;
         }
       }
