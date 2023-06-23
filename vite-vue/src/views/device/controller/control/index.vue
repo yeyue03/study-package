@@ -260,7 +260,8 @@ export default defineComponent({
         id: nanoid(),
         btnType: 'value',
         duration: 1,
-        powerSize: optionItem.valueType == 'range' ? '1' : ''
+        powerSize: optionItem.valueType == 'range' ? '1' : '',
+        standardType: 'temperature'
       };
       const iconObj: any = {
         temperature: 'icon-wendu',
@@ -409,7 +410,7 @@ export default defineComponent({
       const dragSliceItem = boardList.splice(draggingObj.index!, 1)[0];
       boardList.splice(dropIndex, 0, dragSliceItem);
 
-      setSerialNumber();
+      setNumberAndStandard();
     };
 
     const boardDragEnd = () => {
@@ -459,6 +460,9 @@ export default defineComponent({
         const findIndex = _setArr.findIndex((obj: SettingsArrItem) => obj.timestamp == item.timestamp);
         _setArr[findIndex].loop = item.loop;
 
+      } else if (childObj.btnType == "standard") { // 标准box变更
+        setNumberAndStandard();
+        
       } else if (parentItem) {
         // 同一列中温度、湿度、光照时长、等待点统一
         for (const panelType of defaultPanelRowList) {
@@ -488,20 +492,46 @@ export default defineComponent({
       _width += 300
       rowWidth.value = _width + "px";
 
-      setSerialNumber();
+      setNumberAndStandard();
     };
 
-    // 设置box序号(显示在左上角)
-    const setSerialNumber = () => {
+    // 设置box序号(显示在左上角)、设置标准从而判断开关是否禁用
+    const setNumberAndStandard = () => {
       let _num: number = 1;
+      let prevStandardType: string = 'temperature';
+      // standardType
       for (const item of settingsArr.value) {
         if (item.btnType == 'value') {
           const serialNumber: string = _num < 10 ? '0' + _num : _num + '';
+          const isStandardSame: boolean = prevStandardType == item.standardType; // 判断当前box 与前一个标准类型是否相同
+
+          if (!isStandardSame) {
+            item.standardType = prevStandardType;
+            
+            if (prevStandardType == 'temperature') {
+              item['temperature']['switch'] = true;
+
+            } else if (prevStandardType == 'humidity') {
+              item['humidity']['switch'] = true;
+
+            } else if (prevStandardType == 'both') {
+              item['temperature']['switch'] = true;
+              item['humidity']['switch'] = true;
+            }
+          }
+
           for (const panelType of defaultPanelRowList) {
-            item[panelType] && (item[panelType]['serialNumber'] = serialNumber)
+            item[panelType] && (item[panelType]['serialNumber'] = serialNumber);
+
+            if (!isStandardSame) {
+              item[panelType]['standardType'] = prevStandardType;
+            }
           }
 
           _num++;
+
+        } else if (item.btnType == 'standard') { // 标准
+          prevStandardType = item.standardType;
         }
       }
     }

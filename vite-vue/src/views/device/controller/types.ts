@@ -55,6 +55,8 @@ export interface SettingsArrItem {
   bandMax?: number; // 上方差
   bandMin?: number; // 下方差
   serialNumber?: string; // box序号(显示在左上角)
+  standardType?: string; // 标准
+  switch?: boolean; // 开关
   timestamp?: number; // 时间戳 统一循环的左box、右box想同
   isRightLoop?: boolean;
   isShowTimeInput?: boolean;
