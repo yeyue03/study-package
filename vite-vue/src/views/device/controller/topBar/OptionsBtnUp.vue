@@ -23,19 +23,6 @@
     <!-- 方案 -->
     <div class="option-item scale-btn" @click="choseOption('scheme')">
       <i class="iconfont icon-wj-fa"></i>
-
-      <div v-if="isShowStandard" class="select-box">
-        <a-select v-model:value="standardType" defaultOpen v-focus @change="changeStandard" @blur="blurStandard">
-          <a-select-option value="temperature">温度</a-select-option>
-          <a-select-option value="humidity">湿度</a-select-option>
-          <a-select-option value="both">温湿度</a-select-option>
-        </a-select>
-      </div>
-    </div>
-
-    <!-- 标准 -->
-    <div class="option-item scale-btn" @click="choseOption('standard')">
-      <i class="iconfont icon-biaozhun"></i>
     </div>
 
     <!-- 方案保存弹窗 -->

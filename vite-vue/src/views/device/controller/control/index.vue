@@ -1,6 +1,5 @@
 <template>
   <div class="scale-wrap">
-    <div class="now-shandard">当前标准：{{ standardTypeObj[standardType] || '' }}</div>
     <div class="scale-box" :style="scaleStyle">
       <div class="control-box" :style="`width: ${rowWidth}`">
         <div
