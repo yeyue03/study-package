@@ -22,7 +22,7 @@ export const getChartDataSource = (settingsArr: any, needPanelRowList: any) => {
     let resArr: any = [];
 
     for (const panelType of needPanelRowList.value) {
-      if (parentObj[panelType]) {
+      if (parentObj[panelType]['switch']) { // 开关开启
         const _val = parentObj[panelType][valKey];
         resArr.push({
           panelType,
@@ -30,6 +30,16 @@ export const getChartDataSource = (settingsArr: any, needPanelRowList: any) => {
           value: _val,
           bandMax: _val + parentObj[panelType]["bandMax"],
           bandMin: _val + parentObj[panelType]["bandMin"],
+          timestamp
+        });
+
+      } else {
+        resArr.push({
+          panelType,
+          date: _date,
+          value: undefined,
+          bandMax: undefined,
+          bandMin: undefined,
           timestamp
         });
       }

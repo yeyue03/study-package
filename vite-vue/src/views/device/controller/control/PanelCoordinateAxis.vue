@@ -69,8 +69,8 @@
       </div>
 
       <div class="tag-box">
-        <span>开光</span>
-        <a-switch v-model:checked="formState.checked" />
+        <span>开关</span>
+        <a-switch v-model:checked="formState.switch" @change="changeAxis" :disabled="switchDisabled" />
       </div>
     </div>
   </div>
@@ -108,6 +108,7 @@ export default defineComponent({
     const formState = reactive({
       ...axisObj.value
     });
+
     watch(axisObj, (newObj) => {
       Object.assign(formState, newObj)
     }, {
@@ -157,6 +158,16 @@ export default defineComponent({
       }
 
       return max || 100;
+    })
+
+    // 判断开关是否禁用
+    const switchDisabled = computed(() => {
+      let _bool = false;
+      if (formState.panelType == 'temperature' || formState.panelType == 'humidity') {
+        _bool = formState.panelType == formState.standardType || formState.standardType == 'both';
+      }
+
+      return _bool;
     })
 
     const canvasRef = ref();
@@ -288,11 +299,13 @@ export default defineComponent({
       },
       valueMax,
       valueMin,
+      switchDisabled,
       changeValue,
       showTimeInput,
       showValueInput,
       showBand,
       showBandInput,
+      changeAxis
     };
   },
   directives: {
