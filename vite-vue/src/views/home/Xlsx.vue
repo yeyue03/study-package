@@ -12,6 +12,10 @@
     </a-button>
   </a-upload>
 
+  <a-button @click="exportExcel">
+    导出xls
+  </a-button>
+
   <a-table :dataSource="dataSource" :columns="columns" />
 </template>
 
@@ -107,13 +111,45 @@ export default defineComponent({
     }
 
     const fileList = ref([]);
+
+    // 纯前端导出excel
+    // xlsx具体样式修改可参考：前端实现导出excel文件功能：https://www.jianshu.com/p/becd1495ad4e
+    const exportExcel = () => {
+      let exc = XLSX.utils.book_new(); // 初始化一个excel文件
+
+      let orgData = [];
+      let titleList = [];
+      for (const item of columns.value) {
+        titleList.push(item.title);
+      }
+      orgData.push(titleList);
+
+      for (const obj of dataSource.value) {
+        let itemData = [];
+        for (const key in obj) {
+          itemData.push(obj[key]);
+        }
+        orgData.push(itemData);
+      }
+
+      let exc_data = XLSX.utils.aoa_to_sheet(orgData);   // 传入数据 , 到excel
+      const filename = '测试';
+
+      console.log("=== 转换数据：", exc_data);
+
+      // 将文档插入文件并定义名称
+      XLSX.utils.book_append_sheet(exc, exc_data, filename);
+      // 执行下载
+      XLSX.writeFile(exc, filename + '.xlsx');
+    }
+
     return {
       fileList,
       columns,
       dataSource,
       handleChange,
+      exportExcel
     };
   },
 });
 </script>
-
