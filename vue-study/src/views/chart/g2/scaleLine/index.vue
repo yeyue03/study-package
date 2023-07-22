@@ -24,7 +24,7 @@ export default defineComponent({
       return Math.floor(Math.random() * 100)
     }
 
-    const defaultFormat = 'YYYY-MM-DD hh:mm'
+    const defaultFormat = 'YYYY-MM-DD HH:mm'
     let charData = [];
     let dateTicks = [];
     let minTime = 0;
@@ -55,6 +55,8 @@ export default defineComponent({
         })
       }
 
+      // console.log("======= _arr: ", JSON.stringify(_arr));
+
       maxTime = _arr[_arr.length - 1].date;
       dateTicks.push(maxTime)
 
@@ -84,9 +86,10 @@ export default defineComponent({
       chart.scale({
         date: {
           range: [0, 1],
+          // tickInterval: 300000
           // min: minTime,
           // max: maxTime,
-          // ticks: dateTicks
+          ticks: dateTicks
           // ticks: ['2023-06-13 03:30', '2023-06-13 03:40', '2023-06-13 03:50', '2023-06-13 04:00', '2023-06-13 04:30', '2023-06-13 05:30', '2023-06-13 06:30'],
         },
         temperature: {
@@ -96,6 +99,15 @@ export default defineComponent({
           max: 100,
           // tickCount: 10, // 坐标轴上刻度点的个数
         },
+        humidity: {
+          sync: true,
+          min: 0,
+          max: 100,
+        },
+        beam: {
+          min: 0,
+          max: 100,
+        }
       });
 
       chart.tooltip({
@@ -114,6 +126,12 @@ export default defineComponent({
           formatter: (val) => {
             return dayjs(Number(val)).format(defaultFormat);
           },
+        },
+        tickLine: {
+          length: 30
+        },
+        subTickLine: {
+          length: 10
         },
         grid: {
           line: {
@@ -199,13 +217,16 @@ export default defineComponent({
 
       scaleObj.height = initHeight + scaleObj.scale * 50;
 
+      // 缩放时变更 x、y轴配置
       chart.scale({
         date: {
           range: [0, 1],
           min: minTime,
           max: maxTime,
+          minLimit: minTime,
+          maxLimit: maxTime,
+          tickInterval: 300000
           // ticks: dateTicks
-          // ticks: ['2023-06-13 03:30', '2023-06-13 03:40', '2023-06-13 03:50', '2023-06-13 04:00', '2023-06-13 04:30', '2023-06-13 05:30', '2023-06-13 06:30'],
         },
         temperature: {
           alias: '温度',
@@ -213,7 +234,7 @@ export default defineComponent({
           nice: true,
           min: 0,
           max: 100,
-          tickCount: tickCount, // 坐标轴上刻度点的个数
+          // tickCount: tickCount, // 坐标轴上刻度点的个数
         },
       });
       
