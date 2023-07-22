@@ -9,10 +9,11 @@ export default defineConfig({
     viteMockServe({
       supportTs: true,
       logger: true,
+      prodEnabled: true, // 设置打包是否启用 mock 功能
       mockPath: 'mock'
     })
   ],
-  base: './', // 配置打包相对路径
+  base: '/', // 配置打包相对路径
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')

@@ -37,7 +37,7 @@ export default defineComponent({
     const route = useRoute();
     const visibleInfo = ref(false);
     const activeDeviceObj = reactive({ id: 1, name: 'HPP 260' }); 
-    const deviceList = ref([]);
+    const deviceList: any = ref([]);
     const infoPopTop = ref(0);
     const infoPopRef = ref();
 
@@ -69,6 +69,51 @@ export default defineComponent({
 
         loopDeviceListRealValue();
       })
+
+      setTimeout(() => {
+        console.log("== 给设备列表赋值");
+        deviceList.value = [{
+          id: 1,
+          ip: '10.24.175.52',
+          port: '8080',
+          type: 'type',
+          serialNo: 'NSSED001',
+          defineName: '自定义设备名称自定义设备名称',
+          url: '/test',
+          alarmType: '电话', // 报警类型
+          isTemperature: true, // 是否有温度
+          temperatureStart: 5,
+          temperatureEnd: 70,
+          isHumidity: true, // 是否有湿度
+          humidityStart: 10,
+          humidityEnd: 60,
+          isBeam: true, // 是否有光照
+          beamStart: 12,
+          beanEnd: 72,
+          isLink: true, // 是否链接
+        },
+        {
+          id: 2,
+          ip: '10.24.175.52',
+          port: '8080',
+          type: 'type',
+          serialNo: 'sdfdf02',
+          defineName: '设备名称',
+          url: '/test',
+          alarmType: '邮件', // 报警类型
+          isTemperature: true, // 是否有温度
+          temperatureStart: 5,
+          temperatureEnd: 68,
+          isHumidity: true, // 是否有湿度
+          humidityStart: 15,
+          humidityEnd: 65,
+          isBeam: true, // 是否有光照
+          beamStart: 10,
+          beanEnd: 72,
+          isLink: true, // 是否链接
+        }]
+        
+      }, 3000);
     }
     initDeviceList();
 

@@ -10,9 +10,9 @@
       <Xlsx />
     </div>
 
-    <div>
+    <!-- <div>
       <a-button @click="exportPDF">导出pdf</a-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -20,7 +20,7 @@
 import { defineComponent } from "vue";
 import UserApi from "@/api/user.api";
 import Xlsx from "./Xlsx.vue";
-import PdfLoader from "@/utils/html2pdf";
+// import PdfLoader from "@/utils/html2pdf";
 
 export default defineComponent({
   name: "Home",
@@ -36,18 +36,18 @@ export default defineComponent({
         console.log("=== err: ", err);
       });
 
-    const exportPDF = () => {
-      const pdfIdBox = document.getElementById("pdfIdBox"); // 需要导出部分页面的id名
-      const pdfDownLoader = new PdfLoader(
-        pdfIdBox,
-        "fileName",
-        "question-table"
-      ); // fileName -->导出文件名,  question-table -->防止被截断的class名
-      pdfDownLoader.outPutPdfFn("测试");
-    };
+    // const exportPDF = () => {
+    //   const pdfIdBox = document.getElementById("pdfIdBox"); // 需要导出部分页面的id名
+    //   const pdfDownLoader = new PdfLoader(
+    //     pdfIdBox,
+    //     "fileName",
+    //     "question-table"
+    //   ); // fileName -->导出文件名,  question-table -->防止被截断的class名
+    //   pdfDownLoader.outPutPdfFn("测试");
+    // };
 
     return {
-      exportPDF,
+      // exportPDF,
     };
   },
 });

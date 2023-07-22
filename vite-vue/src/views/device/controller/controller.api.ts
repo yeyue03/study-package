@@ -1,4 +1,4 @@
-import { defHttp } from '@/utils/http/axios';
+import defHttp from '@/request/http';
 import { DeviceEditParams, DeviceRealValueParams, PlanDetalParams, PlanAddParams, PlanDisableParams, PlanEnableParams, PlanTemplateAddParams, PlanTemplateEditParams, PlanTemplateListParams, RealChartDataParams } from './typesApi';
 
 enum Api {

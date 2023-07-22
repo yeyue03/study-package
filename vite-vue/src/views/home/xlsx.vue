@@ -19,7 +19,7 @@
   <a-table :dataSource="dataSource" :columns="columns" />
 </template>
 
-<script>
+<script lang="ts">
 import { message } from 'ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
@@ -30,10 +30,10 @@ export default defineComponent({
     UploadOutlined,
   },
   setup() {
-    const columns = ref([]);
-    const dataSource = ref([]);
+    const columns: any = ref([]);
+    const dataSource: any = ref([]);
 
-    const handleChange = (info) => {
+    const handleChange = (info: any) => {
       console.log("===== 文件状态：", info.file.status);
       
       if (info.file.status !== 'uploading') {
@@ -50,7 +50,7 @@ export default defineComponent({
     };
 
     // 上传导入excle文件
-    const importExcel = (file) => {
+    const importExcel = (file: any) => {
       const types = file.name.split('.')[1];
       // 定义上传文件类型
       const fileType = ['xlsx', 'xls', 'csv'].some(
@@ -61,7 +61,7 @@ export default defineComponent({
         return;
       }
       // 执行处理excle文件内容
-      file2Xce(file).then(excelList => {
+      file2Xce(file).then((excelList: any) => {
         if (excelList && excelList.length > 0) {
           console.log('excelList ~~~', excelList);
 
@@ -84,17 +84,17 @@ export default defineComponent({
     }
 
     // 获取 excel 文件内容
-    const file2Xce = async (file) => {
-      return new Promise(function(resolve, reject) {
+    const file2Xce = async (file: any) => {
+      return new Promise(function(resolve) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function(e: any) {
           const data = e.target.result;
           // 工作簿 原始数据
           const workbook = XLSX.read(data, {
             type: 'binary'
           });
 
-          const result = [];
+          const result: any = [];
           workbook.SheetNames.forEach(sheetName => {
             result.push({
               sheetName: sheetName,

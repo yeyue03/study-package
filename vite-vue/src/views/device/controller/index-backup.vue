@@ -1,5 +1,5 @@
 <template>
-  <div :class="prefixCls" class="context-box" :style="`height: ${boxHeight}px;`">
+  <div class="fda-device-content context-box" :style="`height: ${boxHeight}px;`">
     <div class="sidebar-wrap">
       <Sidebar @selectDevice="selectDevice" />
     </div>
@@ -43,12 +43,11 @@ export default defineComponent({
     ChartPanel,
   },
   setup() {
-    const prefixCls = 'fda-device-content';
-
     const pageName = ref('Protocol');
     const deviceObj = ref();
     const planDetailObj = ref({});
-    const boxHeight = document.body.clientHeight - 99;
+    let boxHeight = document.body.clientHeight - 99;
+    boxHeight = boxHeight < 640 ? 640 : boxHeight;
     const needPanelRowList = ref(['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照
 
     provide('changeDeviceObj', deviceObj);
@@ -112,7 +111,6 @@ export default defineComponent({
       selectDevice,
       changePageName,
       deviceObj,
-      prefixCls,
     };
   },
 });
@@ -166,11 +164,10 @@ export default defineComponent({
 </style>
 
 <style lang="less">
-@prefix-cls: ~'@{namespace}-device-content';
 @dark-bg: #151515;
 @boardBgColor: #333;
 
-.@{prefix-cls} {
+.fda-device-content {
   // settings 板块
   .axis-wrap,
   .band-box,
@@ -183,7 +180,7 @@ export default defineComponent({
 }
 
 html[data-theme='dark'] {
-  .@{prefix-cls} {
+  .fda-device-content {
     background-color: @dark-bg !important;
 
     .main-wrap {
