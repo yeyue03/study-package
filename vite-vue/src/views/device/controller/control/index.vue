@@ -1,5 +1,5 @@
 <template>
-  <div class="scale-wrap">
+  <div class="scale-wrap" @dragover="dragoverEvent">
     <div class="scale-box" :style="scaleStyle">
       <div class="control-box" :style="`width: ${rowWidth}`">
         <div
@@ -91,10 +91,6 @@
       </div>
     </div>
   </div>
-
-  <div class="delete-btn" @drop="deleteDropEvent" @dragover="dragoverEvent">
-    <i class="iconfont icon-shanchu"></i>
-  </div>
 </template>
 
 <script lang="ts">
@@ -122,6 +118,7 @@ import {
 } from "../useMitt";
 import { OptionsItem, SettingsArrItem, DraggingObj } from "../types";
 import dayjs from 'dayjs';
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: "ControlRoom",
@@ -132,6 +129,7 @@ export default defineComponent({
     PanelStandard
   },
   setup() {
+    const { t } = useI18n();
     const needPanelRowList: any = inject("changePanelRowList", ['temperature', 'humidity', 'beam']); // 该设备含有的面板类似 温度、湿度、光照（页面显示用）
     const defaultPanelRowList: string[] = ['temperature', 'humidity', 'beam']; // 数据赋值用，不管是否有温度、湿度、光照，都加三行数据，防止设备详情切换后setting有行空着
     const defaultFormat = 'YYYY-MM-DD HH:mm';
@@ -183,7 +181,7 @@ export default defineComponent({
       const _setArr = settingsArr.value;
       if (optionItem.btnType == "reservation") { // 插入预约框
         if (_setArr[0] && _setArr[0].btnType == 'reservation') {
-          return message.warning('已有预约框')
+          return message.warning(t('device.tips.hadReservation'))
 
         } else {
           const _date: string = dayjs((new Date()).getTime() + 60000).format(defaultFormat);
@@ -214,10 +212,10 @@ export default defineComponent({
           timestamp
         }]
 
-        if (dropIndex) {
+        if (dropIndex || dropIndex === 0) {
           const lastItem = _setArr.slice(0, dropIndex + 1).filter((item: SettingsArrItem) => item.btnType == 'loop').pop();
           if (lastItem && !lastItem.isRightLoop) {
-            return message.warning('此处不可插入循环框');
+            return message.warning(t('device.tips.canNotLoop'));
           } else {
             _setArr.splice(dropIndex + 1, 0, ...newArr);
           }
@@ -233,11 +231,11 @@ export default defineComponent({
           standardType: 'temperature'
         };
 
-        if (dropIndex) {
+        if (dropIndex || dropIndex === 0) {
           settingsArr.value.splice(dropIndex + 1, 0, _obj);
         } else {
           settingsArr.value.push(_obj);
-        } 
+        }
       }
 
       setControlChange(settingsArr.value);
@@ -248,6 +246,8 @@ export default defineComponent({
     const setAxisBoard = (optionItem: OptionsItem, dropIndex: number | void) => {
       let startValue = 10;
       let endValue = 20;
+      let bandMax = 0;
+      let bandMin = 0;
       if (optionItem.valueType == "constant") { // 恒定值
         endValue = startValue;
       }
@@ -271,7 +271,7 @@ export default defineComponent({
 
       // 获取前一个坐标轴元素
       let lastItem: any = null;
-      if (dropIndex) {
+      if (dropIndex || dropIndex === 0) {
         lastItem = settingsArr.value.slice(0, dropIndex + 1).filter((item: SettingsArrItem) => item.btnType == 'value').pop();
       } else {
         lastItem = settingsArr.value.filter((item: SettingsArrItem) => item.btnType == 'value').pop();
@@ -280,6 +280,8 @@ export default defineComponent({
       for (const panelType of defaultPanelRowList) {
         if (lastItem) {
           startValue = lastItem[panelType]['endValue']; // 后一个坐标轴开始值等于前一个坐标轴结束值
+          bandMax = lastItem[panelType]['bandMax'];
+          bandMin = lastItem[panelType]['bandMin'];
 
         } else { // 第一个axis box开始值取设备实际值
           startValue = injectDeviceObj.value[panelType]
@@ -298,15 +300,16 @@ export default defineComponent({
           powerSize: optionItem.valueType == 'range' ? '1' : '',
           valueType: optionItem.valueType,
           serialNumber,
-          bandMax: 0,
-          bandMin: 0,
+          bandMax,
+          bandMin,
           panelType,
           btnType: "value",
-          standardType: 'temperature'
+          standardType: 'temperature',
+          switch: true
         }
       }
 
-      if (dropIndex) {
+      if (dropIndex || dropIndex === 0) {
         settingsArr.value.splice(dropIndex + 1, 0, _obj);
       } else {
         settingsArr.value.push(_obj);
@@ -335,6 +338,7 @@ export default defineComponent({
 
     const dragoverEvent = (e: Event) => {
       e.preventDefault();
+      willDropIndex.value = -1;
     };
 
     const willDropIndex = ref(-1); // 将拖拽到的位置索引
@@ -388,7 +392,7 @@ export default defineComponent({
       
       if (!draggingObj.id || draggingObj.id === item.id) {
         return;
-      }
+      }      
 
       const boardList = settingsArr.value;
       // 判断循环box拖动是否合理
@@ -401,7 +405,7 @@ export default defineComponent({
 
         for (const item of sliceArr) {
           if (item.btnType == 'loop') {
-            return message.warning('不可拖动')
+            return message.warning(t('device.tips.canNotDrag'))
           }
         }
       }
@@ -415,18 +419,6 @@ export default defineComponent({
     const boardDragEnd = () => {
       draggingObj = {};
       willDropIndex.value = -1;
-    };
-
-    // board 拖拽到删除icon 处时触发删除事件
-    const deleteDropEvent = (e: any) => {
-      e.preventDefault();
-      let boardObj = e.dataTransfer.getData("boardObj"); // 按钮类型
-      if (!boardObj) {
-        return;
-      }
-
-      boardObj = JSON.parse(boardObj);
-      deleteBoard(boardObj.index, boardObj.btnType, boardObj.timestamp);
     };
 
     const deleteBoard = (index: number, btnType: string, timestamp: number | undefined) => {
@@ -537,9 +529,9 @@ export default defineComponent({
 
     // 缩放
     const scaleObj = reactive({
-      width: 100,
-      height: 100,
-      scale: 1
+      width: 156.25,
+      height: 156.25,
+      scale: 0.64
     })
     const scaleStyle = computed(() => {
       const _width = scaleObj.width >= 100 ? 100 : scaleObj.width;
@@ -564,9 +556,9 @@ export default defineComponent({
           scaleObj.scale *= 0.8;
 
         } else if (type == 'restore') { // 还原
-          scaleObj.width = 100;
-          scaleObj.height = 100;
-          scaleObj.scale = 1;
+          scaleObj.width = 156.25;
+          scaleObj.height = 156.25;
+          scaleObj.scale = 0.64;
         }
       }
     })
@@ -588,7 +580,6 @@ export default defineComponent({
       boardDragStart,
       boardDrop,
       boardDragEnd,
-      deleteDropEvent,
       dragoverEvent,
       dragoverBoardEvent,
       deleteBoard,
@@ -657,12 +648,12 @@ export default defineComponent({
   transition: all linear 0.3s;
 
   .cha-btn {
-    display: none;
+    display: block;
     position: absolute;
-    top: -6px;
-    right: -6px;
-    width: 20px;
-    height: 20px;
+    top: -25px;
+    right: -25px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: #999;
     cursor: pointer;
@@ -670,9 +661,11 @@ export default defineComponent({
     .iconfont {
       position: relative;
       display: block;
-      left: 1px;
-      top: 2px;
-      font-size: 12px;
+      left: -1px;
+      top: 22px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #f00;
       transform: scale(0.6);
       -moz-transform: scale(0.6);
       -webkit-transform: scale(0.6);
@@ -682,9 +675,9 @@ export default defineComponent({
 }
 .board-wrap:hover {
   background: rgba(255, 255, 255, .2);
-  .cha-btn {
-    display: block;
-  }
+  // .cha-btn {
+  //   display: block;
+  // }
 }
 
 .control-bg-box {

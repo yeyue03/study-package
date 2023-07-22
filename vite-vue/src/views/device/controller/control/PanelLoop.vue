@@ -2,7 +2,7 @@
   <div class="board">
     <div class="loop-box">
       <div class="tag-box">
-        <span class="tag-span">{{ formState.isRightLoop ? "LOOP" : "JUMP TARGET" }}</span>
+        <span class="tag-span">{{ formState.isRightLoop ? t('device.settings.loopRight') : t('device.settings.loopLeft') }}</span>
       </div>
       <i :class="`iconfont ${formState.icon}`"></i>
       <div class="tag-box">
@@ -32,6 +32,7 @@
 
 <script lang="ts">
 import { reactive, toRefs, defineComponent } from "vue";
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: "PanelLoop",
@@ -45,6 +46,7 @@ export default defineComponent({
   },
   emits: ["changePanel"],
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { panelObj } = toRefs(props);
 
     const formState = reactive({
@@ -64,6 +66,7 @@ export default defineComponent({
     };
 
     return {
+      t,
       formState,
       showLoopInput,
       changeDate,
@@ -79,7 +82,6 @@ export default defineComponent({
 
 <style lang="less" scoped>
 @rowHeight: 214px;
-@boardBgColor: #333;
 
 .board {
   width: 120px !important;
@@ -91,7 +93,6 @@ export default defineComponent({
   align-items: center;
   width: 100%;
   height: 100%;
-  background: @boardBgColor;
 }
 
 .tag-box {

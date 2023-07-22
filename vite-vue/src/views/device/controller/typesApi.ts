@@ -13,21 +13,10 @@ export interface PlanDetalParams {
 }
 
 export interface PlanAddParams {
-  standardType: string;
   deviceId: number;
   settings: string;
   startTime: string;
   isRun: boolean;
-}
-
-export interface PlanDataAddParams {
-  deviceId?: number; // 把组装好的数据返给后台时用
-  panelType: string;
-  date: string;
-  value: number;
-  realValue?: number;
-  bandMax: number;
-  bandMin: number;
 }
 
 export interface PlanDisableParams {
@@ -42,7 +31,6 @@ export interface PlanTemplateAddParams {
   deviceId: number;
   name: string;
   settings: string;
-  standardType: string;
 }
 
 export interface PlanTemplateEditParams {

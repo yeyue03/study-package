@@ -26,6 +26,7 @@ export interface DeviceInfoObj {
   setTemperature: number; // 温度设定值
   setHumidity: number;
   setBeam: number;
+  isRun: boolean;
 }
 
 // 操作按钮数组内参数类型

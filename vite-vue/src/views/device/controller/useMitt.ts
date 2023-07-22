@@ -1,4 +1,3 @@
-// import mitt from '/@/utils/mitt'; // 原路径
 import mitt from '@/utils/mitt';
 import { SettingsArr } from './types';
 export interface ControlInterfacce {

@@ -19,11 +19,11 @@ import { ref, reactive, defineComponent } from "vue";
 import DeviceItem from './DeviceItem.vue';
 import InfoPopup from './InfoPopup.vue';
 import { getDeviceList, getDeviceRealValue } from '../controller.api';
-// import { getFileAccessHttpUrl } from '/@/utils/common/compUtils'; // 原路径
 import { getFileAccessHttpUrl } from '@/utils/common/compUtils';
 import { useRoute } from 'vue-router';
 import { message } from "ant-design-vue";
-import { DeviceInfoObj } from '../types'
+import { DeviceInfoObj } from '../types';
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: "ChartSideBar",
@@ -33,6 +33,7 @@ export default defineComponent({
   },
   emits: ['selectDevice'],
   setup(_, { emit }) {
+    const { t } = useI18n();
     const route = useRoute();
     const visibleInfo = ref(false);
     const activeDeviceObj = reactive({ id: 1, name: 'HPP 260' }); 
@@ -67,7 +68,6 @@ export default defineComponent({
         deviceList.value = data || [];
 
         loopDeviceListRealValue();
-        console.log("=== 设备列表: ", data);
       })
     }
     initDeviceList();
@@ -78,12 +78,12 @@ export default defineComponent({
         deviceId: item.id
       }
       getDeviceRealValue(params).then((res: any) => {
-        item.temperature = res?.temperature || 25;
-        item.humidity = res?.humidity || 25;
-        item.beam = res?.beam || 25;
-        item.setTemperature = res?.temperature || 25;
-        item.setHumidity = res?.humidity || 25;
-        item.setBeam = res?.beam || 25;
+        item.temperature = res?.temperature || 0;
+        item.humidity = res?.humidity || 0;
+        item.beam = res?.beam || 0;
+        item.setTemperature = res?.setTemperature || 0;
+        item.setHumidity = res?.setHumidity || 0;
+        item.setBeam = res?.setBeam || 0;
       })
     }
 
@@ -99,7 +99,7 @@ export default defineComponent({
 
     const clickDevice = (item: DeviceInfoObj) => {
       if (!item.isLink) {
-        return message.warning('该设备不可连接，请联系管理员');
+        return message.warning(t('device.tips.deviceNotLink'));
       }
       
       Object.assign(activeDeviceObj, item);
@@ -167,6 +167,6 @@ export default defineComponent({
   position: absolute;
   top: -5px;
   // left: 190px;
-  right: -500px;
+  right: -550px;
 }
 </style>

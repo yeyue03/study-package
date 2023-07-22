@@ -3,7 +3,7 @@
     <div v-show="pageName == 'Protocol'" class="search-box">
       <div class="search-item">
         <div class="item-box">
-          <span>日期：</span>
+          <span>{{ t('device.chart.date') }}：</span>
           <a-range-picker
             v-model:value="queryParam.dateArr"
             showTime
@@ -13,16 +13,16 @@
         </div>
 
         <div class="item-box">
-          <span>查询类别：</span>
+          <span>{{ t('device.chart.dateType') }}：</span>
           <a-select v-model:value="queryParam.dateType">
-            <a-select-option value="day">按天</a-select-option>
-            <a-select-option value="hour">小时</a-select-option>
-            <a-select-option value="minute">分钟</a-select-option>
+            <a-select-option value="day">{{ t('device.chart.day') }}</a-select-option>
+            <a-select-option value="hour">{{ t('device.chart.hour') }}</a-select-option>
+            <a-select-option value="minute">{{ t('device.chart.minute') }}</a-select-option>
           </a-select>
         </div>
       </div>
 
-      <a-button type="primary" @click="setIntervalFun">查询</a-button>
+      <a-button type="primary" @click="setIntervalFun">{{ t('device.chart.search') }}</a-button>
     </div>
 
     <div ref="chartWrapBoxRef" class="scale-box" @wheel.prevent="handleWheel">
@@ -60,6 +60,7 @@ import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import { realChartData } from "../controller.api";
 import { getChartDataSource, debounce } from '../device';
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: "ChartPanel",
@@ -75,6 +76,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const { pageName } = toRefs(props);
     const defaultFormat = "YYYY-MM-DD HH:mm";
     const dataSource = ref<LineChartData>([]);
@@ -88,7 +90,7 @@ export default defineComponent({
       width: 100,
       height: 100,
       scale: 0,
-      tickCount: 4,
+      tickCount: 6,
       minTimestamp: 0,
       maxTimestamp: 0,
       initStartTimestamp: 0,
@@ -129,11 +131,11 @@ export default defineComponent({
     // 查询开启计时器
     const setIntervalFun = () => {
       if (!injectDeviceObj.value?.id) {
-        return message.warning("请先选取设备");
+        return message.warning(t('device.tips.pleaseChoseDevice'));
       } else if (!queryParam.dateArr || !queryParam.dateArr.length) {
-        return message.warning("请选择日期");
+        return message.warning(t('device.tips.pleaseChoseDate'));
       } else if (!queryParam.dateType) {
-        return message.warning("请选择查询类别");
+        return message.warning(t('device.tips.pleaseChoseDateType'));
       }
 
       const startTimeStamp = new Date(queryParam.dateArr[0]).getTime();
@@ -141,12 +143,12 @@ export default defineComponent({
       const diffV = endTimeStamp - startTimeStamp;
 
       if (queryParam.dateType == "minute" && diffV > 172800000) {
-        return message.warning("日期范围超过两天，类别不可选分钟");
+        return message.warning(t('device.tips.exceedTwoDay'));
       } else if (
         (queryParam.dateType == "minute" || queryParam.dateType == "hour") &&
         diffV > 7776000000
       ) {
-        return message.warning("日期范围超过90天，类别不可选分钟或小时");
+        return message.warning(t('device.tips.exceed90Day'));
       }
 
       scaleObj.minTimestamp = startTimeStamp;
@@ -176,8 +178,8 @@ export default defineComponent({
 
       realChartData(params).then((data: any) => {
         maskLoading.value = false;
+        let resArr: any = [];
         if (data && data.length) {
-          let resArr: any = [];
           for (const item of data) {
             for (const panelType of needPanelRowList.value) {
               let _val = item.temperature; // 实际值
@@ -212,14 +214,12 @@ export default defineComponent({
               resArr.push(_obj);
             }
           }
-
-          realDataSource.value = resArr;
-
-          scaleObj.width = chartWrapBoxRef.value.clientWidth;
-          scaleObj.height = initHeight;
-          
-          scaleProtocol("refresh");
         }
+        realDataSource.value = resArr;
+
+        scaleObj.width = chartWrapBoxRef.value.clientWidth;
+        scaleObj.height = initHeight;
+        scaleProtocol("refresh");
 
       }).catch(() => {
         maskLoading.value = false;
@@ -231,11 +231,14 @@ export default defineComponent({
       // 实际曲线页面时，进入页面即查询实际值
       if (pageName.value == "Protocol") {
         const nowTimestamp = new Date().getTime();
-        const prevNowTimestamp = nowTimestamp - 43200000;
+        const prevNowTimestamp = nowTimestamp - 36000000;
+        const nextNowTimestamp = nowTimestamp + 7200000;
         const startTime = dayjs(prevNowTimestamp).format(defaultFormat);
-        const endTime = dayjs(nowTimestamp).format(defaultFormat);
+        const endTime = dayjs(nextNowTimestamp).format(defaultFormat);
         queryParam.dateType = "minute";
         queryParam.dateArr = [startTime, endTime];
+        // queryParam.dateArr = ['2023-06-30 00:00', '2023-07-01 06:00']; // 测试用
+        
         setIntervalFun();
 
       } else { // 预览刷新 加计时器防止 settingsArr未变更
@@ -305,7 +308,7 @@ export default defineComponent({
     listenerScaleOption((type: string) => {
       if (changePageName.value == pageName.value) {
         if (type == 'reduce' && scaleObj.scale <= -4) {
-          return message.warning('已缩放到最小');
+          return message.warning(t('device.tips.hadMinimum'));
         } else {
           maskLoading.value = true;
           judgeScale(type);
@@ -319,7 +322,7 @@ export default defineComponent({
       // e.wheelDelta > 0 上滑 缩小
       const type = e.wheelDelta < 0 ? 'reduce' : 'amplify';
       if (type == 'reduce' && scaleObj.scale <= -4) {
-        return message.warning('已缩放到最小');
+        return message.warning(t('device.tips.hadMinimum'));
       } else {
         maskLoading.value = true;
         judgeScale(type);
@@ -340,26 +343,30 @@ export default defineComponent({
       if (type == "amplify") { // 放大
         const redMin = scaleObj.minTimestamp + scaleTimeRang;
         const redMax = scaleObj.maxTimestamp - scaleTimeRang;
-        if (redMin < redMax) {
+        
+        const tickCount = Math.floor((scaleObj.width - 120) / 33);
+        const maxTickMin = tickCount * 60 * 1000; // 间隔多少分钟（按间隔算，防止显示相同分钟）
+
+        if (redMax - redMin > maxTickMin || scaleObj.scale < 0) {
           scaleObj.scale++;
           scaleObj.tickCount++;
           scaleObj.minTimestamp = redMin;
           scaleObj.maxTimestamp = redMax;
 
         } else {
-          return message.warning('日期范围已接近，不可继续放大');
+          return message.warning(t('device.tips.dateNear'));
         }
 
       } else if (type == "reduce" && scaleObj.scale > -5) { // 缩小
         scaleObj.scale--;
-        scaleObj.tickCount > 2 && scaleObj.tickCount--;
+        scaleObj.tickCount > 3 && scaleObj.tickCount--;
         scaleObj.minTimestamp -= scaleTimeRang;
         scaleObj.maxTimestamp += scaleTimeRang;
         
 
       } else if (type == "restore") { // 还原
         scaleObj.scale = 0;
-        scaleObj.tickCount = 4;
+        scaleObj.tickCount = 6;
       }
 
       // 实际时 还原只还原图表高度，不调接口
@@ -391,10 +398,21 @@ export default defineComponent({
     const scaleSimulation = (type: string) => {
       const scaleTimeRang: number = 1 * 60 * 1000; // 放大缩小x轴缩放值
       if (type == "amplify") { // 放大
-        scaleObj.scale++;
-        scaleObj.tickCount++;
-        scaleObj.minTimestamp += scaleTimeRang;
-        scaleObj.maxTimestamp -= scaleTimeRang;
+        const redMin = scaleObj.minTimestamp + scaleTimeRang;
+        const redMax = scaleObj.maxTimestamp - scaleTimeRang;
+
+        const tickCount = Math.floor((scaleObj.width - 120) / 33);
+        const maxTickMin = tickCount * 60 * 1000; // 间隔多少分钟（按间隔算，防止显示相同分钟）
+        
+        if (redMax - redMin > maxTickMin || scaleObj.scale < 0) {
+          scaleObj.scale++;
+          scaleObj.tickCount++;
+          scaleObj.minTimestamp = redMin;
+          scaleObj.maxTimestamp = redMax;
+
+        } else {
+          return message.warning(t('device.tips.dateNear'));
+        }
 
       } else if (type == "reduce" && scaleObj.scale > -5) { // 缩小
         scaleObj.scale--;
@@ -404,7 +422,7 @@ export default defineComponent({
 
       } else if (type == "restore") { // 还原
         scaleObj.scale = 0;
-        scaleObj.tickCount = 4;
+        scaleObj.tickCount = 6;
 
         scaleObj.minTimestamp = scaleObj.initStartTimestamp;
         scaleObj.maxTimestamp = scaleObj.initEndTimestamp;
@@ -423,6 +441,7 @@ export default defineComponent({
     });
 
     return {
+      t,
       queryParam,
       dataSource,
       maskLoading,

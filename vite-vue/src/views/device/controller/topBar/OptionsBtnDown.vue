@@ -145,7 +145,7 @@
     width: 50px;
     height: 40px;
     margin: 3px 0 0 3px;
-    background: #333;
+    background-color: #fff;
     border-top: solid 2px #aaa;
     border-left: solid 2px #aaa;
     border-bottom: solid 1px #555;

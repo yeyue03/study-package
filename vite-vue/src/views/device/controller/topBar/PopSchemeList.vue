@@ -1,7 +1,7 @@
 <template>
   <a-modal
     wrapClassName="one-column-modal"
-    title="方案"
+    :title="t('device.infoPop.scheme')"
     :visible="visible"
     :maskClosable="false"
     :confirmLoading="submitLoading"
@@ -10,15 +10,15 @@
     @cancel="handleCancel"
   >
     <template #footer>
-      <a-button size="large" @click="handleCancel">取消</a-button>
+      <a-button size="large" @click="handleCancel">{{ t('device.infoPop.cancel') }}</a-button>
     </template>
 
     <a-table size="small" :columns="columns" :data-source="dataSource">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <div class="btn-box">
-            <a @click="replacePlan(record.settings)">替换</a>
-            <a @click="deletePlanTemplate(record.id)">删除</a>
+            <a @click="replacePlan(record.settings)">{{ t('device.infoPop.replace') }}</a>
+            <a @click="deletePlanTemplate(record.id)">{{ t('device.infoPop.delete') }}</a>
           </div>
         </template>
       </template>
@@ -31,10 +31,12 @@ import { computed, defineComponent, ref } from "vue";
 import { message } from "ant-design-vue";
 import { planTemplateList, planTemplateDelete } from '../controller.api';
 import { setReplacePlan } from '../useMitt';
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: "PopSchemeList",
   setup() {
+    const { t } = useI18n();
     const visible = ref(false);
     const submitLoading = ref(false);
 
@@ -64,14 +66,14 @@ export default defineComponent({
       const params = {
         deviceId: nowDeviceId.value
       }
-      planTemplateList(params).then(data => {
+      planTemplateList(params).then((data: any) => {
         dataSource.value = data || [];
       })
     }
 
     const deletePlanTemplate = (id: number) => {
       planTemplateDelete(id).then(() => {
-        message.success('删除成功');
+        message.success(t('device.tips.deleteSuccess'));
         getTemplateList();
       })
     }
@@ -79,7 +81,7 @@ export default defineComponent({
     // 把计划详情替换到当前模板
     const replacePlan = (settings: string) => {
       if (!settings) {
-        message.warning('该模板值为空')
+        message.warning(t('device.tips.templateNull'))
       }
 
       setReplacePlan(settings);
@@ -97,6 +99,7 @@ export default defineComponent({
     };
 
     return {
+      t,
       visible,
       columns,
       dataSource,

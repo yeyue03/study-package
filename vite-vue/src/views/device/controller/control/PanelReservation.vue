@@ -2,7 +2,7 @@
   <div class="board">
     <div class="clock-timer">
       <div class="tag-box">
-        <span class="tag-span">CLOCK TIMER</span>
+        <span class="tag-span">{{ t('device.settings.reservation') }}</span>
       </div>
 
       <div v-if="!formState.isShowDateInput && formState.date" @click="showDateInput(true)">
@@ -27,6 +27,7 @@
 
 <script lang="ts">
 import { reactive, toRefs, defineComponent } from "vue";
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: "PanelReservation",
@@ -40,6 +41,7 @@ export default defineComponent({
   },
   emits: ["changePanel"],
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { panelObj } = toRefs(props);
 
     const formState = reactive({
@@ -64,6 +66,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       formState,
       showDateInput,
       getDateStr
@@ -79,7 +82,6 @@ export default defineComponent({
 
 <style lang="less" scoped>
 @rowHeight: 214px;
-@boardBgColor: #333;
 
 .board {
   width: 170px !important;
@@ -90,7 +92,6 @@ export default defineComponent({
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  background: @boardBgColor;
 }
 .date-str {
   padding: 2px 6px;

@@ -1,104 +1,141 @@
 <template>
   <div class="info-wrap">
-    <div class="title">Info</div>
+    <div class="title">{{ t('device.infoPop.info') }}</div>
     <div class="info-box">
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">Device Type</a-col>
-        <a-col :span="rightSpan">{{ formState.type }}</a-col>
-      </a-row>
+      <div class="range-box">
+        <span class="range-span">{{ t('device.infoPop.deviceType') }}</span>
+        <span>{{ formState.type }}</span>
+      </div>
 
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">User Defined Name</a-col>
-        <a-col :span="rightSpan">
-          <a-input v-model:value="formState.defineName"></a-input>
-        </a-col>
-      </a-row>
+      <!-- 用户自定义名称 -->
+      <div class="range-box">
+        <span class="range-span">{{ t('device.infoPop.definedNmae') }}</span>
+        <a-input class="long-input" v-model:value="formState.defineName"></a-input>
+      </div>
 
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">Serial No</a-col>
-        <a-col :span="rightSpan">{{ formState.serialNo }}</a-col>
-      </a-row>
+      <!-- 序列号 -->
+      <div class="range-box">
+        <span class="range-span">{{ t('device.infoPop.serialNo') }}</span>
+        <span>{{ formState.serialNo }}</span>
+      </div>
 
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">Server Address</a-col>
-        <a-col :span="rightSpan">{{ formState.ip }}</a-col>
-      </a-row>
-
-      <hr />
-
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">Temperature Range</a-col>
-        <a-col :span="rightSpan">{{ formState.temperatureStart }}-{{ formState.temperatureEnd }} ℃</a-col>
-      </a-row>
-
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">Humidity Range</a-col>
-        <a-col :span="rightSpan">{{ formState.humidityStart }}-{{ formState.humidityEnd }} %rH</a-col>
-      </a-row>
-
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">Beam Range</a-col>
-        <a-col :span="rightSpan">{{ formState.beamStart }}-{{ formState.beanEnd }} lx</a-col>
-      </a-row>
+      <!-- 服务器地址 -->
+      <div class="range-box">
+        <span class="range-span">{{ t('device.infoPop.serverAddress') }}</span>
+        <span>{{ formState.ip }}</span>
+      </div>
 
       <hr />
 
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">报警方式</a-col>
-        <a-col :span="rightSpan">
-          <a-select v-model:value="formState.alarmTypeArr" mode="multiple">
-            <a-select-option value="邮件">邮件</a-select-option>
-            <a-select-option value="电话">电话</a-select-option>
-            <a-select-option value="短信">短信</a-select-option>
+      <div v-show="formState.isLink">
+        <!-- 温度 范围 -->
+        <div class="range-wrap">
+          <div class="range-box">
+            <span class="range-span">{{ t('device.infoPop.temperatureRange') }}</span>
+            <span class="range-value">{{ formState.temperatureStart }}-{{ formState.temperatureEnd }} ℃</span>
+          </div>
+
+          <div class="range-box">
+            <span>{{ t('device.infoPop.nowSetValue') }}: {{ formState.showSetTemperature }}</span>
+          </div>
+        </div>
+
+        <!-- 湿度 范围 -->
+        <div class="range-wrap">
+          <div class="range-box">
+            <span class="range-span">{{ t('device.infoPop.humidityRange') }}</span>
+            <span class="range-value">{{ formState.humidityStart }}-{{ formState.humidityEnd }} %rH</span>
+          </div>
+
+          <div class="range-box">
+            <span>{{ t('device.infoPop.nowSetValue') }}: {{ formState.showSetHumidity }}</span>
+          </div>
+        </div>
+
+        <!-- 光照范围 -->
+        <div class="range-wrap">
+          <div class="range-box">
+            <span class="range-span">{{ t('device.infoPop.beamRange') }}</span>
+            <span class="range-value">{{ formState.beamStart }}-{{ formState.beanEnd }} lx</span>
+          </div>
+
+          <div class="range-box">
+            <span>{{ t('device.infoPop.nowSetValue') }}: {{ formState.showSetBeam }}</span>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- 报警方式 -->
+        <div class="range-box">
+          <span class="range-span">{{ t('device.infoPop.alarmType') }}</span>
+          <a-select class="long-input" v-model:value="formState.alarmTypeArr" mode="multiple">
+            <a-select-option value="邮件">{{ t('device.infoPop.email') }}</a-select-option>
+            <a-select-option value="电话">{{ t('device.infoPop.phone') }}</a-select-option>
+            <a-select-option value="短信">{{ t('device.infoPop.message') }}</a-select-option>
           </a-select>
-        </a-col>
-      </a-row>
+        </div>
 
-      <a-row v-if="formState.isTemperature" type="flex" align="middle">
-        <a-col :span="leftSpan">温度设定值</a-col>
-        <a-col :span="rightSpan">
-          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.setTemperature" />
-        </a-col>
-      </a-row>
+        <!-- 是否开启温度 -->
+        <div class="range-wrap">
+          <div class="range-box">
+            <span class="range-span">{{ t('device.infoPop.isTemperature') }}</span>
+            <span class="range-value">
+              <a-checkbox v-model:checked="formState.isTemperature"></a-checkbox>
+            </span>
+          </div>
 
-      <a-row v-if="formState.isHumidity" type="flex" align="middle">
-        <a-col :span="leftSpan">湿度设定值</a-col>
-        <a-col :span="rightSpan">
-          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.setHumidity" />
-        </a-col>
-      </a-row>
+          <div class="range-box" v-show="formState.isTemperature">
+            <span class="set-span">{{ t('device.infoPop.setValue') }}</span>
+            <a-input-number class="input-number" :step="0.1" :precision="1" v-model:value="formState.setTemperature" />
+          </div>
+        </div>
 
-      <a-row v-if="formState.isBeam" type="flex" align="middle">
-        <a-col :span="leftSpan">光照设定值</a-col>
-        <a-col :span="rightSpan">
-          <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-model:value="formState.setBeam" />
-        </a-col>
-      </a-row>
+        <!-- 是否开启湿度 -->
+        <div class="range-wrap">
+          <div class="range-box">
+            <span class="range-span">{{ t('device.infoPop.isHumidity') }}</span>
+            <span class="range-value">
+              <a-checkbox v-model:checked="formState.isHumidity"></a-checkbox>
+            </span>
+          </div>
 
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">是否开启温度</a-col>
-        <a-col :span="rightSpan">
-          <a-checkbox v-model:checked="formState.isTemperature"></a-checkbox>
-        </a-col>
-      </a-row>
+          <div class="range-box" v-show="formState.isHumidity">
+            <span class="set-span">{{ t('device.infoPop.setValue') }}</span>
+            <a-input-number class="input-number" :step="0.1" :precision="1" v-model:value="formState.setHumidity" />
+          </div>
+        </div>
 
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">是否开启湿度</a-col>
-        <a-col :span="rightSpan">
-          <a-checkbox v-model:checked="formState.isHumidity"></a-checkbox>
-        </a-col>
-      </a-row>
+        <!-- 是否开启光照 -->
+        <div class="range-wrap">
+          <div class="range-box">
+            <span class="range-span">{{ t('device.infoPop.isBeam') }}</span>
+            <span class="range-value">
+              <a-checkbox v-model:checked="formState.isBeam"></a-checkbox>
+            </span>
+          </div>
 
-      <a-row type="flex" align="middle">
-        <a-col :span="leftSpan">是否开启光照</a-col>
-        <a-col :span="rightSpan">
-          <a-checkbox v-model:checked="formState.isBeam"></a-checkbox>
-        </a-col>
-      </a-row>
+          <div class="range-box" v-show="formState.isBeam">
+            <span class="set-span">{{ t('device.infoPop.setValue') }}</span>
+            <a-input-number class="input-number" :step="0.1" :precision="1" v-model:value="formState.setBeam" />
+          </div>
+        </div>
+
+        <!-- 是否执行 -->
+        <div class="range-wrap">
+          <div class="range-box">
+            <span class="range-span">{{ t('device.infoPop.isRun') }}</span>
+            <span class="range-value">
+              <a-checkbox v-model:checked="formState.isRun"></a-checkbox>
+            </span>
+          </div>
+        </div>
+
+      </div>
 
       <a-row justify="center" class="bottom-btn">
-        <a-button size="small" @click="savePopup">Save</a-button>
-        <a-button size="small" @click="hideInfoPopup">Close</a-button>
+        <a-button v-show="formState.isLink" size="small" @click="savePopup">{{ t('device.infoPop.save') }}</a-button>
+        <a-button size="small" @click="hideInfoPopup">{{ t('device.infoPop.close') }}</a-button>
       </a-row>
     </div>
   </div>
@@ -109,16 +146,26 @@ import { reactive, defineComponent } from 'vue'
 import { deviceEdit } from '../controller.api';
 import { message } from 'ant-design-vue';
 import { DeviceInfoObj } from '../types';
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: 'InfoPopup',
   emits: ['hideInfoPopup', 'refreshList'],
   setup(_, { emit }) {
+    const { t } = useI18n();
     const formState: any = reactive({})
 
     const showInfoPopup = (obj: DeviceInfoObj) => {
       obj.alarmTypeArr = obj.alarmType ? obj.alarmType.split(',') : [];
       Object.assign(formState, obj);
+
+      formState.showSetTemperature = obj.setTemperature;
+      formState.showSetHumidity = obj.setHumidity;
+      formState.showSetBeam = obj.setBeam;
+
+      formState.setTemperature = undefined;
+      formState.setHumidity = undefined;
+      formState.setBeam = undefined;
     }
     
     const hideInfoPopup = () => {
@@ -136,16 +183,18 @@ export default defineComponent({
         isTemperature: formState.isTemperature,
         isHumidity: formState.isHumidity,
         isBeam: formState.isBeam,
+        isRun: formState.isRun
       }
       
       deviceEdit(params).then(() => {
-        message.success('保存成功');
+        message.success(t('device.tips.saveSuccess'));
         emit('refreshList');
         hideInfoPopup();
       })
     }
 
     return {
+      t,
       formState,
       leftSpan: 8,
       rightSpan: 16,
@@ -159,9 +208,10 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .info-wrap {
-  width: 500px;
+  width: 550px;
   border: solid 3px #eee;
-  background: @sider-dark-bg-color;
+  // background: @sider-dark-bg-color;
+  background-color: #fff;
   border-radius: 5px;
 
   .title {
@@ -186,6 +236,41 @@ export default defineComponent({
 
     .ant-btn {
       margin: 0 8px;
+    }
+  }
+
+  .range-wrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+  }
+
+  .range-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    // margin: 5px 0;
+
+    .range-span {
+      width: 175px;
+    }
+    .range-value {
+      width: 100px;
+    }
+    .input-number {
+      width: 120px;
+    }
+    .only-show {
+      margin-left: 30px;
+    }
+    .set-span {
+      width: 90px;
+      margin-right: 5px;
+    }
+    .long-input {
+      width: 315px;
     }
   }
 }

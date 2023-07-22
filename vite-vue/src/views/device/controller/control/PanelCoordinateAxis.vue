@@ -2,17 +2,17 @@
   <div :class="{'board': true, 'band-board': formState.isShowBand}">
     <div class="axis-wrap">
       <div class="tag-box">
-        <span class="tag-span">Section {{ formState.serialNumber }}</span>
+        <span class="tag-span">{{ t('device.settings.section') }} {{ formState.serialNumber }}</span>
         <span v-if="!formState.isShowTimeInput" class="tag-span" @click="showTimeInput">{{ durationConvertStr }}</span>
         <template v-else>
           <template v-if="formState.valueType == 'range'">
             <a-select v-model:value="formState.powerSize" v-focus @change="showTimeInput" @blur="showTimeInput">
-              <a-select-option value="1">等待点1</a-select-option>
-              <a-select-option value="2">等待点2</a-select-option>
+              <a-select-option value="1">{{ t('device.settings.wait01') }}</a-select-option>
+              <a-select-option value="2">{{ t('device.settings.wait02') }}</a-select-option>
             </a-select>
           </template>
           <template v-else>
-            <a-input-number class="tag-span" :min="1" :max="1440" :step="1" :precision="0" v-focus v-model:value="formState.duration" @blur="showTimeInput" />
+            <a-input-number class="tag-span" :min="1" :max="1440" :step="0.1" :precision="1" v-focus v-model:value="formState.duration" @blur="showTimeInput" />
           </template>
         </template>
       </div>
@@ -20,7 +20,7 @@
       <!-- 坐标轴画布 -->
       <div class="canvas-box" :style="canvasStyle">
         <canvas ref="canvasRef">
-          您的浏览器不支持canvas
+          {{ t('device.settings.notSupportCanvas') }}
         </canvas>
 
         <div class="icon-float">
@@ -35,13 +35,13 @@
           <span v-else class="tag-span"></span>
         </template>
         <template v-else>
-          <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-focus v-model:value="formState.startValue" @blur="showValueInput('isShowStartValInput')" />
+          <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="0.1" :precision="1" v-focus v-model:value="formState.startValue" @blur="showValueInput('isShowStartValInput')" />
         </template>
 
         <!-- endValue 输入框 -->
         <span v-if="!formState.isShowEndValInput" class="tag-span" @click="showValueInput('isShowEndValInput')">{{ formState.endValue }} {{ panelTypeSymboObj[formState.panelType] }}</span>
         <template v-else>
-          <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="1" :precision="0" v-focus v-model:value="formState.endValue" @blur="showValueInput('isShowEndValInput')" />
+          <a-input-number class="tag-span" :min="valueMin" :max="valueMax" :step="0.1" :precision="1" v-focus v-model:value="formState.endValue" @blur="showValueInput('isShowEndValInput')" />
         </template>
       </div>
       
@@ -53,23 +53,23 @@
     </div>
     <div v-if="formState.isShowBand" class="band-box">
       <div class="tag-box">
-        <span class="tag-span">Tol. band</span>
+        <span class="tag-span">{{ t('device.settings.band') }}</span>
       </div>
       <div class="band-span">
         <div>
           <span class="max-span">max: </span>
           <span v-if="!formState.isShowMaxBandInput" @click="showBandInput('isShowMaxBandInput')">{{ formState.bandMax }}  {{ panelTypeSymboObj[formState.panelType] }}</span>
-          <a-input-number v-else class="tag-input" :min="0" :max="100" :step="1" :precision="0" v-focus v-model:value="formState.bandMax" @blur="showBandInput('isShowMaxBandInput')" />
+          <a-input-number v-else class="tag-input" :min="0" :max="100" :step="0.1" :precision="1" v-focus v-model:value="formState.bandMax" @blur="showBandInput('isShowMaxBandInput')" />
         </div>
         <div>
           <span class="max-span">min: </span>
           <span v-if="!formState.isShowMinBandInput" @click="showBandInput('isShowMinBandInput')">{{ formState.bandMin }}  {{ panelTypeSymboObj[formState.panelType] }}</span>
-          <a-input-number v-else class="tag-input" :min="-100" :max="0" :step="1" :precision="0" v-focus v-model:value="formState.bandMin" @blur="showBandInput('isShowMinBandInput')" />
+          <a-input-number v-else class="tag-input" :min="-100" :max="0" :step="0.1" :precision="1" v-focus v-model:value="formState.bandMin" @blur="showBandInput('isShowMinBandInput')" />
         </div>
       </div>
 
       <div class="tag-box">
-        <span>开关</span>
+        <span>{{ t('device.settings.switch') }}</span>
         <a-switch v-model:checked="formState.switch" @change="changeAxis" :disabled="switchDisabled" />
       </div>
     </div>
@@ -78,6 +78,7 @@
 
 <script lang="ts">
 import { ref, defineComponent, nextTick, reactive, toRefs, watch, computed, inject } from "vue";
+import { useI18n } from '@/hooks/web/useI18n';
 
 export default defineComponent({
   name: "PanelCoordinateAxis",
@@ -103,6 +104,7 @@ export default defineComponent({
   },
   emits: ['changePanel'],
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { canvasWidth, canvasHeight, axisObj } = toRefs(props); // 获取画布的宽、高
 
     const formState = reactive({
@@ -129,7 +131,7 @@ export default defineComponent({
         return hour + 'h:' + minute + 'm';
 
       } else { // 显示等待点
-        return '等待点' + formState.powerSize
+        return t('device.settings.wait') + ' ' + formState.powerSize
       }
     })
 
@@ -253,6 +255,11 @@ export default defineComponent({
       changeAxis();
     };
 
+    // 主题色变更
+    // watch(() => appStore.getDarkMode, () => {
+    //   console.log("== 主题切换");
+    // })
+
     // 是否显示时间段输入框
     const showTimeInput = () => {
       formState.isShowTimeInput = !formState.isShowTimeInput;
@@ -272,6 +279,7 @@ export default defineComponent({
     // 是否显示方差box
     const showBand = () => {
       formState.isShowBand = !formState.isShowBand;
+      changeAxis();
     }
 
     // 是否显示方差输入框
@@ -288,6 +296,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       canvasRef,
       formState,
       panelTypeSymboObj,
@@ -318,7 +327,6 @@ export default defineComponent({
 
 <style lang="less" scoped>
 @rowHeight: 214px;
-@boardBgColor: #333;
 
 .board {
   display: flex;
@@ -332,7 +340,6 @@ export default defineComponent({
   width: 210px;
   height: 100%;
   padding: 0 5px 0 0;
-  background: #333;
 }
 .canvas-box {
   overflow: hidden;
@@ -395,8 +402,7 @@ export default defineComponent({
   justify-content: space-between;
   width: 120px;
   padding: 0 10px;
-  color: #fff;
-  background: @boardBgColor;
+  background-color: #fff;
   box-sizing: border-box;
   border-left: solid 3px #ccc;
   

@@ -1,14 +1,12 @@
-// import { defHttp } from '/@/utils/http/axios'; // 原路径
-import defHttp from '@/request/http';
-import { DeviceEditParams, DeviceRealValueParams, PlanDetalParams, PlanAddParams, PlanDataAddParams, PlanDisableParams, PlanEnableParams, PlanTemplateAddParams, PlanTemplateEditParams, PlanTemplateListParams, RealChartDataParams } from './typesApi';
+import { defHttp } from '@/utils/http/axios';
+import { DeviceEditParams, DeviceRealValueParams, PlanDetalParams, PlanAddParams, PlanDisableParams, PlanEnableParams, PlanTemplateAddParams, PlanTemplateEditParams, PlanTemplateListParams, RealChartDataParams } from './typesApi';
 
 enum Api {
   deviceList = '/device/myList',
-  deviceEdit = '/device/edit',
+  deviceEdit = '/device/control',
   deviceRealValue = '/deviceData/getNew',
   planDetal = '/plan/getByDeviceId',
   planAdd = '/plan/add',
-  planDataAdd = '/planData/add',
   planDisable = '/plan/disable',
   planEnable = '/plan/enable',
   planTemplateAdd = '/planTemplate/add',
@@ -44,7 +42,6 @@ export const planDetal = (params: PlanDetalParams) => defHttp.get({ url: Api.pla
  */
 export const planAdd = (params: PlanAddParams) => defHttp.post({ url: Api.planAdd, params });
 
-export const planDataAdd = (params: PlanDataAddParams) => defHttp.post({ url: Api.planDataAdd, params });
 /**
  * 计划 暂停
  * @param params

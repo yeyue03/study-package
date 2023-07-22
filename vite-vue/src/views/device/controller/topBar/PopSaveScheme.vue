@@ -27,11 +27,13 @@ import { computed, defineComponent, reactive, ref, inject } from 'vue';
 import { message, Form } from 'ant-design-vue';
 import { SettingsArr } from '../types';
 import { planTemplateAdd } from '../controller.api';
-// settingsArr
 const useForm = Form.useForm;
+import { useI18n } from '@/hooks/web/useI18n';
+
 export default defineComponent({
   name: 'PopSaveScheme',
   setup() {
+    const { t } = useI18n();
     const visible = ref(false);
     const submitLoading = ref(false);
     const settingsArr = ref<SettingsArr>([]); // 保存的计划数据
@@ -43,18 +45,16 @@ export default defineComponent({
     });
     const rules = computed(() => {
       return {
-        name: [{ type: 'string', required: true, message: '请输入方案名称', trigger: 'blur' }],
+        name: [{ type: 'string', required: true, message: t('device.tips.pleaseInputSchemeName'), trigger: 'blur' }],
       }
     });
 
     const { resetFields, validate, validateInfos } = useForm(formState, rules);
 
-    const standardType = ref('temperature');
-    const showModal = (setArr: SettingsArr, sType: string) => {
+    const showModal = (setArr: SettingsArr) => {
       resetFields();
       visible.value = true;
       settingsArr.value = setArr;
-      standardType.value = sType || 'temperature'
     }
 
     const handleCancel = () => {
@@ -65,7 +65,7 @@ export default defineComponent({
     // 提交
     const onSubmit = () => {
       if (!injectDeviceObj.value?.id) {
-        return message.warning('请先选取设备');
+        return message.warning(t('device.tips.pleaseChoseDevice'));
       }
 
       validate()
@@ -77,11 +77,10 @@ export default defineComponent({
             deviceId: deviceObj.id,
             name: formState.name,
             settings: JSON.stringify(settingsArr.value),
-            standardType: standardType.value
           }
           
           planTemplateAdd(params).then(() => {
-            message.success('操作成功');
+            message.success(t('device.tips.success'));
             submitLoading.value = false;
             handleCancel();
             
