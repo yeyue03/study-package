@@ -78,6 +78,16 @@ export default defineComponent({
 
             columns.value = cols;
             dataSource.value = firstTableList;
+
+            // let _arr = [];
+            // for (const item of firstTableList) {
+            //   _arr.push({
+            //     zoneID: item.ZoneID,
+            //     cnlabel: `(${item.GMT}) ${item['城市']}`,
+            //     enlabel: `(${item.GMT}) ${item['__EMPTY_1']}`,
+            //   })
+            // }
+            // console.log("=== _arr: ", JSON.stringify(_arr));
           }
         }
       });

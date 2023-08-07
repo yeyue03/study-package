@@ -12,6 +12,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/device',
     name: 'Device',
     component: () => import('@/views/device/controller/index.vue')
+  },
+  {
+    path: '/linkageLine',
+    name: 'LinkageLine',
+    component: () => import('@/views/echarts/linkageLine/index.vue')
   }
 ];
  
