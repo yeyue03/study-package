@@ -82,6 +82,27 @@ export default defineComponent({
       view1.line().position("date*realPrice").color("#0ff");
       view1.line().position("date*temperature").shape(['smooth', 'dash']).color("#f00");
 
+      view1.axis('price', {
+        grid: {
+          line: {
+            type: 'line',
+            style: {
+              stroke: '#aaa',
+              lineDash: [4, 4],
+            },
+          },
+        },
+      })
+      view1.axis('realPrice', false);
+      view1.axis('temperature', false);
+      view1.scale('price', {
+        alias: '表1',
+        min: 0,
+        max: 1000,
+        minLimit: 0,
+        maxLimit: 1000,
+      });
+
       const view2 = chart.createView({
         region: {
           start: {
@@ -99,6 +120,18 @@ export default defineComponent({
       view2.interaction("sibling-tooltip");
       view2.data(dateArr);
       view2.line().position("date*price").color("#66ccff");
+
+      view2.axis('price', {
+        grid: {
+          line: {
+            type: 'line',
+            style: {
+              stroke: '#aaa',
+              lineDash: [4, 4],
+            },
+          },
+        },
+      })
 
       chart.render();
     };
