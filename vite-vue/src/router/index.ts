@@ -9,6 +9,16 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
+    path: '/xlsx',
+    name: 'Xlsx',
+    component: () => import('@/views/xlsx/index.vue')
+  },
+  {
+    path: '/drag/dragGrid',
+    name: 'DragGrid',
+    component: () => import('@/views/drag/dragGrid/index.vue')
+  },
+  {
     path: '/device',
     name: 'Device',
     component: () => import('@/views/device/controller/index.vue')

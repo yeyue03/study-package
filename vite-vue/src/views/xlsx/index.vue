@@ -1,22 +1,28 @@
 <template>
-  <a-upload
-    v-model:file-list="fileList"
-    name="file"
-    :before-upload="() => false"
-    :showUploadList="false"
-    @change="handleChange"
-  >
-    <a-button>
-      <upload-outlined></upload-outlined>
-      导入xls
+  <div id="pdfIdBox">
+    <a-upload
+      v-model:file-list="fileList"
+      name="file"
+      :before-upload="() => false"
+      :showUploadList="false"
+      @change="handleChange"
+    >
+      <a-button type="primary" style="margin-right: 20px;">
+        <upload-outlined></upload-outlined>
+        导入xls
+      </a-button>
+    </a-upload>
+
+    <a-button type="primary" @click="exportExcel">
+      导出xls
     </a-button>
-  </a-upload>
 
-  <a-button @click="exportExcel">
-    导出xls
-  </a-button>
+    <a-table :dataSource="dataSource" :columns="columns" />
 
-  <a-table :dataSource="dataSource" :columns="columns" />
+    <div>
+      <a-button type="primary" @click="exportPDF">页面导出为pdf</a-button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -24,6 +30,7 @@ import { message } from 'ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
 import * as XLSX from 'xlsx';
+import PdfLoader from "@/utils/html2pdf";
 
 export default defineComponent({
   components: {
@@ -153,12 +160,23 @@ export default defineComponent({
       XLSX.writeFile(exc, filename + '.xlsx');
     }
 
+    const exportPDF = () => {
+      const pdfIdBox = document.getElementById("pdfIdBox"); // 需要导出部分页面的id名
+      const pdfDownLoader = new PdfLoader(
+        pdfIdBox,
+        "fileName",
+        "question-table"
+      ); // fileName -->导出文件名,  question-table -->防止被截断的class名
+      pdfDownLoader.outPutPdfFn("测试");
+    };
+
     return {
       fileList,
       columns,
       dataSource,
       handleChange,
-      exportExcel
+      exportExcel,
+      exportPDF
     };
   },
 });
